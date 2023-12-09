@@ -1,6 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
@@ -8,6 +6,11 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connect } from './src/config/connection.js';
+
+//  IMPORTING ROUTER
+import userRouter from './src/routes/userRoutes.js'
+import postRouter from './src/routes/postRoutes.js'
+
 
 dotenv.config()
 
@@ -27,15 +30,22 @@ app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
 app.use(morgan('common'));
 
+
+
 // cors options
 app.use(cors({
   origin: "*"
 }));
 
-// routes
+
 app.get('/', (req, res) => {
-  res.send('Hello Express!');
+  res.send('WELCOME TO YOCIAL');
 });
+
+// ROUTER SETUP
+app.use("/api/user",userRouter)
+app.use("/api/post",postRouter)
+
 
 
 app.listen(port,() => {
