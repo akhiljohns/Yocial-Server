@@ -4,12 +4,11 @@ const router = Router();
 
 import {
     login,
-    register,
     validateRegister
 } from "../controllers/userController.js";
 
-router.get('/login', login);
+router.post('/login', login);
 
-router.get('/register', validateRegister);
+router.post('/register', validateRegister);
 
-export default router 
+export default router

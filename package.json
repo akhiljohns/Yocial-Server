@@ -12,7 +12,7 @@
     "social",
     "media"
   ],
-  "author": "Akhil Johns",
+  "author": "Akhil Johns",  
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
