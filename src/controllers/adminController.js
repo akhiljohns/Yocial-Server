@@ -3,6 +3,7 @@ import {
   adminLogin,
   // register
   getUsers,
+  toggelBlockStatus
 } from "../helpers/adminHelper.js";
 
 ////////////////////////////////////////////////// ADMIN LOGIN //////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ export const adminPostLogin = (req, res, next) => {
   }
 };
 
-////////////////////////////////////////////////// USER FETCH //////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// USER RELATED //////////////////////////////////////////////////////////////////
 // @desc    Get users
 // @route   GET /admin/fetch-users
 // @access  Admin - private
@@ -52,6 +53,22 @@ export const fetchUsers = (req, res) => {
 };
 
 
+// @desc    Change user's block status
+// @route   PATCH /admin/:userId/change-status
+// @access  Admin - private
+export const changeStatus = (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const status = req.body.status;
+        toggelBlockStatus(userId, status).then((response) =>{
+            res.status(200).send(response);
+        }).catch((error) => {
+            res.status(500).send(error.message);
+        })
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+}
 
 
 

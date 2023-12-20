@@ -79,6 +79,45 @@ export const getUsers = (page, perPage, search) => {
   });
 };
 
+
+//function to update user block status
+export const toggelBlockStatus = (userId, status) => {
+  return new Promise((resolve, reject) => {
+    try {
+      User.findOneAndUpdate({ _id: userId }, { blocked: status }, { new: true })
+        .select("-password")
+        .exec()
+        .then((response) => {
+            resolve({
+              status: 200,
+              message: "User block status updated",
+              user: response,
+            }).catch((err) => {
+            resolve({
+              status: 500,
+              error_code: "DB_UPDATE_ERROR",
+              message: err.message,
+            });
+          })
+        })
+        .catch((err) => {
+          resolve({
+            status: 500,
+            error_code: "DB_UPDATE_ERROR",
+            message: err.message,
+          });
+        });
+    } catch (error) {
+      resolve({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: error.message,
+      });
+    }
+  });
+};
+
+
 ////////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
 //   export const register = ({ name, email, password }) => {
 //     return new Promise(async (resolve, reject) => {
