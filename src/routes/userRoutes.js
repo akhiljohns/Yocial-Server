@@ -4,12 +4,31 @@ const router = Router();
 
 import {
     login,
-    validateRegister
+    register,
+    // sendVerifyEmail,
 } from "../controllers/userController.js";
 
 router.post('/login', login);
 
-router.post('/register', validateRegister);
+router.post('/register', register);
+
+
+
+
+
+
+
+
+// EMAIL VERIFICATION
+// router.post('/sendverifyemail',sendVerifyEmail);
+
+
+
+
+
+
+
+
 
 
 export default router
