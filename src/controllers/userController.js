@@ -1,5 +1,10 @@
-import { userLogin, registration } from "../../src/helpers/userHelper.js";
-
+import {
+  userLogin,
+  registration,
+  followHelper,
+  unfollowHelper,
+  getConnectonHelper,
+} from "../../src/helpers/userHelper.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
@@ -23,7 +28,6 @@ export const login = (req, res) => {
   }
 };
 
-
 // @desc    Register user
 // @route   POST /user/register
 // @access  Public
@@ -43,8 +47,62 @@ export const register = (req, res) => {
   }
 };
 
-// EMAIL VERIFICATION
+////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
+// @desc    Follow user
+// @route   POST /user/:userId/follow/:followeeUserId
+// @access  Registerd users
+export const followUser = (req, res) => {
+  try {
+    const { userId, followeeUserId } = req.params;
+    followHelper(userId, followeeUserId)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
+// @desc    Unfollow user
+// @route   POST /user/:userId/unfollow/:followeeUserId
+// @access  Registerd users
+export const unfollowUser = (req, res) => {
+  try {
+    const { userId, followeeUserId } = req.params;
+    unfollowHelper(userId, followeeUserId)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+// @desc    Get connections
+// @route   GET /user/fetch/connection/:userId
+// @access  Registerd users
+export const getConnection = (req, res) => {
+  try {
+    const { userId } = req.params;
+    getConnectonHelper(userId)
+      .then((connection) => {
+        res.status(200).send(connection);
+      })
+      .catch((err) => {
+        res.status(500).send(err);
+      });
+  } catch (error) {
+    res.status(500).send(err);
+  }
+};
+
+// EMAIL VERIFICATION
 // export const sendVerifyEmail = (req, res) => {
 //   try
 //   {
