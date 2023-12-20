@@ -1,16 +1,19 @@
-import {Router} from "express"
+import { Router } from "express";
 const router = Router();
 
 import {
-    adminPostLogin,
-    // adminPostRegister,
-
+  adminPostLogin,
+  // adminPostRegister,
+  fetchUsers,
 } from "../controllers/adminController.js";
-
 
 // @desc    Login admin
 // @access  Admins
-router.post('/login', adminPostLogin);
+router.post("/login", adminPostLogin);
+
+// @desc    Fetch all users
+// @access  Admins
+router.get("/fetch-users", fetchUsers);
 
 // router.post('/register', adminPostRegister);
 

@@ -3,13 +3,9 @@ const saltRounds = 10; //setting salt rounds
 import generateJwt from "../services/jwt.js"; //imporing jwt
 
 // importing models
-import { User } from "../models/userModel.js"; //userModel
+import User from "../models/userModel.js"; //userModel
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
-
-// @desc    Login user
-// @route   POST /users/login
-// @access  Public
 // @desc    Login user
 // @route   POST /users/login
 // @access  Public
