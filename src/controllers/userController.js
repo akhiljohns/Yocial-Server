@@ -4,7 +4,9 @@ import {
   followHelper,
   unfollowHelper,
   getConnectonHelper,
-  fetchUserById
+  fetchUserById,
+  sendEmail,
+  // verifyEmail,
 } from "../../src/helpers/userHelper.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
@@ -122,15 +124,47 @@ export const getConnection = (req, res) => {
   }
 };
 
-// EMAIL VERIFICATION
-// export const sendVerifyEmail = (req, res) => {
-//   try
-//   {
-//     const userData = req.body;
 
-//   }
-//   catch (error)
-//   {
+////////////////////////////////////////////////// EMAIL VARIFICATION //////////////////////////////////////////////////////////////////
+// @desc    To send user verification email
+// @route   POST /user/send-verification
+// @access  Public
+export const sendVerificationEmail = (req, res) => {
+  try {
+    const email = req.body.email;
+    sendEmail(email).then((response) => {
+      res.status(200).send(response)
+    }).catch((error) => {
+      res.status(error.status).send(error)
+    })
+  } catch (error) {
+    res.status(500).send({
+      status: 500,
+      error_code: "INTERNAL_SERVER_ERROR",
+      message: "Somethings wrong please try after sometime.",
+    });
+  }
+};
 
+// @desc    To verify user email
+// @route   GET /auth/verify/:id/:token
+// @access  Public
+// export const verifyEmail = async (req, res) => {
+//   try {
+
+//     const userId = req.params.id;
+//     const token = req.params.token;
+
+//     verifyEmail(userId, token).then((response) => {
+//       res.status(200).send(response)
+//     }).catch((error) => {
+//       res.status(error.status).send(error)
+//     })
+//   } catch (error) {
+//     res.status(500).send({
+//       status: 500,
+//       error_code: "INTERNAL_SERVER_ERROR",
+//       message: "Somethings wrong please try after sometime.",
+//     });
 //   }
-// }
+// };

@@ -6,6 +6,9 @@ import generateJwt from "../services/jwt.js"; //imporing jwt
 import User from "../models/userModel.js"; //userModel
 import { Connection } from "../models/connectionModel.js";//CollectionModel
 
+import { verificationEmail } from "../services/nodemailer.js";
+
+
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
 // @route   POST /users/login
@@ -272,3 +275,61 @@ export const getConnectonHelper = (userId) => {
 }
 
 
+////////////////////////////////////////////////// EMAIL VARIFICATION //////////////////////////////////////////////////////////////////
+// @desc    Sent verification link
+// @route   GET /auth/send-verification
+// @access  Public - Registerd users
+export const sendEmail = (email) => {
+  return new Promise((resolve, reject) => {
+    try {
+      User.findOne({ email: email })
+        .select("-password")
+        .exec()
+        .then((user) => {
+          if (user) {
+            verificationEmail(user.email, user.username,user.id)
+              .then((response) => {
+                resolve({
+                  status: 200,
+                  message: "verification email has been sent.",
+                });
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          } else {
+            reject({ status: 404, message: "User not found" });
+          }
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    } catch (error) {
+      reject({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Somethings wrong please try after sometime.",
+      });
+    }
+  });
+};
+
+
+// export const verifyEmail =  (userId,token) => {
+//   return new Promise(async (resolve, reject) => {
+//      try 
+//        {
+//         const user = await User.findOne({ _id: req.params.id });
+//         if (!user) return res.status(400).send("Invalid link");
+
+
+//        } 
+//      catch (error)
+//        {
+           
+//        }
+//   });
+// }
+
+
+// Verify
