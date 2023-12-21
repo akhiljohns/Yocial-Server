@@ -8,7 +8,6 @@ import {
   followUser,
   unfollowUser,
   fetch_Users,
-
 } from "../controllers/userController.js";
 
 router.post("/login", login);

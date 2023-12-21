@@ -11,6 +11,7 @@ import { connect } from './src/config/connection.js';
 import userRouter from './src/routes/userRoutes.js'
 import postRouter from './src/routes/postRoutes.js'
 import adminRouter from './src/routes/adminRouter.js'
+import authRouter from './src/routes/authRouter.js'
 
 
 dotenv.config()
@@ -48,6 +49,7 @@ app.get('/', (req, res) => {
 app.use("/api/user",userRouter)
 app.use("/api/admin",adminRouter)
 app.use("/api/post",postRouter)
+app.use("/api/auth", authRouter);
 
 
 
