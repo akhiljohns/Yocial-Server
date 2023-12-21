@@ -4,11 +4,10 @@ import generateJwt from "../services/jwt.js"; //imporing jwt
 
 // importing models
 import User from "../models/userModel.js"; //userModel
-import { Connection } from "../models/connectionModel.js";//CollectionModel
+import { Connection } from "../models/connectionModel.js"; //CollectionModel
 import { Verify } from "../models/verifyModel.js";
 
 import { verificationEmail } from "../services/nodemailer.js";
-
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
@@ -168,12 +167,12 @@ export const fetchUserById = (userId) => {
 // @access  Private
 const isValidUserId = async (userId) => {
   try {
-    const user = await User.findOne({_id: userId});
+    const user = await User.findOne({ _id: userId });
     return !!user;
   } catch (error) {
     return false;
   }
-}
+};
 
 // @desc    Follow user
 // @route   POST /user/:userId/follow/:followeeUserId
@@ -191,16 +190,17 @@ export const followHelper = (userId, followeeId) => {
         { userId: userId },
         { $addToSet: { following: followeeId } },
         { upsert: true, new: true }
-      ).exec()
+      )
+        .exec()
         .then((userConnection) => {
           Connection.findOneAndUpdate(
             { userId: followeeId },
             { $addToSet: { followers: userId } },
             { upsert: true, new: true }
-          ).exec()
+          )
+            .exec()
             .then((followeeConnection) => {
-
-              console.log(userConnection, followeeConnection );
+              console.log(userConnection, followeeConnection);
 
               resolve({ userConnection, followeeConnection });
             })
@@ -212,10 +212,10 @@ export const followHelper = (userId, followeeId) => {
           reject(error);
         });
     } catch (error) {
-      reject(error)
+      reject(error);
     }
-  })
-}
+  });
+};
 
 // @desc    Unfollow user
 // @route   POST /user/:userId/unfollow/:followeeUserId
@@ -247,7 +247,7 @@ export const unfollowHelper = (userId, followeeId) => {
     } catch (error) {
       reject(error);
     }
-  })
+  });
 };
 
 // @desc    Get connections
@@ -256,27 +256,30 @@ export const unfollowHelper = (userId, followeeId) => {
 export const getConnectonHelper = (userId) => {
   return new Promise((resolve, reject) => {
     try {
-      Connection.findOne({userId: userId}).then((connection) => {
-        resolve(connection);
-      }).catch((error) => reject({
-        status:500,
-        error_code: "DB_FETCH_ERROR",
-        message:error.message,
-        error
-      }));
+      Connection.findOne({ userId: userId })
+        .then((connection) => {
+          resolve(connection);
+        })
+        .catch((error) =>
+          reject({
+            status: 500,
+            error_code: "DB_FETCH_ERROR",
+            message: error.message,
+            error,
+          })
+        );
     } catch (error) {
       reject({
-        status:500,
+        status: 500,
         error_code: "INTERNAL_SERVER_ERROR",
-        message:error.message,
-        error
+        message: error.message,
+        error,
       });
     }
-  })
-}
+  });
+};
 
-
-////////////////////////////////////////////////// EMAIL VARIFICATION //////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// EMAIL VERIFICATION //////////////////////////////////////////////////////////////////
 // @desc    Sent verification link
 // @route   GET /auth/send-verification
 // @access  Public - Registerd users
@@ -288,7 +291,7 @@ export const sendEmail = (email) => {
         .exec()
         .then((user) => {
           if (user) {
-            verificationEmail(user.email, user.username,user.id)
+            verificationEmail(user.email, user.username, user.id)
               .then((response) => {
                 resolve({
                   status: 200,
@@ -314,21 +317,47 @@ export const sendEmail = (email) => {
     }
   });
 };
+export const checkToken = async (userId, token) => {
+  try {
+    const user = await User.findOne({ _id: userId });
 
+    if (user.verified) {
+      return Promise.reject({ status: 400, message: "User Already verified" });
+    }
 
-export const checkToken =  (userId,token) => {
-  return new Promise(async (resolve, reject) => {
-     try 
-       {
-        const user = await User.findOne({ _id: userId });
-        if (!user) return res.status(400).send("Invalid link");
+    if (!user) {
+      return Promise.reject({ status: 404, message: "User not found" });
+    }
 
+    const existingToken = await Verify.findOne({
+      token: token,
+    });
 
-       } 
-     catch (error)
-       {
-           
-       }
-  });
-}
+    if (!existingToken) {
+      return Promise.reject({
+        status: 400,
+        message:
+          "Token is expired or invalid. Try Sending Another Verification Mail",
+      });
+    }
 
+    // Update the 'used' key in the Verify schema to true
+    existingToken.used = true;
+    await existingToken.save();
+
+    // Update the 'verified' key in the User schema to true
+    user.verified = true;
+    await user.save();
+
+    return Promise.resolve({
+      status: 200,
+      message: "Token is valid, user verified",
+    });
+  } catch (error) {
+    return Promise.reject({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
