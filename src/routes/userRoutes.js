@@ -8,6 +8,7 @@ import {
   followUser,
   unfollowUser,
   fetch_Users,
+  requestVerification
 } from "../controllers/userController.js";
 
 router.post("/login", login);
@@ -30,4 +31,11 @@ router.post("/:userId/unfollow/:followeeUserId", unfollowUser);
 // @desc    Fetch users
 // @access  Authenticated users
 router.get("/fetch-users", fetch_Users);
+
+
+
+///////////////////////// password management //////////////////
+router.post("/password/verify/email", requestVerification);
+
+
 export default router;

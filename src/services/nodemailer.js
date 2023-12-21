@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { Verify } from "../models/verifyModel.js";
-import { sentEmail } from "./sentmail.js";
+import { sentEmail, sentVerificationEmail } from "./sentmail.js";
+
 
 export const verificationEmail = async (email, username, userId) => {
   try {
@@ -44,3 +45,32 @@ export const verificationEmail = async (email, username, userId) => {
     return { status: 500, message: "Internal Server Error", error: error };
   }
 };
+
+///////////// password management ///////////////
+
+export const generateTokenForPassword = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const token = crypto.randomBytes(32).toString('hex');
+      const verify = new Verify({
+        username: data?.username,
+        email: data?.email,
+        token: token,
+        password: data?.password
+      })
+
+      await verify.save();
+
+      const verificationLink = `${process.env.BASE_URL}/auth/change-password/verify/${data?.username}/${token}`;
+
+      sentVerificationEmail(data?.email, data?.username, verificationLink).then((response)=> {
+        resolve(response);
+      }).catch((error)=> {
+        reject(error);
+      })
+
+    } catch (error) {
+        reject(error);
+    }
+  })
+}

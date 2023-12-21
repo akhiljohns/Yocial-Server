@@ -7,6 +7,7 @@ import {
   fetchUserById,
   sendEmail,
   checkToken,
+  changePasswordRequestHelper
 } from "../../src/helpers/userHelper.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
@@ -168,3 +169,18 @@ export const verifyEmail = async (req, res) => {
     });
   }
 };
+
+
+/////////////// password management //////////////
+export const requestVerification = (req, res) => {
+  try {
+    const {password, userId} = req.body;
+    changePasswordRequestHelper(userId, password).then((response) => {
+      res.status(200).send(response)
+    }).catch((error) => {
+      res.status(500).send(error)
+    })
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
