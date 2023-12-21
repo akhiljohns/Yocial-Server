@@ -7,7 +7,7 @@ import User from "../models/userModel.js"; //userModel
 import { Connection } from "../models/connectionModel.js"; //CollectionModel
 import { Verify } from "../models/verifyModel.js";
 
-import { verificationEmail } from "../services/nodemailer.js";
+import { generateTokenForPassword, verificationEmail, } from "../services/nodemailer.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
@@ -361,3 +361,25 @@ export const checkToken = async (userId, token) => {
     });
   }
 };
+
+
+/////////////////////////////// password management //////////////////////////////
+
+export const changePasswordRequestHelper = (userId, password) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const user = await User.findOne({_id: userId});
+
+      generateTokenForPassword({email: user.email, password: hashedPassword, username: user.username}).then((res) => {
+        resolve(res);
+      }).catch((err) => {
+        reject(err);
+      })
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
