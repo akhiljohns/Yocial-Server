@@ -131,6 +131,33 @@ export const registration = async ({
   }
 };
 
+////////////////////////////////////////////////// USER FETCH //////////////////////////////////////////////////////////////////
+// @desc    Get users
+// @route   GET /user/fetch-users
+// @access  Public
+export const fetchUserById = (userId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      userId = userId.trim();
+      let query = {};
+      if (userId && userId !== undefined) {
+        query = { _id: userId };
+      }
+
+      User.find(query)
+        .select("-password")
+        .exec()
+        .then((user) => {
+          resolve(user);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    To check valid user
