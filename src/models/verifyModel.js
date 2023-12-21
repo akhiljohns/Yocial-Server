@@ -17,6 +17,10 @@ const verifySchema = new Schema(
       type: String,
       required: true,
     },
+    used: {
+      type: Boolean,
+      default: false,
+    },
     password: {
       type: String,
     },
@@ -26,4 +30,4 @@ const verifySchema = new Schema(
   }
 );
 
-export const Verify = model("verify", verifySchema,"verify");
+export const Verify = model("verify", verifySchema, "verify");
