@@ -6,7 +6,7 @@ import {
   getConnectonHelper,
   fetchUserById,
   sendEmail,
-  // verifyEmail,
+  checkToken,
 } from "../../src/helpers/userHelper.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
@@ -149,22 +149,22 @@ export const sendVerificationEmail = (req, res) => {
 // @desc    To verify user email
 // @route   GET /auth/verify/:id/:token
 // @access  Public
-// export const verifyEmail = async (req, res) => {
-//   try {
+export const verifyEmail = async (req, res) => {
+  try {
 
-//     const userId = req.params.id;
-//     const token = req.params.token;
+    const userId = req.params.id;
+    const token = req.params.token;
 
-//     verifyEmail(userId, token).then((response) => {
-//       res.status(200).send(response)
-//     }).catch((error) => {
-//       res.status(error.status).send(error)
-//     })
-//   } catch (error) {
-//     res.status(500).send({
-//       status: 500,
-//       error_code: "INTERNAL_SERVER_ERROR",
-//       message: "Somethings wrong please try after sometime.",
-//     });
-//   }
-// };
+    checkToken(userId, token).then((response) => {
+      res.status(200).send(response)
+    }).catch((error) => {
+      res.status(error.status).send(error)
+    })
+  } catch (error) {
+    res.status(500).send({
+      status: 500,
+      error_code: "INTERNAL_SERVER_ERROR",
+      message: "Somethings wrong please try after sometime.",
+    });
+  }
+};

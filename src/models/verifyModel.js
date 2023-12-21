@@ -17,10 +17,6 @@ const verifySchema = new Schema(
       type: String,
       required: true,
     },
-    used: {
-      type: Boolean,
-      default: false,
-    },
     password: {
       type: String,
     },

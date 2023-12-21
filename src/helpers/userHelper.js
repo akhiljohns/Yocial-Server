@@ -5,6 +5,7 @@ import generateJwt from "../services/jwt.js"; //imporing jwt
 // importing models
 import User from "../models/userModel.js"; //userModel
 import { Connection } from "../models/connectionModel.js";//CollectionModel
+import { Verify } from "../models/verifyModel.js";
 
 import { verificationEmail } from "../services/nodemailer.js";
 
@@ -315,21 +316,19 @@ export const sendEmail = (email) => {
 };
 
 
-// export const verifyEmail =  (userId,token) => {
-//   return new Promise(async (resolve, reject) => {
-//      try 
-//        {
-//         const user = await User.findOne({ _id: req.params.id });
-//         if (!user) return res.status(400).send("Invalid link");
+export const checkToken =  (userId,token) => {
+  return new Promise(async (resolve, reject) => {
+     try 
+       {
+        const user = await User.findOne({ _id: userId });
+        if (!user) return res.status(400).send("Invalid link");
 
 
-//        } 
-//      catch (error)
-//        {
+       } 
+     catch (error)
+       {
            
-//        }
-//   });
-// }
+       }
+  });
+}
 
-
-// Verify
