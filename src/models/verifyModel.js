@@ -30,4 +30,4 @@ const verifySchema = new Schema(
   }
 );
 
-export const Verify = model("verify", verifySchema,"verify");
+export const Verify = model("verify", verifySchema, "verify");
