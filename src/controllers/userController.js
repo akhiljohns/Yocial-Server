@@ -4,6 +4,7 @@ import {
   followHelper,
   unfollowHelper,
   getConnectonHelper,
+  fetchUserById
 } from "../../src/helpers/userHelper.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
@@ -46,6 +47,25 @@ export const register = (req, res) => {
     res.status(500).send(error);
   }
 };
+
+////////////////////////////////////////////////// USER FETCH //////////////////////////////////////////////////////////////////
+// @desc    Get users
+// @route   GET /user/fetch-users
+// @access  Public
+export const fetch_Users = (req, res) => {
+  try {
+    const {userId} = req.query || ''
+    fetchUserById(userId).then((response) => {
+      res.status(200).json(response)
+    }).catch((err) => {
+      res.status(500).json(err);
+    })
+  } catch (error) {
+    console.log("error in fetchUsers (userController)", error);
+    res.status(500).json(err);
+  }
+};
+
 
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    Follow user
