@@ -123,3 +123,61 @@ export const deletePostHelper = (postId) => {
       });
   });
 };
+
+// @desc    Like/unlike post
+// @route   GET /like-unlike/:postId/:userId
+// @access  Authenticated user
+export const likeUnlikeHelper = async ({ postId, userId }) => {
+  try {
+    const postExist = await Post.findById(postId);
+
+    if (!postExist) {
+      return {
+        status: 404,
+        message: "Post Not Found",
+      };
+    }
+
+    const userExists = await Post.exists({ _id: postId, likes: userId });
+
+    if (!userExists) {
+      const result = await Post.findOneAndUpdate(
+        { _id: postId },
+        { $push: { likes: userId } },
+        { new: true }
+      );
+
+      return {
+        status: 200,
+        message: "Like Has Been Added To The Post Successfully.",
+        result,
+      };
+    } else {
+      const result = await Post.findOneAndUpdate(
+        { _id: postId },
+        { $pull: { likes: userId } },
+        { new: true }
+      );
+
+      return {
+        status: 200,
+        message: "Like Has Been Removed From The Post Successfully.",
+        result,
+      };
+    }
+  } catch (error) {
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+      // Handle the case where the provided postId is not a valid ObjectId
+      return {
+        status: 404,
+        message: "Post Not Found",
+      };
+    } else {
+      return {
+        status: 500,
+        message: "Internal Server Error",
+        error: error.message || "Something Went Wrong, Try After Sometime",
+      };
+    }
+  }
+};
