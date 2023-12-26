@@ -5,6 +5,7 @@ import {
   createPost,
   deletePost,
   fetchSinglePost,
+  likeUnlikePost,
   updatePost,
 } from "../controllers/postController.js";
 
@@ -24,4 +25,8 @@ router.get("/fetch-single-post/:postId", fetchSinglePost);
 // @access  Authenticated user
 router.delete("/delete/post/:postId", deletePost);
 
+
+// @desc    like&unlike Post
+// @access  Authenticated user
+router.get('/like-unlike/:postId/:userId', likeUnlikePost)
 export default router;

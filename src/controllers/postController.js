@@ -2,6 +2,7 @@ import {
   createPostHelper,
   deletePostHelper,
   fetchSinglePostHelper,
+  likeUnlikeHelper,
   updatePostHelper,
 } from "../helpers/postHelper.js";
 
@@ -68,4 +69,30 @@ export const deletePost = (req, res) => {
     .catch((err) => {
       res.status(err.status).send(err);
     });
+};
+
+// @desc    Like/unlike post
+// @route   GET /like-unlike/:postId/:userId
+// @access  Authenticated user
+export const likeUnlikePost = (req, res) => {
+  try {
+    const data = {
+      userId: req.params.userId,
+      postId: req.params.postId,
+    };
+
+    likeUnlikeHelper(data)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((err) => {
+        res.status(err.status).send(err);
+      });
+  } catch (error) {
+    res.status(500).send({
+      status: 500,
+      error_code: "INTERNAL_SERVER_ERROR",
+      message: "Somethings wrong please try after sometime.",
+    });
+  }
 };
