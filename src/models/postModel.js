@@ -14,15 +14,10 @@ const postSchema = new Schema(
       trim: true,
     },
 
-    description: {
+    caption: {
       type: String,
       trim: true,
       maxLength: 100,
-    },
-
-    date: {
-      type: Date,
-      default: Date.now,
     },
 
     likes: {
@@ -35,7 +30,11 @@ const postSchema = new Schema(
       default: [],
     },
 
-    hidden: {
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
+    userBlocked: {
       type: Boolean,
       default: false,
     },
