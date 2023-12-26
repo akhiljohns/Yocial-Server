@@ -79,7 +79,7 @@ export const followUser = (req, res) => {
     const { userId, followeeUserId } = req.params;
     followHelper(userId, followeeUserId)
       .then((response) => {
-        res.status(200).send(response);
+        res.status(response.status).send(response);
       })
       .catch((error) => {
         res.status(500).send(error);
@@ -97,13 +97,13 @@ export const unfollowUser = (req, res) => {
     const { userId, followeeUserId } = req.params;
     unfollowHelper(userId, followeeUserId)
       .then((response) => {
-        res.status(200).send(response);
+        res.status(response.status).send(response);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        res.status(error.status).send(error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    res.status(error.status).send(error);
   }
 };
 
@@ -115,13 +115,13 @@ export const getConnection = (req, res) => {
     const { userId } = req.params;
     getConnectonHelper(userId)
       .then((connection) => {
-        res.status(200).send(connection);
+        res.status(connection.status).send(connection);
       })
       .catch((err) => {
-        res.status(500).send(err);
+        res.status(err.status).send(err);
       });
   } catch (error) {
-    res.status(500).send(err);
+    res.status(error.status).send(err);
   }
 };
 
@@ -134,12 +134,12 @@ export const sendVerificationEmail = (req, res) => {
   try {
     const email = req.body.email;
     sendEmail(email).then((response) => {
-      res.status(200).send(response)
+      res.status(response.status).send(response)
     }).catch((error) => {
       res.status(error.status).send(error)
     })
   } catch (error) {
-    res.status(500).send({
+    res.status(error.status).send({
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",
@@ -157,12 +157,12 @@ export const verifyEmail = async (req, res) => {
     const token = req.params.token;
 
     checkToken(userId, token).then((response) => {
-      res.status(200).send(response)
+      res.status(response.status).send(response)
     }).catch((error) => {
       res.status(error.status).send(error)
     })
   } catch (error) {
-    res.status(500).send({
+    res.status(error.status).send({
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",
