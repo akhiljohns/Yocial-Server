@@ -59,3 +59,21 @@ export const updatePostHelper = ({ caption, postId }) => {
       });
   });
 };
+
+// @desc    Fetch single posts
+// @route   GET /post/fetch-single-post
+// @access  Authenticated user
+export const fetchSinglePostHelper = (postId) => {
+  return new Promise((resolve, reject) => {
+    Post.findOne({ _id: postId })
+      .then((post) => {
+        resolve(post);
+      })
+      .catch((error) => {
+        reject({
+          status: error.status || 500,
+          message: error.message || "Something Went Wrong, Try After Sometime",
+        });
+      });
+  });
+};

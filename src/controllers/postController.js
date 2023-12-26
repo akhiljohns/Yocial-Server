@@ -1,4 +1,8 @@
-import { createPostHelper, updatePostHelper } from "../helpers/postHelper.js";
+import {
+  createPostHelper,
+  fetchSinglePostHelper,
+  updatePostHelper,
+} from "../helpers/postHelper.js";
 
 // @desc    Create new post
 // @route   POST /post/create-post
@@ -35,4 +39,18 @@ export const updatePost = (req, res, next) => {
         res.status(err.status).send(err);
       });
   } catch (error) {}
+};
+
+// @desc    Fetch single posts
+// @route   GET /post/fetch-single-post
+// @access  Authenticated user
+export const fetchSinglePost = (req, res, next) => {
+  const postId = req.params.postId;
+  fetchSinglePostHelper(postId)
+    .then((response) => {
+      res.status(200).send(response);
+    })
+    .catch((err) => {
+      res.status(err.status).send(err);
+    });
 };
