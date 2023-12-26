@@ -1,5 +1,6 @@
 import {
   createPostHelper,
+  deletePostHelper,
   fetchSinglePostHelper,
   updatePostHelper,
 } from "../helpers/postHelper.js";
@@ -47,6 +48,20 @@ export const updatePost = (req, res, next) => {
 export const fetchSinglePost = (req, res, next) => {
   const postId = req.params.postId;
   fetchSinglePostHelper(postId)
+    .then((response) => {
+      res.status(200).send(response);
+    })
+    .catch((err) => {
+      res.status(err.status).send(err);
+    });
+};
+
+// @desc    Delete post
+// @route   GET /delete/post/:postId
+// @access  Authenticated user
+export const deletePost = (req, res) => {
+  const postId = req.params.postId;
+  deletePostHelper(postId)
     .then((response) => {
       res.status(200).send(response);
     })

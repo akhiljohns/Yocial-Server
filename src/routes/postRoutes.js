@@ -3,6 +3,7 @@ const router = Router();
 
 import {
   createPost,
+  deletePost,
   fetchSinglePost,
   updatePost,
 } from "../controllers/postController.js";
@@ -18,5 +19,9 @@ router.put("/update-post/:postId", updatePost);
 // @desc    Fetch Single post
 // @access  Authenticated user
 router.get("/fetch-single-post/:postId", fetchSinglePost);
+
+// @desc    Fetch Single post
+// @access  Authenticated user
+router.delete("/delete/post/:postId", deletePost);
 
 export default router;
