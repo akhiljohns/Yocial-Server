@@ -7,7 +7,10 @@ import User from "../models/userModel.js"; //userModel
 import { Connection } from "../models/connectionModel.js"; //CollectionModel
 import { Verify } from "../models/verifyModel.js";
 
-import { generateTokenForPassword, verificationEmail, } from "../services/nodemailer.js";
+import {
+  generateTokenForPassword,
+  verificationEmail,
+} from "../services/nodemailer.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
@@ -321,12 +324,11 @@ export const checkToken = async (userId, token) => {
   try {
     const user = await User.findOne({ _id: userId });
 
-    if (user.verified) {
-      return Promise.reject({ status: 400, message: "User Already verified" });
-    }
-
     if (!user) {
       return Promise.reject({ status: 404, message: "User not found" });
+    }
+    if (user.verified) {
+      return Promise.reject({ status: 400, message: "User Already verified" });
     }
 
     const existingToken = await Verify.findOne({
@@ -362,7 +364,6 @@ export const checkToken = async (userId, token) => {
   }
 };
 
-
 /////////////////////////////// password management //////////////////////////////
 
 export const changePasswordRequestHelper = (userId, password) => {
@@ -370,16 +371,21 @@ export const changePasswordRequestHelper = (userId, password) => {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const user = await User.findOne({_id: userId});
+      const user = await User.findOne({ _id: userId });
 
-      generateTokenForPassword({email: user.email, password: hashedPassword, username: user.username}).then((res) => {
-        resolve(res);
-      }).catch((err) => {
-        reject(err);
+      generateTokenForPassword({
+        email: user.email,
+        password: hashedPassword,
+        username: user.username,
       })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((err) => {
+          reject(err);
+        });
     } catch (error) {
       reject(error);
     }
-  })
-}
-
+  });
+};
