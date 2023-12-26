@@ -1,5 +1,4 @@
-import { createPostHelper } from "../helpers/postHelper.js";
-
+import { createPostHelper, updatePostHelper } from "../helpers/postHelper.js";
 
 // @desc    Create new post
 // @route   POST /post/create-post
@@ -20,4 +19,20 @@ export const createPost = (req, res, next) => {
       message: "Somethings wrong please try after sometime.",
     });
   }
+};
+export const updatePost = (req, res, next) => {
+  try {
+    const data = {
+      caption: req.body.caption,
+      postId: req.params.postId,
+    };
+    console.log(data);
+    updatePostHelper(data)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((err) => {
+        res.status(err.status).send(err);
+      });
+  } catch (error) {}
 };
