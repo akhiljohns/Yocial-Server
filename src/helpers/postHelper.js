@@ -82,7 +82,7 @@ export const fetchSinglePostHelper = (postId) => {
     }
     Post.findOne({ _id: postId })
       .then((post) => {
-        resolve(post);
+        resolve({ status: 404, message: "Single Post Found", post });
       })
       .catch((error) => {
         reject({
@@ -166,7 +166,7 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
       };
     }
   } catch (error) {
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    if (error.name === "CastError" && error.kind === "ObjectId") {
       // Handle the case where the provided postId is not a valid ObjectId
       return {
         status: 404,

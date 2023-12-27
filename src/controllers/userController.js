@@ -22,13 +22,13 @@ export const login = (req, res) => {
     };
     userLogin(userData)
       .then((response) => {
-        res.status(200).json(response);
+        res.status(response.status).json(response);
       })
       .catch((err) => {
-        res.status(500).send(err);
+        res.status(error.status).send(err);
       });
   } catch (error) {
-    res.status(500).send(error);
+    res.status(error.status).send(error);
   }
 };
 
@@ -41,13 +41,13 @@ export const register = (req, res) => {
     // console.log(`userData in validateRegister ${userData}`);
     registration(userData)
       .then((response) => {
-        res.status(200).json(response);
+        res.status(response.status).json(response);
       })
       .catch((err) => {
-        res.status(500).send(err);
+        res.status(err.status).send(err);
       });
   } catch (error) {
-    res.status(500).send(error);
+    res.status(error.status).send(error);
   }
 };
 
@@ -59,13 +59,13 @@ export const fetch_Users = (req, res) => {
   try {
     const {userId} = req.query || ''
     fetchUserById(userId).then((response) => {
-      res.status(200).json(response)
+      res.status(response.status).json(response)
     }).catch((err) => {
-      res.status(500).json(err);
+      res.status(err.status).json(err);
     })
   } catch (error) {
     console.log("error in fetchUsers (userController)", error);
-    res.status(500).json(err);
+    res.status(error.status).json(err);
   }
 };
 
@@ -82,10 +82,10 @@ export const followUser = (req, res) => {
         res.status(response.status).send(response);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        res.status(error.status).send(error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    res.status(error.status).send(error);
   }
 };
 
@@ -176,11 +176,11 @@ export const requestVerification = (req, res) => {
   try {
     const {password, userId} = req.body;
     changePasswordRequestHelper(userId, password).then((response) => {
-      res.status(200).send(response)
+      res.status(response.status).send(response)
     }).catch((error) => {
-      res.status(500).send(error)
+      res.status(error.status).send(error)
     })
   } catch (error) {
-    res.status(500).send(error)
+    res.status(error.status).send(error)
   }
 }

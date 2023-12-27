@@ -13,13 +13,13 @@ export const createPost = (req, res, next) => {
   try {
     createPostHelper(req.body)
       .then((response) => {
-        res.status(200).send(response);
+        res.status(response.status).send(response);
       })
       .catch((err) => {
         res.status(err.status).send(err);
       });
   } catch (error) {
-    res.status(500).send({
+    res.status(error.status).send({
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",
@@ -35,7 +35,7 @@ export const updatePost = (req, res, next) => {
     console.log(data);
     updatePostHelper(data)
       .then((response) => {
-        res.status(200).send(response);
+        res.status(response.status).send(response);
       })
       .catch((err) => {
         res.status(err.status).send(err);
@@ -50,7 +50,7 @@ export const fetchSinglePost = (req, res, next) => {
   const postId = req.params.postId;
   fetchSinglePostHelper(postId)
     .then((response) => {
-      res.status(200).send(response);
+      res.status(response.status).send(response);
     })
     .catch((err) => {
       res.status(err.status).send(err);
@@ -64,7 +64,7 @@ export const deletePost = (req, res) => {
   const postId = req.params.postId;
   deletePostHelper(postId)
     .then((response) => {
-      res.status(200).send(response);
+      res.status(response.status).send(response);
     })
     .catch((err) => {
       res.status(err.status).send(err);
@@ -83,16 +83,16 @@ export const likeUnlikePost = (req, res) => {
 
     likeUnlikeHelper(data)
       .then((response) => {
-        res.status(200).send(response);
+        res.status(response.status).send(response);
       })
       .catch((err) => {
         res.status(err.status).send(err);
       });
   } catch (error) {
-    res.status(500).send({
-      status: 500,
-      error_code: "INTERNAL_SERVER_ERROR",
-      message: "Somethings wrong please try after sometime.",
+    res.status(error).send({
+      status: error.status || 500,
+      error_code: error.code || "INTERNAL_SERVER_ERROR",
+      message: error.message || "Somethings wrong please try after sometime.",
     });
   }
 };

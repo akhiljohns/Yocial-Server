@@ -302,14 +302,20 @@ export const sendEmail = (email) => {
                 });
               })
               .catch((error) => {
-                reject(error);
+                reject({
+                  status: error.status, 
+                  message: error.message || "verification email has been sent.",
+                error});
               });
           } else {
             reject({ status: 404, message: "User not found" });
           }
         })
         .catch((error) => {
-          reject(error);
+          reject({
+            status: error.status, 
+            message: error.message || "verification email has been sent.",
+          error});
         });
     } catch (error) {
       reject({
@@ -379,10 +385,16 @@ export const changePasswordRequestHelper = (userId, password) => {
         username: user.username,
       })
         .then((res) => {
-          resolve(res);
+          resolve({
+            status: res.status || 200, 
+            message: erroresr.message || "Success",
+            res});
         })
         .catch((err) => {
-          reject(err);
+          reject({
+            status: err.status, 
+            message: err.message || "went wrong",
+          err});
         });
     } catch (error) {
       reject(error);

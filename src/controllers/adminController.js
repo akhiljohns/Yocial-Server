@@ -15,10 +15,10 @@ export const adminPostLogin = (req, res, next) => {
     const data = req.body;
     adminLogin(data)
       .then((response) => {
-        res.status(200).json({ ...response });
+        res.status(response.status).json({ ...response });
       })
       .catch((error) => {
-        res.status(200).json({
+        res.status(error.status).json({
           status: 500,
           error_code: "INTERNAL_SERVER_ERROR",
           message: error.message,
@@ -41,14 +41,14 @@ export const fetchUsers = (req, res) => {
 
     getUsers(page, perPage, search)
       .then((response) => {
-        res.status(200).json(response);
+        res.status(response.status).json(response);
       })
       .catch((err) => {
-        res.status(500).json(err);
+        res.status(err.status).json(err);
       });
   } catch (error) {
     console.log("error in fetchUsers (userController)", error);
-    res.status(500).json(err);
+    res.status(error.status).json(err);
   }
 };
 
@@ -61,12 +61,12 @@ export const changeStatus = (req, res) => {
         const userId = req.params.userId;
         const status = req.body.status;
         toggelBlockStatus(userId, status).then((response) =>{
-            res.status(200).send(response);
+            res.status(response.status).send(response);
         }).catch((error) => {
-            res.status(500).send(error.message);
+            res.status(error.status).send(error.message);
         })
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(error.status).send(error.message);
     }
 }
 
