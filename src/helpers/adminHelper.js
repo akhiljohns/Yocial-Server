@@ -56,7 +56,11 @@ export const getUsers = (page, perPage, search) => {
         .select("-password")
         .exec()
         .then((users) => {
-          resolve(users);
+          resolve({
+            status: 200,
+            message: "Succesfully Fetched Users Details",
+            users,
+          });
         })
         .catch((err) => {
           console.log("error fetching users", err);
@@ -79,7 +83,6 @@ export const getUsers = (page, perPage, search) => {
   });
 };
 
-
 //function to update user block status
 export const toggelBlockStatus = (userId, status) => {
   return new Promise((resolve, reject) => {
@@ -88,17 +91,17 @@ export const toggelBlockStatus = (userId, status) => {
         .select("-password")
         .exec()
         .then((response) => {
-            resolve({
-              status: 200,
-              message: "User block status updated",
-              user: response,
-            }).catch((err) => {
+          resolve({
+            status: 200,
+            message: "User block status updated",
+            user: response,
+          }).catch((err) => {
             resolve({
               status: 500,
               error_code: "DB_UPDATE_ERROR",
               message: err.message,
             });
-          })
+          });
         })
         .catch((err) => {
           resolve({
@@ -116,7 +119,6 @@ export const toggelBlockStatus = (userId, status) => {
     }
   });
 };
-
 
 ////////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
 //   export const register = ({ name, email, password }) => {

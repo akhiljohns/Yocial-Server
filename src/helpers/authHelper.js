@@ -14,7 +14,11 @@ export const changePasswordHelper = (token, username) => {
             Verify.findOneAndUpdate({username: username, token: token, used: false}, {used: true}).then((res) => {
                 if(res){
                     User.findOneAndUpdate({username:username}, {password: res.password}).then(async (response)=> {
-                        resolve(response);
+                        resolve({
+                            status: 200,
+                            message: "User Password Updated Successfully",
+                            response
+                          })
                     }).catch((err) => {
                         reject(err);
                     })

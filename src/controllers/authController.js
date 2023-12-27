@@ -7,11 +7,11 @@ export const changePassword = (req, res) => {
     const {token, username} = req.params;
 
     changePasswordHelper(token, username).then((response)=> {
-      res.status(200).send("password has been changed successfully, Please go back to home page.");
+      res.status(response.status).send("password has been changed successfully, Please go back to home page.");
     }).catch((error)=> {
-      res.status(500).send(error.message)
+      res.status(error.status).send(error.message)
     })
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(error.status).send(error.message);
   }
 }
