@@ -78,7 +78,8 @@ export const userLogin = async ({ credential, password }) => {
 // @route   POST /users/register
 // @access  Public
 export const registration = async ({
-  name,
+  fname,
+  lname,
   username,
   email,
   password,
@@ -88,6 +89,7 @@ export const registration = async ({
     // Check if username exists
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
+      console.log("Username Taken");
       return {
         status: 409,
         error_code: "USERNAME_TAKEN",
@@ -98,6 +100,7 @@ export const registration = async ({
     // Check if email exists
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
+      console.log("Email already registered");
       return {
         status: 409,
         error_code: "EMAIL_ALREADY_REGISTERED",
@@ -113,7 +116,7 @@ export const registration = async ({
       username,
       email,
       password: hashedPassword,
-      name,
+      name: fname+" "+lname,
       phone: phone ? phone : null,
     });
 
@@ -124,7 +127,7 @@ export const registration = async ({
 
     return {
       status: 200,
-      message: "Account created successfully",
+      message: "Account Created Successfully",
     };
   } catch (error) {
     console.error(`Error during registration: ${error}`);
@@ -303,9 +306,10 @@ export const sendEmail = (email) => {
               })
               .catch((error) => {
                 reject({
-                  status: error.status, 
+                  status: error.status,
                   message: error.message || "verification email has been sent.",
-                error});
+                  error,
+                });
               });
           } else {
             reject({ status: 404, message: "User not found" });
@@ -313,9 +317,10 @@ export const sendEmail = (email) => {
         })
         .catch((error) => {
           reject({
-            status: error.status, 
+            status: error.status,
             message: error.message || "verification email has been sent.",
-          error});
+            error,
+          });
         });
     } catch (error) {
       reject({
@@ -386,15 +391,17 @@ export const changePasswordRequestHelper = (userId, password) => {
       })
         .then((res) => {
           resolve({
-            status: res.status || 200, 
+            status: res.status || 200,
             message: erroresr.message || "Success",
-            res});
+            res,
+          });
         })
         .catch((err) => {
           reject({
-            status: err.status, 
+            status: err.status,
             message: err.message || "went wrong",
-          err});
+            err,
+          });
         });
     } catch (error) {
       reject(error);
