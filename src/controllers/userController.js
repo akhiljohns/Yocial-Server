@@ -83,9 +83,7 @@ export const fetchUserByUsername = (req, res) => {
   try {
     const {username} = req.params;
 
-     console.log("7474747",username)
      userByUsernameHelper(username).then((user)=> {
-      console.log("7-=--=-",user)
       res.status(200).send(user);
     }).catch((error) => {
       res.status(500).send(error)

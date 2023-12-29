@@ -3,6 +3,7 @@ const router = Router();
 
 import {
   createPost,
+  ctrlFetchUserPosts,
   deletePost,
   fetchSinglePost,
   likeUnlikePost,
@@ -12,7 +13,8 @@ import protect from "../middlewares/authMiddleware.js";
 
 // @desc    Create post
 // @access  Authenticated user
-router.post("/create-post", protect, createPost);
+// router.post("/create-post", protect, createPost);
+router.post("/create-post", createPost);
 
 // @desc    Update post
 // @access  Authenticated user
@@ -22,7 +24,11 @@ router.put("/update-post/:postId", protect, updatePost);
 // @access  Authenticated user
 router.get("/fetch-single-post/:postId", protect, fetchSinglePost);
 
-// @desc    Fetch Single post
+// @desc    Fetch a user's posts
+// @access  Registerd users
+router.get("/fetchUserPosts", ctrlFetchUserPosts);
+
+// @desc    delete Single post
 // @access  Authenticated user
 router.delete("/delete/post/:postId", protect, deletePost);
 

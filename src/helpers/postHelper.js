@@ -93,6 +93,25 @@ export const fetchSinglePostHelper = (postId) => {
   });
 };
 
+
+// @desc    Fetch a user's posts
+// @route   GET /post/fetchUserPosts
+// @access  Registerd users
+export const fetchUserPosts = (userId) => {
+  return new Promise ((resolve, reject) => {
+    try {
+
+      Post.find({userId: userId}).sort({createdAt: -1}).lean().then((posts)=> {
+        resolve(posts);
+      }).catch((err) => {
+        reject(err);
+      })
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
 // @desc    Delete post
 // @route   GET /delete/post/:postId
 // @access  Authenticated user

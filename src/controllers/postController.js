@@ -2,6 +2,7 @@ import {
   createPostHelper,
   deletePostHelper,
   fetchSinglePostHelper,
+  fetchUserPosts,
   likeUnlikeHelper,
   updatePostHelper,
 } from "../helpers/postHelper.js";
@@ -57,6 +58,22 @@ export const fetchSinglePost = (req, res, next) => {
     });
 };
 
+
+// @desc    Fetch a user's posts
+// @route   GET /post/fetchUserPosts
+// @access  Registerd users
+export const ctrlFetchUserPosts = (req, res, next) => {
+  try {
+      const userId = req.query.userId;
+      fetchUserPosts(userId).then((posts)=> {
+          res.status(200).send({status:200, posts:posts});
+      }).catch((error) => {
+          res.status(500).send(error)
+      })
+  } catch (error) {
+      res.status(500).send(error);
+  }
+};
 // @desc    Delete post
 // @route   GET /delete/post/:postId
 // @access  Authenticated user
