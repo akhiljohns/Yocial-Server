@@ -8,6 +8,7 @@ import {
   sendEmail,
   checkToken,
   changePasswordRequestHelper,
+  userByUsernameHelper,
 } from "../../src/helpers/userHelper.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
@@ -74,6 +75,27 @@ export const fetch_Users = (req, res) => {
     res.status(error.status).json(err);
   }
 };
+
+// @desc    Fetch user by username
+// @route   /user/fetch/user/username/:username
+// @access Authenticated users
+export const fetchUserByUsername = (req, res) => {
+  try {
+    const {username} = req.params;
+
+     console.log("7474747",username)
+     userByUsernameHelper(username).then((user)=> {
+      console.log("7-=--=-",user)
+      res.status(200).send(user);
+    }).catch((error) => {
+      res.status(500).send(error)
+    })
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+
 
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    Follow user

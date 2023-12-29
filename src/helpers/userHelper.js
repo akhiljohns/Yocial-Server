@@ -179,6 +179,34 @@ export const fetchUserById = (userId) => {
   });
 };
 
+
+// @desc    Search user by username
+// @route   GET /user/fetch/user/username/:username
+// @access  Registerd users
+export const userByUsernameHelper = (username) => {
+  return new Promise((resolve, reject) => {
+    try {
+      User.findOne({username: username}).select("-password")
+      .exec()
+      .then((user)=>{
+        resolve(user);
+      }).catch((err) => {
+        resolve({
+          status: 500,
+          error_code: "DB_FETCH_ERROR",
+          message: err.message
+        })
+      })
+    } catch (error) {
+      resolve({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+    }
+  })
+}
+
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    To check valid user
 // @access  Private

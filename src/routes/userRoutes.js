@@ -9,6 +9,7 @@ import {
   unfollowUser,
   fetch_Users,
   requestVerification,
+  fetchUserByUsername,
 } from "../controllers/userController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -27,9 +28,14 @@ router.post("/:userId/follow/:followeeUserId", protect, followUser);
 // @access  Registerd users
 router.post("/:userId/unfollow/:followeeUserId", protect, unfollowUser);
 
-// @desc    Fetch users
+// @desc    Fetch user by id
 // @access  Authenticated users
 router.get("/fetch-users", protect, fetch_Users);
+
+// @desc    Fetch user by username 
+// @access  Authenticated users
+router.get("/fetch/username/:username", fetchUserByUsername )
+
 
 ///////////////////////// password management //////////////////
 router.post("/password/verify/email", protect, requestVerification);
