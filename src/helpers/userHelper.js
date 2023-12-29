@@ -179,24 +179,25 @@ export const fetchUserById = (userId) => {
   });
 };
 
-
 // @desc    Search user by username
 // @route   GET /user/fetch/user/username/:username
 // @access  Registerd users
 export const userByUsernameHelper = (username) => {
   return new Promise((resolve, reject) => {
     try {
-      User.findOne({username: username}).select("-password")
-      .exec()
-      .then((user)=>{
-        resolve(user);
-      }).catch((err) => {
-        resolve({
-          status: 500,
-          error_code: "DB_FETCH_ERROR",
-          message: err.message
+      User.findOne({ username: username })
+        .select("-password")
+        .exec()
+        .then((user) => {
+          resolve(user);
         })
-      })
+        .catch((err) => {
+          resolve({
+            status: 500,
+            error_code: "DB_FETCH_ERROR",
+            message: err.message,
+          });
+        });
     } catch (error) {
       resolve({
         status: 500,
@@ -204,8 +205,8 @@ export const userByUsernameHelper = (username) => {
         message: err.message,
       });
     }
-  })
-}
+  });
+};
 
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    To check valid user
@@ -297,48 +298,53 @@ export const unfollowHelper = (userId, followeeId) => {
 
 // @desc    Get connections
 // @route   GET /user/fetch/connection/:userId
-// @access  Registerd users
-export const getConnectonHelper = (userId) => {
-  return new Promise((resolve, reject) => {
-    try {
-      Connection.findOne({ userId: userId })
-        .then((connection) => {
-          resolve(connection);
-        })
-        .catch((error) =>
-          reject({
-            status: 500,
-            error_code: "DB_FETCH_ERROR",
-            message: error.message,
-            error,
-          })
-        );
-    } catch (error) {
-      reject({
-        status: 500,
-        error_code: "INTERNAL_SERVER_ERROR",
-        message: error.message,
-        error,
-      });
+// @access  Registered users
+export const getConnectonHelper = async (userId) => {
+  try {
+    const response = await Connection.findOne({ userId: userId });
+
+    let connection = {};
+    if (!response) {
+      connection = { followersCount: 0, followingCount: 0 };
+    } else {
+      connection = {
+        followersCount: response.followers.length,
+        followingCount: response.following.length,
+      };
     }
-  });
+
+    return {
+      status: 200,
+      message: "User Connection Fetched",
+      connection,
+    };
+  } catch (error) {
+    throw {
+      status: error.status || 500,
+      error_code: error?.error_code || "DB_FETCH_ERROR",
+      message: error.message,
+      error,
+    };
+  }
 };
+
 
 ////////////////////////////////////////////////// EMAIL VERIFICATION //////////////////////////////////////////////////////////////////
 // @desc    Sent verification link
 // @route   GET /auth/send-verification
 // @access  Public - Registerd users
 export const sendEmail = (credential) => {
-
-
-  return new Promise(async(resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const queryRes = await findQuery(credential);
 
       if (queryRes.error) {
-        throw { status: queryRes.error.status, message: queryRes.error.message };
+        throw {
+          status: queryRes.error.status,
+          message: queryRes.error.message,
+        };
       }
-  
+
       let query = queryRes;
 
       User.findOne(query)

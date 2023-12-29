@@ -22,7 +22,7 @@ router.post("/register", register);
 
 // @desc    Follow user
 // @access  Registerd users
-router.post("/:userId/follow/:followeeUserId", protect, followUser);
+router.post("/:userId/follow/:followeeUserId", followUser);
 
 // @desc    Unfollow user
 // @access  Registerd users

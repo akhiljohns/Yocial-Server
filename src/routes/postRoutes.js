@@ -3,7 +3,7 @@ const router = Router();
 
 import {
   createPost,
-  ctrlFetchUserPosts,
+  fetchUserDetails,
   deletePost,
   fetchSinglePost,
   likeUnlikePost,
@@ -26,7 +26,7 @@ router.get("/fetch-single-post/:postId", protect, fetchSinglePost);
 
 // @desc    Fetch a user's posts
 // @access  Registerd users
-router.get("/fetchUserPosts", ctrlFetchUserPosts);
+router.get("/fetchUserDetails", fetchUserDetails);
 
 // @desc    delete Single post
 // @access  Authenticated user

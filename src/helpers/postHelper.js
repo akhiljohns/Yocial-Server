@@ -102,7 +102,11 @@ export const fetchUserPosts = (userId) => {
     try {
 
       Post.find({userId: userId}).sort({createdAt: -1}).lean().then((posts)=> {
-        resolve(posts);
+        resolve({
+          status: 200,
+          message: "Fetched Used Posts Succesfully.",
+          posts,
+        });
       }).catch((err) => {
         reject(err);
       })
@@ -111,6 +115,8 @@ export const fetchUserPosts = (userId) => {
     }
   })
 }
+
+
 
 // @desc    Delete post
 // @route   GET /delete/post/:postId

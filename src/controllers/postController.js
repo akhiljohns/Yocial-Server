@@ -6,6 +6,7 @@ import {
   likeUnlikeHelper,
   updatePostHelper,
 } from "../helpers/postHelper.js";
+import { getConnectonHelper } from "../helpers/userHelper.js";
 
 // @desc    Create new post
 // @route   POST /post/create-post
@@ -57,21 +58,25 @@ export const fetchSinglePost = (req, res, next) => {
       res.status(err.status).send(err);
     });
 };
-
-
 // @desc    Fetch a user's posts
 // @route   GET /post/fetchUserPosts
-// @access  Registerd users
-export const ctrlFetchUserPosts = (req, res, next) => {
+// @access  Registered users
+export const fetchUserDetails = async (req, res, next) => {
   try {
-      const userId = req.query.userId;
-      fetchUserPosts(userId).then((posts)=> {
-          res.status(200).send({status:200, posts:posts});
-      }).catch((error) => {
-          res.status(500).send(error)
-      })
+    const userId = req.query.userId;
+    const postRepon = await fetchUserPosts(userId);
+    const connRespon = await getConnectonHelper(userId);
+
+    const userDetails = {
+      posts: postRepon.posts,
+      followers: connRespon.connection.followersCount,
+      followings: connRespon.connection.followingCount,
+      status: connRespon.status,
+    };
+
+    res.status(connRespon.status).send(userDetails);
   } catch (error) {
-      res.status(500).send(error);
+    res.status(error.status || 500).send(error);
   }
 };
 // @desc    Delete post

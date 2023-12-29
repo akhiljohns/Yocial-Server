@@ -107,7 +107,7 @@ export const followUser = (req, res) => {
         res.status(response.status).send(response);
       })
       .catch((error) => {
-        res.status(error.status).send(error);
+        res.status(404).send(error);
       });
   } catch (error) {
     res.status(error.status).send(error);
