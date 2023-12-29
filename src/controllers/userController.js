@@ -7,7 +7,7 @@ import {
   fetchUserById,
   sendEmail,
   checkToken,
-  changePasswordRequestHelper
+  changePasswordRequestHelper,
 } from "../../src/helpers/userHelper.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
@@ -25,10 +25,10 @@ export const login = (req, res) => {
         res.status(response.status).json(response);
       })
       .catch((err) => {
-        res.status(error.status).send(err);
+        res.status(err.status).send(err);
       });
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(err.status).send(error);
   }
 };
 
@@ -38,9 +38,14 @@ export const login = (req, res) => {
 export const register = (req, res) => {
   try {
     const userData = req.body;
-    // console.log(`userData in validateRegister ${userData}`);
     registration(userData)
       .then((response) => {
+        // if (response.status == 200) {
+        //   sendEmail(response.email).then((resp) => {
+        //     res.status(resp.status).json(resp);
+        //   });
+        // }
+
         res.status(response.status).json(response);
       })
       .catch((err) => {
@@ -57,18 +62,18 @@ export const register = (req, res) => {
 // @access  Public
 export const fetch_Users = (req, res) => {
   try {
-    const {userId} = req.query || ''
-    fetchUserById(userId).then((response) => {
-      res.status(response.status).json(response)
-    }).catch((err) => {
-      res.status(err.status).json(err);
-    })
+    const { userId } = req.query || "";
+    fetchUserById(userId)
+      .then((response) => {
+        res.status(response.status).json(response);
+      })
+      .catch((err) => {
+        res.status(err.status).json(err);
+      });
   } catch (error) {
-    console.log("error in fetchUsers (userController)", error);
     res.status(error.status).json(err);
   }
 };
-
 
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    Follow user
@@ -125,19 +130,20 @@ export const getConnection = (req, res) => {
   }
 };
 
-
-////////////////////////////////////////////////// EMAIL VARIFICATION //////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// EMAIL VERIFICATION //////////////////////////////////////////////////////////////////
 // @desc    To send user verification email
 // @route   POST /user/send-verification
 // @access  Public
 export const sendVerificationEmail = (req, res) => {
   try {
-    const email = req.body.email;
-    sendEmail(email).then((response) => {
-      res.status(response.status).send(response)
-    }).catch((error) => {
-      res.status(error.status).send(error)
-    })
+    const credential = req.body.credential;
+    sendEmail(credential)
+      .then((response) => {
+        res.status(response.status).send(response);
+      })
+      .catch((error) => {
+        res.status(error.status).send(error);
+      });
   } catch (error) {
     res.status(error.status).send({
       status: 500,
@@ -152,15 +158,16 @@ export const sendVerificationEmail = (req, res) => {
 // @access  Public
 export const verifyEmail = async (req, res) => {
   try {
-
     const userId = req.params.id;
     const token = req.params.token;
 
-    checkToken(userId, token).then((response) => {
-      res.status(response.status).send(response)
-    }).catch((error) => {
-      res.status(error.status).send(error)
-    })
+    checkToken(userId, token)
+      .then((response) => {
+        res.status(response.status).send(response);
+      })
+      .catch((error) => {
+        res.status(error.status).send(error);
+      });
   } catch (error) {
     res.status(error.status).send({
       status: 500,
@@ -170,17 +177,18 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
-
 /////////////// password management //////////////
 export const requestVerification = (req, res) => {
   try {
-    const {password, userId} = req.body;
-    changePasswordRequestHelper(userId, password).then((response) => {
-      res.status(response.status).send(response)
-    }).catch((error) => {
-      res.status(error.status).send(error)
-    })
+    const { password, userId } = req.body;
+    changePasswordRequestHelper(userId, password)
+      .then((response) => {
+        res.status(response.status).send(response);
+      })
+      .catch((error) => {
+        res.status(error.status).send(error);
+      });
   } catch (error) {
-    res.status(error.status).send(error)
+    res.status(error.status).send(error);
   }
-}
+};

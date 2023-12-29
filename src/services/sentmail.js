@@ -1,14 +1,11 @@
 import nodemailer, { createTransport } from "nodemailer";
 
-
-
 export const sentEmail = async (email, username, message) => {
   try {
-
-    const subject = 'Yocial Email Verification';
+    const subject = "Yocial Email Verification";
     const transporter = createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
+      host: process.env.HOST,
+      port: process.env.EMAIL_PORT,
       secure: false,
       auth: {
         user: process.env.EMAIL,
@@ -28,7 +25,8 @@ export const sentEmail = async (email, username, message) => {
                     <h2 style="color: #333; text-align: center;">Yocial Email Verification</h2>
                     <p>Hello ${username},</p>
                     <p>Use The Below Link To Verify Your Email In Yocial</p>
-                    <p>${message}</p>
+                    <p style="text-align: center; font-size: 24px;"><a href=${message} >Click here to verify</a> </p>
+
                   
                     <p>If you did not request this code, please ignore this message. This link is valid for 30 minutes.</p>
                     <p>Thank you for using Yocial.</p>
@@ -53,14 +51,10 @@ export const sentEmail = async (email, username, message) => {
   }
 };
 
-
-
-
-
 export const sentVerificationEmail = async (email, username, link) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const subject = 'Yocial Email Verification';
+      const subject = "Yocial Email Verification";
       const transporter = createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -90,13 +84,13 @@ export const sentVerificationEmail = async (email, username, link) => {
                 </body>
                 </html>`;
 
-                const info = await transporter.sendMail({
-                  from: process.env.EMAIL,
-                  to: email,
-                  subject: subject,
-                  text: "",
-                  html: template,
-                });
+      const info = await transporter.sendMail({
+        from: process.env.EMAIL,
+        to: email,
+        subject: subject,
+        text: "",
+        html: template,
+      });
       resolve(info);
     } catch (error) {
       console.log("error in sentmail: " + error);
@@ -104,5 +98,3 @@ export const sentVerificationEmail = async (email, username, link) => {
     }
   });
 };
-
-

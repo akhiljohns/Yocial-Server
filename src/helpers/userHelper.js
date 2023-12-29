@@ -11,6 +11,7 @@ import {
   generateTokenForPassword,
   verificationEmail,
 } from "../services/nodemailer.js";
+import { findQuery } from "../services/query.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
@@ -18,22 +19,13 @@ import {
 // @access  Public
 export const userLogin = async ({ credential, password }) => {
   try {
-    // Identifying credential is email/phone
-    let query = {};
+    const queryRes = await findQuery(credential);
 
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credential)) {
-      // If the credential follows a basic email format, consider it as an email
-      query = { email: credential };
-    } else if (/^\d+$/.test(credential)) {
-      // If the credential contains only numbers, consider it as a phone
-      query = { phone: credential };
-    } else if (/^[a-zA-Z0-9_-]+$/.test(credential)) {
-      // If the credential contains only letters, numbers, underscore, and hyphen, consider it as a username
-      query = { username: credential };
-    } else {
-      // If none of the above conditions are met, you can handle it based on your requirements
-      throw { status: 400, message: "Invalid credential format" };
+    if (queryRes.error) {
+      throw { status: queryRes.error.status, message: queryRes.error.message };
     }
+
+    let query = queryRes;
 
     const user = await User.findOne(query);
 
@@ -48,11 +40,28 @@ export const userLogin = async ({ credential, password }) => {
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      throw { status: 403, message: "Wrong Password" };
+      throw {
+        status: 403,
+        message: "Wrong Password",
+        error_code: "Unauthorized",
+      };
+    }
+
+    if (!user.verified) {
+      throw {
+        status: 403,
+        message: "Kindly Verify Your Email Before Proceeding",
+        error_code: "Unauthorized",
+        userVerified: false,
+      };
     }
 
     if (user.blocked) {
-      throw { status: 403, message: "Your Account Is Temporarily Blocked" };
+      throw {
+        status: 403,
+        message: "Your Account Is Temporarily Blocked",
+        error_code: "FORBIDDEN",
+      };
     }
 
     const tokens = await generateJwt(user);
@@ -70,6 +79,7 @@ export const userLogin = async ({ credential, password }) => {
       error_code: error.error_code || "INTERNAL_SERVER_ERROR",
       message: error.message || "Something Went Wrong, Try After Sometime",
       status: error.status || 500,
+      userVerified: error.userVerified,
     };
   }
 };
@@ -78,8 +88,8 @@ export const userLogin = async ({ credential, password }) => {
 // @route   POST /users/register
 // @access  Public
 export const registration = async ({
-  fname,
-  lname,
+  fName,
+  lName,
   username,
   email,
   password,
@@ -116,7 +126,7 @@ export const registration = async ({
       username,
       email,
       password: hashedPassword,
-      name: fname+" "+lname,
+      name: fName + " " + lName,
       phone: phone ? phone : null,
     });
 
@@ -125,9 +135,10 @@ export const registration = async ({
     // Save the user to the database
     await newUser.save();
 
+    const emailResp = await sendEmail(newUser.email);
     return {
-      status: 200,
-      message: "Account Created Successfully",
+      status: emailResp.status || 200,
+      message: emailResp.message || "Account Created Successfully",
     };
   } catch (error) {
     console.error(`Error during registration: ${error}`);
@@ -289,10 +300,20 @@ export const getConnectonHelper = (userId) => {
 // @desc    Sent verification link
 // @route   GET /auth/send-verification
 // @access  Public - Registerd users
-export const sendEmail = (email) => {
-  return new Promise((resolve, reject) => {
+export const sendEmail = (credential) => {
+
+
+  return new Promise(async(resolve, reject) => {
     try {
-      User.findOne({ email: email })
+      const queryRes = await findQuery(credential);
+
+      if (queryRes.error) {
+        throw { status: queryRes.error.status, message: queryRes.error.message };
+      }
+  
+      let query = queryRes;
+
+      User.findOne(query)
         .select("-password")
         .exec()
         .then((user) => {
@@ -301,13 +322,15 @@ export const sendEmail = (email) => {
               .then((response) => {
                 resolve({
                   status: 200,
-                  message: "verification email has been sent.",
+                  message:
+                    "A Verification email has been sent to the registered Email Address,kindly verify the email before proceeding",
                 });
               })
               .catch((error) => {
                 reject({
                   status: error.status,
-                  message: error.message || "verification email has been sent.",
+                  message:
+                    error.message || "Something went wrong,try again later",
                   error,
                 });
               });
@@ -318,7 +341,7 @@ export const sendEmail = (email) => {
         .catch((error) => {
           reject({
             status: error.status,
-            message: error.message || "verification email has been sent.",
+            message: error.message || "Something went wrong,try again later",
             error,
           });
         });

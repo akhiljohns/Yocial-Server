@@ -4,7 +4,7 @@ const router = Router();
 import {
   login,
   register,
-  // sendVerifyEmail,
+  // sendVerificationEmail,
   followUser,
   unfollowUser,
   fetch_Users,
@@ -17,7 +17,7 @@ router.post("/login", login);
 router.post("/register", register);
 
 // EMAIL VERIFICATION
-// router.post('/sendverifyemail',sendVerifyEmail);
+// router.post('/sendverifyemail',sendVerificationEmail);
 
 // @desc    Follow user
 // @access  Registerd users
