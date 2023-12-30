@@ -3,9 +3,10 @@ const router = Router();
 
 import {
   adminPostLogin,
-  // adminPostRegister,
+  adminPostRegister,
   fetchUsers,
-  changeStatus
+  changeStatus,
+  fetchAllUsers
 } from "../controllers/adminController.js";
 
 // @desc    Login admin
@@ -14,7 +15,7 @@ router.post("/login", adminPostLogin);
 
 // @desc    Fetch all users
 // @access  Admins
-router.get("/fetch-users", fetchUsers);
+router.get("/fetch-users", fetchAllUsers);
 
 // @desc    Change block status
 // @access  Admins
@@ -23,6 +24,6 @@ router.patch('/:userId/change-status', changeStatus);
 
 
 
-// router.post('/register', adminPostRegister);
+router.post('/register', adminPostRegister);
 
 export default router;
