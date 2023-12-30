@@ -10,37 +10,52 @@ import User from "../models/userModel.js";
 // @desc    Login admin
 // @route   POST /admin/login
 // @access  Private
+
 export const adminLogin = async (data) => {
   try {
     return new Promise(async (resolve, reject) => {
+      console.log(data, "hihiihihi");
       const admin = await Admin.findOne({ email: data.email });
-      if (admin && bcrypt.compare(data.password, admin.password)) {
-        generateJwt(admin)
-          .then((adminTokens) => {
-            resolve({
-              status: 200,
-              message: "Admin login successful",
-              adminTokens,
-              admin,
-              valid: true,
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-            resolve({
-              status: 500,
-              message: error.message,
-              error_code: "INTERNAL_SERVER_ERROR",
-            });
-          });
+
+      if (admin) {
+        // Use bcrypt.compare to compare the passwords
+        bcrypt.compare(data.password, admin.password).then((passwordMatch) => {
+          if (passwordMatch) {
+            // Password is correct, generate JWT
+            generateJwt(admin)
+              .then((adminTokens) => {
+                resolve({
+                  status: 200,
+                  message: "Admin login successful",
+                  adminTokens,
+                  admin,
+                  valid: true,
+                });
+              })
+              .catch((error) => {
+                console.log(error);
+                resolve({
+                  status: 500,
+                  message: error.message,
+                  error_code: "INTERNAL_SERVER_ERROR",
+                });
+              });
+          } else {
+            // Password is incorrect
+            resolve({ status: 401, message: "Invalid credentials" });
+          }
+        });
       } else {
+        // No admin found with the given email
         resolve({ status: 401, message: "Invalid credentials" });
       }
     });
   } catch (error) {
     console.log("error during admin login (in adminHelper): " + error);
+    return { status: error.status, message: error.message };
   }
 };
+
 
 ////////////////////////////////////////////////// USER RELATED //////////////////////////////////////////////////////////////////
 // @desc    Fetch users (with pagination and filters)
@@ -53,6 +68,42 @@ export const getUsers = (page, perPage, search) => {
       User.find({ name: regex })
         .skip((page - 1) * perPage)
         .limit(perPage)
+        .select("-password")
+        .exec()
+        .then((users) => {
+          resolve({
+            status: 200,
+            message: "Succesfully Fetched Users Details",
+            users,
+          });
+        })
+        .catch((err) => {
+          console.log("error fetching users", err);
+          reject({
+            status: 500,
+            message: err.message,
+            error_code: "DB_FETCH_ERROR",
+            err,
+          });
+        });
+    } catch (error) {
+      console.log("error getting users: " + error);
+      reject({
+        status: 500,
+        message: error.message,
+        error_code: "INTERNAL_SERVER_ERROR",
+        error,
+      });
+    }
+  });
+};
+// @desc    Fetch all users 
+// @route   GET /admin/fetch-users
+// @access  Admin - private
+export const getAllUsers = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      User.find()
         .select("-password")
         .exec()
         .then((users) => {
@@ -120,57 +171,57 @@ export const toggelBlockStatus = (userId, status) => {
   });
 };
 
-////////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
-//   export const register = ({ name, email, password }) => {
-//     return new Promise(async (resolve, reject) => {
-//       try {
-//         if (await Admin.findOne({ email: email })) {
-//           reject({
-//             status: 409,
-//             error_code: "USER_ALREADY_REGISTERED",
-//             message: "Email has already been registered",
-//           });
-//         }
+//////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
+  export const register = ({ name, email, password }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (await Admin.findOne({ email: email })) {
+          reject({
+            status: 409,
+            error_code: "USER_ALREADY_REGISTERED",
+            message: "Email has already been registered",
+          });
+        }
 
-//         bcrypt
-//           .hash(password, saltRounds)
-//           .then((hashedPassword) => {
-//             const newAdmin = new Admin({
-//               name: name,
-//               email: email,
-//               password: hashedPassword,
-//             });
+        bcrypt
+          .hash(password, saltRounds)
+          .then((hashedPassword) => {
+            const newAdmin = new Admin({
+              name: name,
+              email: email,
+              password: hashedPassword,
+            });
 
-//             newAdmin
-//               .save()
-//               .then((response) => {
-//                 resolve({
-//                   status: 200,
-//                   message: "Account created successfully",
-//                 });
-//               })
-//               .catch((error) => {
-//                 reject({
-//                   error_code: "DB_SAVE_ERROR",
-//                   message: "omethings wrong try after sometimes",
-//                   status: 500,
-//                 });
-//               });
-//           })
-//           .catch((error) => {
-//             reject({
-//               error_code: "PSW_HASHING_ERROR",
-//               message: "Somethings wrong try after sometimes",
-//               status: 500,
-//             });
-//           });
-//       } catch (error) {
-//         reject({
-//           error_code: "INTERNAL_SERVER_ERROR",
-//           message: "Somethings wrong try after sometimes",
-//           status: 500,
-//         });
-//         console.log("Error in registration(userHelper): " + error);
-//       }
-//     });
-//   };
+            newAdmin
+              .save()
+              .then((response) => {
+                resolve({
+                  status: 200,
+                  message: "Account created successfully",
+                });
+              })
+              .catch((error) => {
+                reject({
+                  error_code: "DB_SAVE_ERROR",
+                  message: "omethings wrong try after sometimes",
+                  status: 500,
+                });
+              });
+          })
+          .catch((error) => {
+            reject({
+              error_code: "PSW_HASHING_ERROR",
+              message: "Somethings wrong try after sometimes",
+              status: 500,
+            });
+          });
+      } catch (error) {
+        reject({
+          error_code: "INTERNAL_SERVER_ERROR",
+          message: "Somethings wrong try after sometimes",
+          status: 500,
+        });
+        console.log("Error in registration(userHelper): " + error);
+      }
+    });
+  };
