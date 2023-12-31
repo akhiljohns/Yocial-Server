@@ -84,6 +84,7 @@ export const changeStatus = (req, res) => {
     try {
         const userId = req.params.userId;
         const status = req.body.status;
+        console.log(userId,status);
         toggelBlockStatus(userId, status).then((response) =>{
             res.status(response.status).send(response);
         }).catch((error) => {

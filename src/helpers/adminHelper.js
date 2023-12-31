@@ -133,8 +133,6 @@ export const getAllUsers = () => {
     }
   });
 };
-
-//function to update user block status
 export const toggelBlockStatus = (userId, status) => {
   return new Promise((resolve, reject) => {
     try {
@@ -146,12 +144,6 @@ export const toggelBlockStatus = (userId, status) => {
             status: 200,
             message: "User block status updated",
             user: response,
-          }).catch((err) => {
-            resolve({
-              status: 500,
-              error_code: "DB_UPDATE_ERROR",
-              message: err.message,
-            });
           });
         })
         .catch((err) => {
@@ -170,7 +162,6 @@ export const toggelBlockStatus = (userId, status) => {
     }
   });
 };
-
 //////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
   export const register = ({ name, email, password }) => {
     return new Promise(async (resolve, reject) => {
