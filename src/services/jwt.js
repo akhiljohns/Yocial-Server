@@ -34,14 +34,14 @@ const generateJwt = (data) => {
   return new Promise((resolve, reject) => {
     try {
       const tokens = {};
-      const options = { expiresIn: "10000" },
+      const options = { expiresIn: "36000" }, // Expiring after 1 hour (3600 seconds)
         payload = {};
       if (data._id) {
         payload.userId = data._id;
       } else if (data.email) {
         payload.email = data.email;
       }
-      //signing new access token with an expiration time  of 1hr
+      //signing new access token with an expiration time of 1hr
       jwt.sign(
         payload,
         process.env.JWT_KEY_SECRET,
@@ -71,6 +71,5 @@ const generateJwt = (data) => {
     }
   });
 };
-
 
 export default generateJwt;

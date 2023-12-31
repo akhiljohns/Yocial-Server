@@ -104,13 +104,14 @@ export const followUser = (req, res) => {
     const { userId, followeeUserId } = req.params;
     followHelper(userId, followeeUserId)
       .then((response) => {
+        console.log(response);
         res.status(response.status).send(response);
       })
       .catch((error) => {
         res.status(404).send(error);
       });
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(error).send(error);
   }
 };
 
@@ -125,7 +126,7 @@ export const unfollowUser = (req, res) => {
         res.status(response.status).send(response);
       })
       .catch((error) => {
-        res.status(error.status).send(error);
+        res.status(error?.status|| 500).send(error);
       });
   } catch (error) {
     res.status(error.status).send(error);
