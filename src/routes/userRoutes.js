@@ -22,7 +22,7 @@ router.post("/register", register);
 
 // @desc    Follow user
 // @access  Registerd users
-router.post("/:userId/follow/:followeeUserId", followUser);
+router.post("/:userId/follow/:followeeUserId", protect, followUser);
 
 // @desc    Unfollow user
 // @access  Registerd users
@@ -34,7 +34,7 @@ router.get("/fetch-users", protect, fetch_Users);
 
 // @desc    Fetch user by username 
 // @access  Authenticated users
-router.get("/fetch/username/:username", fetchUserByUsername )
+router.get("/fetch/username/:username", protect, fetchUserByUsername )
 
 
 ///////////////////////// password management //////////////////

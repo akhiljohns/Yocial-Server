@@ -1,5 +1,32 @@
 import jwt from "jsonwebtoken";
 
+
+
+
+// @desc    Sign JWT Refresh token
+// @file   < Middleware-function >
+// @access  Private
+const generateRefreshToken = (payload) => {
+  return new Promise((resolve, reject) => {
+    const options = { expiresIn: "10d" };
+    //signing new refresh token with an expiration time  of 10days
+    jwt.sign(
+      payload,
+      process.env.JWT_REFRESH_SECRET,
+      options,
+      (err, refreshToken) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(refreshToken);
+        }
+      }
+    );
+  });
+};
+
+
+
 // @desc    Sign JWT token
 // @file   < Middleware >
 // @access  Private
@@ -7,13 +34,14 @@ const generateJwt = (data) => {
   return new Promise((resolve, reject) => {
     try {
       const tokens = {};
-      const options = { expiresIn: "100000" };
-      const payload = {};
-      if (data.id) {
-        payload.userId = data.id;
+      const options = { expiresIn: "10000" },
+        payload = {};
+      if (data._id) {
+        payload.userId = data._id;
       } else if (data.email) {
         payload.email = data.email;
       }
+      //signing new access token with an expiration time  of 1hr
       jwt.sign(
         payload,
         process.env.JWT_KEY_SECRET,
@@ -23,14 +51,26 @@ const generateJwt = (data) => {
             reject(err);
           } else {
             tokens["accessToken"] = accessToken;
-            resolve(tokens);
+
+            //calling function to generate refresh token
+            generateRefreshToken(payload)
+              .then((refreshToken) => {
+                tokens["refreshToken"] = refreshToken;
+
+                resolve(tokens);
+              })
+              .catch((err) => {
+                reject(err);
+              });
           }
         }
       );
     } catch (error) {
-        console.log(`Error Generating JWT ${error}`);
-        reject(error);
+      reject(error);
+      console.log("Error generating JWT", error);
     }
   });
 };
+
+
 export default generateJwt;
