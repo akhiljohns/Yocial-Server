@@ -231,7 +231,6 @@ export const followHelper = (userId, followeeId) => {
         reject(new Error("Invalid user ID"));
         return;
       }
-
       Connection.findOneAndUpdate(
         { userId: userId },
         { $addToSet: { following: followeeId } },
@@ -251,13 +250,16 @@ export const followHelper = (userId, followeeId) => {
               resolve({ userConnection, followeeConnection });
             })
             .catch((error) => {
+              console.log(error)
               reject(error);
             });
         })
         .catch((error) => {
+          console.log(error)
           reject(error);
         });
     } catch (error) {
+      console.log(error)
       reject(error);
     }
   });
@@ -288,9 +290,10 @@ export const unfollowHelper = (userId, followeeId) => {
         { $pull: { followers: userId } },
         { new: true }
       ).exec();
-
+      
       resolve({ userConnection, followeeConnection });
     } catch (error) {
+      console.log(error)
       reject(error);
     }
   });
@@ -308,8 +311,8 @@ export const getConnectonHelper = async (userId) => {
       connection = { followersCount: 0, followingCount: 0 };
     } else {
       connection = {
-        followersCount: response.followers.length,
-        followingCount: response.following.length,
+        followersCount: response.followers,
+        followingCount: response.following,
       };
     }
 
