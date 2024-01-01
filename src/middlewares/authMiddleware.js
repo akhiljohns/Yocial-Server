@@ -8,8 +8,8 @@ const verifyUser = (decodedToken) => {
 };
 
 // Renew the access token
-const renewAccessToken = (userId) => {
-  return jwt.sign({ userId: userId }, process.env.JWT_KEY_SECRET, { expiresIn: "1hr" });
+const renewAccessToken = async (userId) => {
+  return await jwt.sign({ userId: userId }, process.env.JWT_KEY_SECRET, { expiresIn: "1hr" });
 };
 
 // Middleware for user authentication
@@ -46,9 +46,10 @@ const protect = async (req, res, next) => {
 // Refresh access token
 export  const refreshAccessToken = async (req, res) => {
   try {
+    console.log(req.headers.authorization);
     if (req.headers.authorization) {
       const refreshToken = req.headers.authorization;
-      const decodedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+      const decodedRefreshToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
       const user = await verifyUser(decodedRefreshToken);
 
       if (user && !user?.blocked) {
@@ -61,6 +62,7 @@ export  const refreshAccessToken = async (req, res) => {
       res.status(401).json({ status: 401, message: "No token provided", error_code: "NO_TOKEN" });
     }
   } catch (error) {
+    console.log(error);
     res.status(401).json({ message: "User not authorized", status: 401, error_code: "AUTHENTICATION_FAILED", error });
   }
 };
