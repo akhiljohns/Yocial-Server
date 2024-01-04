@@ -27,7 +27,7 @@ const protect = async (req, res, next) => {
             req.user = user;
             next(); // Proceed to the next middleware
           } else {
-            res.status(403).json({ message: "User has been blocked", status: 403, error_code: "FORBIDDEN" });
+            res.status(403).json({ message: "User has been blocked", status: 403, error_code: "FORBIDDEN_LOGIN" });
           }
         } else {
           res.status(401).json({ message: "User Not Verified", status: 401, error_code: "Unauthorized" });

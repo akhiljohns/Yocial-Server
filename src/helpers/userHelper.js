@@ -60,7 +60,8 @@ export const userLogin = async ({ credential, password }) => {
       throw {
         status: 403,
         message: "Your Account Is Temporarily Blocked",
-        error_code: "FORBIDDEN",
+        error_code: "FORBIDDEN_LOGIN",
+
       };
     }
 
