@@ -104,13 +104,13 @@ export const followUser = (req, res) => {
     const { userId, followeeUserId } = req.params;
     followHelper(userId, followeeUserId)
       .then((response) => {
-        res.status(response.status).send(response);
+        res.status(200).send(response);
       })
       .catch((error) => {
-        res.status(404).send(error);
+        res.status(500).send(error);
       });
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(error.status || 500).send(error);
   }
 };
 
@@ -122,13 +122,14 @@ export const unfollowUser = (req, res) => {
     const { userId, followeeUserId } = req.params;
     unfollowHelper(userId, followeeUserId)
       .then((response) => {
-        res.status(response.status).send(response);
+        res.status(200).send(response);
       })
       .catch((error) => {
-        res.status(error.status).send(error);
+        res.status(error?.status|| 500).send(error);
       });
   } catch (error) {
-    res.status(error.status).send(error);
+
+    res.status(error.status || 500).send(error);
   }
 };
 
@@ -140,13 +141,13 @@ export const getConnection = (req, res) => {
     const { userId } = req.params;
     getConnectonHelper(userId)
       .then((connection) => {
-        res.status(connection.status).send(connection);
+        res.status(200).send(connection);
       })
       .catch((err) => {
-        res.status(err.status).send(err);
+        res.status(err?.status || 500).send(err);
       });
   } catch (error) {
-    res.status(error.status).send(err);
+    res.status(error?.status || 500).send(err);
   }
 };
 

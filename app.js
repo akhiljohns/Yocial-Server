@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
-app.use(morgan('common'));
+app.use(morgan('dev'));
 
 
 
@@ -41,9 +41,6 @@ app.use(cors({
 }));
 
 
-app.get('/', (req, res) => {
-  res.send('WELCOME TO YOCIAL');
-});
 
 // ROUTER SETUP
 app.use("/api/user",userRouter)

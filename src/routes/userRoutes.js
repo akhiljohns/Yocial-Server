@@ -10,6 +10,7 @@ import {
   fetch_Users,
   requestVerification,
   fetchUserByUsername,
+  getConnection,
 } from "../controllers/userController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -27,6 +28,10 @@ router.post("/:userId/follow/:followeeUserId", protect, followUser);
 // @desc    Unfollow user
 // @access  Registerd users
 router.post("/:userId/unfollow/:followeeUserId", protect, unfollowUser);
+
+// @desc    Get connections
+// @access  Registerd users
+router.get("/fetch/connection/:userId", protect, getConnection)
 
 // @desc    Fetch user by id
 // @access  Authenticated users

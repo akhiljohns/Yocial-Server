@@ -99,7 +99,6 @@ export const registration = async ({
     // Check if username exists
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
-      console.log("Username Taken");
       return {
         status: 409,
         error_code: "USERNAME_TAKEN",
@@ -110,7 +109,6 @@ export const registration = async ({
     // Check if email exists
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
-      console.log("Email already registered");
       return {
         status: 409,
         error_code: "EMAIL_ALREADY_REGISTERED",
@@ -130,7 +128,6 @@ export const registration = async ({
       phone: phone ? phone : null,
     });
 
-    console.log(newUser);
 
     // Save the user to the database
     await newUser.save();
@@ -231,7 +228,6 @@ export const followHelper = (userId, followeeId) => {
         reject(new Error("Invalid user ID"));
         return;
       }
-
       Connection.findOneAndUpdate(
         { userId: userId },
         { $addToSet: { following: followeeId } },
@@ -246,7 +242,6 @@ export const followHelper = (userId, followeeId) => {
           )
             .exec()
             .then((followeeConnection) => {
-              console.log(userConnection, followeeConnection);
 
               resolve({ userConnection, followeeConnection });
             })
@@ -288,7 +283,7 @@ export const unfollowHelper = (userId, followeeId) => {
         { $pull: { followers: userId } },
         { new: true }
       ).exec();
-
+      
       resolve({ userConnection, followeeConnection });
     } catch (error) {
       reject(error);
@@ -308,8 +303,8 @@ export const getConnectonHelper = async (userId) => {
       connection = { followersCount: 0, followingCount: 0 };
     } else {
       connection = {
-        followersCount: response.followers.length,
-        followingCount: response.following.length,
+        followersCount: response.followers,
+        followingCount: response.following,
       };
     }
 

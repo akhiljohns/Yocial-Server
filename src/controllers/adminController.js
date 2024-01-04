@@ -14,10 +14,8 @@ import {
 export const adminPostLogin = (req, res, next) => {
   try {
     const data = req.body;
-    console.log('data :>> ', data);
     adminLogin(data)
       .then((response) => {
-        console.log('response :>> ', response);
         res.status(response.status).json({ ...response });
       })
       .catch((error) => {
@@ -28,7 +26,6 @@ export const adminPostLogin = (req, res, next) => {
         });
       });
   } catch (error) {
-    console.log("error logging in admin", error);
   }
 };
 
@@ -50,7 +47,6 @@ export const fetchUsers = (req, res) => {
         res.status(err.status).json(err);
       });
   } catch (error) {
-    console.log("error in fetchUsers (userController)", error);
     res.status(error.status).json(err);
   }
 };
@@ -71,7 +67,6 @@ export const fetchAllUsers = (req, res) => {
         res.status(err.status).json(err);
       });
   } catch (error) {
-    console.log("error in fetchUsers (userController)", error);
     res.status(error.status).json(err);
   }
 };
