@@ -104,7 +104,6 @@ export const followUser = (req, res) => {
     const { userId, followeeUserId } = req.params;
     followHelper(userId, followeeUserId)
       .then((response) => {
-        console.log(response);
         res.status(200).send(response);
       })
       .catch((error) => {
@@ -126,11 +125,9 @@ export const unfollowUser = (req, res) => {
         res.status(200).send(response);
       })
       .catch((error) => {
-        console.log(error)
         res.status(error?.status|| 500).send(error);
       });
   } catch (error) {
-    console.log(error)
 
     res.status(error.status || 500).send(error);
   }
@@ -144,7 +141,6 @@ export const getConnection = (req, res) => {
     const { userId } = req.params;
     getConnectonHelper(userId)
       .then((connection) => {
-        console.log(connection)
         res.status(200).send(connection);
       })
       .catch((err) => {

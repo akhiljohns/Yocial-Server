@@ -99,7 +99,6 @@ export const registration = async ({
     // Check if username exists
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
-      console.log("Username Taken");
       return {
         status: 409,
         error_code: "USERNAME_TAKEN",
@@ -110,7 +109,6 @@ export const registration = async ({
     // Check if email exists
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
-      console.log("Email already registered");
       return {
         status: 409,
         error_code: "EMAIL_ALREADY_REGISTERED",
@@ -130,7 +128,6 @@ export const registration = async ({
       phone: phone ? phone : null,
     });
 
-    console.log(newUser);
 
     // Save the user to the database
     await newUser.save();
@@ -245,21 +242,17 @@ export const followHelper = (userId, followeeId) => {
           )
             .exec()
             .then((followeeConnection) => {
-              console.log(userConnection, followeeConnection);
 
               resolve({ userConnection, followeeConnection });
             })
             .catch((error) => {
-              console.log(error)
               reject(error);
             });
         })
         .catch((error) => {
-          console.log(error)
           reject(error);
         });
     } catch (error) {
-      console.log(error)
       reject(error);
     }
   });
@@ -293,7 +286,6 @@ export const unfollowHelper = (userId, followeeId) => {
       
       resolve({ userConnection, followeeConnection });
     } catch (error) {
-      console.log(error)
       reject(error);
     }
   });

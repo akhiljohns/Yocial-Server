@@ -43,7 +43,6 @@ export const sentEmail = async (email, username, message) => {
       html: template,
     });
 
-    console.log("Email sent successfully:", info);
     return { status: 200, message: "Email sent successfully", data: info };
   } catch (error) {
     console.error("Error in sentEmail:", error);
@@ -93,7 +92,6 @@ export const sentVerificationEmail = async (email, username, link) => {
       });
       resolve(info);
     } catch (error) {
-      console.log("error in sentmail: " + error);
       reject(error);
     }
   });

@@ -67,7 +67,6 @@ const generateJwt = (data) => {
       );
     } catch (error) {
       reject(error);
-      console.log("Error generating JWT", error);
     }
   });
 };

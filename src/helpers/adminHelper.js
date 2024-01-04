@@ -14,7 +14,6 @@ import User from "../models/userModel.js";
 export const adminLogin = async (data) => {
   try {
     return new Promise(async (resolve, reject) => {
-      console.log(data, "hihiihihi");
       const admin = await Admin.findOne({ email: data.email });
 
       if (admin) {
@@ -33,7 +32,6 @@ export const adminLogin = async (data) => {
                 });
               })
               .catch((error) => {
-                console.log(error);
                 resolve({
                   status: 500,
                   message: error.message,
@@ -51,7 +49,6 @@ export const adminLogin = async (data) => {
       }
     });
   } catch (error) {
-    console.log("error during admin login (in adminHelper): " + error);
     return { status: error.status, message: error.message };
   }
 };
@@ -78,7 +75,6 @@ export const getUsers = (page, perPage, search) => {
           });
         })
         .catch((err) => {
-          console.log("error fetching users", err);
           reject({
             status: 500,
             message: err.message,
@@ -87,7 +83,6 @@ export const getUsers = (page, perPage, search) => {
           });
         });
     } catch (error) {
-      console.log("error getting users: " + error);
       reject({
         status: 500,
         message: error.message,
@@ -114,7 +109,6 @@ export const getAllUsers = () => {
           });
         })
         .catch((err) => {
-          console.log("error fetching users", err);
           reject({
             status: 500,
             message: err.message,
@@ -123,7 +117,6 @@ export const getAllUsers = () => {
           });
         });
     } catch (error) {
-      console.log("error getting users: " + error);
       reject({
         status: 500,
         message: error.message,
@@ -221,7 +214,7 @@ export const toggelBlockStatus = (userId, status) => {
           message: "Somethings wrong try after sometimes",
           status: 500,
         });
-        console.log("Error in registration(userHelper): " + error);
+        ("Error in registration(userHelper): " + error);
       }
     });
   };
