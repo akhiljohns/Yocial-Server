@@ -51,7 +51,7 @@ export const userLogin = async ({ credential, password }) => {
       throw {
         status: 403,
         message: "Kindly Verify Your Email Before Proceeding",
-        error_code: "Unauthorized",
+        error_code: "Unauthorized_verify",
         userVerified: false,
       };
     }
@@ -60,7 +60,8 @@ export const userLogin = async ({ credential, password }) => {
       throw {
         status: 403,
         message: "Your Account Is Temporarily Blocked",
-        error_code: "FORBIDDEN",
+        error_code: "FORBIDDEN_LOGIN",
+
       };
     }
 
