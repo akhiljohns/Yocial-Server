@@ -15,6 +15,7 @@ export const createPost = (req, res, next) => {
   try {
     createPostHelper(req.body)
       .then((response) => {
+        console.log(response);
         res.status(response.status).send(response);
       })
       .catch((err) => {
@@ -36,6 +37,8 @@ export const updatePost = (req, res, next) => {
     };
     updatePostHelper(data)
       .then((response) => {
+        console.log(response);
+
         res.status(response.status).send(response);
       })
       .catch((err) => {
@@ -51,6 +54,8 @@ export const fetchSinglePost = (req, res, next) => {
   const postId = req.params.postId;
   fetchSinglePostHelper(postId)
     .then((response) => {
+      console.log(response);
+
       res.status(response.status).send(response);
     })
     .catch((err) => {
@@ -85,6 +90,8 @@ export const deletePost = (req, res) => {
   const postId = req.params.postId;
   deletePostHelper(postId)
     .then((response) => {
+      console.log(response);
+
       res.status(response.status).send(response);
     })
     .catch((err) => {
