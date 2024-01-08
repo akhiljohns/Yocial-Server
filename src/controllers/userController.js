@@ -23,12 +23,13 @@ export const login = (req, res) => {
     };
     userLogin(userData)
       .then((response) => {
+        console.log(response);
         res.status(response.status).json(response);
       })
       .catch((err) => {
         res.status(err.status).send(err);
       });
-  } catch (error) {
+    } catch (error) {
     res.status(err.status).send(error);
   }
 };
@@ -40,7 +41,8 @@ export const register = (req, res) => {
   try {
     const userData = req.body;
     registration(userData)
-      .then((response) => {
+    .then((response) => {
+        console.log(response);
         // if (response.status == 200) {
         //   sendEmail(response.email).then((resp) => {
         //     res.status(resp.status).json(resp);
