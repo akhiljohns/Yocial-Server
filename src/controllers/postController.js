@@ -13,16 +13,17 @@ import { getConnectonHelper } from "../helpers/userHelper.js";
 // @access  Public
 export const createPost = (req, res, next) => {
   try {
+    console.log(req.body,"-=-=-=-=-=-==");
     createPostHelper(req.body)
       .then((response) => {
         console.log(response);
-        res.status(response.status).send(response);
+        res.status(response.status || 200).send(response);
       })
       .catch((err) => {
-        res.status(err.status).send(err);
+        res.status(err.status || 500).send(err);
       });
   } catch (error) {
-    res.status(error.status).send({
+    res.status(error.status || 500).send({
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",

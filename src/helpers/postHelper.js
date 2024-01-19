@@ -3,34 +3,51 @@ import { Post } from "../models/postModel.js";
 // @desc    Create post
 // @route   POST /post/create-post
 // @access  Logined Users
-export const createPostHelper = ({ imageUrl, caption, userId }) => {
+export const createPostHelper = ({ image, caption, userId }) => {
   return new Promise(async (resolve, reject) => {
     try {
       let query = {};
       if (caption) {
         query = {
           userId: userId,
-          image: imageUrl,
+          image: image,
           caption: caption || null,
         };
       } else {
         query = {
           userId: userId,
-          image: imageUrl,
+          image: image,
         };
       }
 
       const newPost = new Post(query);
-      await newPost.save();
-      resolve({
-        status: 200,
-        message: "Post Has Been Created Succcefully.",
-      });
+      newPost
+        .save()
+        .then((response) => {
+          resolve({
+            status: 200,
+            message: "Post Has Been Created Succcefully.",
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+
+          reject({
+            error_code: error.error_code || "DB_SAVE_ERROR",
+            message:
+              error.message || "Something Went Wrong, Try After Sometime",
+            status: error.status || 500,
+            error,
+          });
+        });
     } catch (error) {
+      console.log(error);
+
       reject({
         error_code: error.error_code || "INTERNAL_SERVER_ERROR",
         message: error.message || "Something Went Wrong, Try After Sometime",
         status: error.status || 500,
+        error,
       });
     }
   });
@@ -93,30 +110,30 @@ export const fetchSinglePostHelper = (postId) => {
   });
 };
 
-
 // @desc    Fetch a user's posts
 // @route   GET /post/fetchUserPosts
 // @access  Registerd users
 export const fetchUserPosts = (userId) => {
-  return new Promise ((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     try {
-
-      Post.find({userId: userId}).sort({createdAt: -1}).lean().then((posts)=> {
-        resolve({
-          status: 200,
-          message: "Fetched Used Posts Succesfully.",
-          posts,
+      Post.find({ userId: userId })
+        .sort({ createdAt: -1 })
+        .lean()
+        .then((posts) => {
+          resolve({
+            status: 200,
+            message: "Fetched Used Posts Succesfully.",
+            posts,
+          });
+        })
+        .catch((err) => {
+          reject(err);
         });
-      }).catch((err) => {
-        reject(err);
-      })
     } catch (error) {
       reject(error);
     }
-  })
-}
-
-
+  });
+};
 
 // @desc    Delete post
 // @route   GET /delete/post/:postId

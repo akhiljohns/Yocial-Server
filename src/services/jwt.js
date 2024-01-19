@@ -34,7 +34,7 @@ const generateJwt = (data) => {
   return new Promise((resolve, reject) => {
     try {
       const tokens = {};
-      const options = { expiresIn: "36000" }, // Expiring after 1 hour (3600 seconds)
+      const options = { expiresIn: "360000" },
         payload = {};
       if (data._id) {
         payload.userId = data._id;
