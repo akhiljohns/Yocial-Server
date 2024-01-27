@@ -8,6 +8,11 @@ import {
 } from "../helpers/postHelper.js";
 import { getConnectonHelper } from "../helpers/userHelper.js";
 
+  
+  import {
+    verifyUser
+  } from "../middlewares/authMiddleware.js"
+
 // @desc    Create new post
 // @route   POST /post/create-post
 // @access  Public
@@ -88,9 +93,11 @@ export const fetchUserDetails = async (req, res, next) => {
 // @desc    Delete post
 // @route   GET /delete/post/:postId
 // @access  Authenticated user
-export const deletePost = (req, res) => {
+export const deletePost = async (req, res) => {
+  console.log("deletePost", req.params.postId,"-==-=-=-=-=",req.headers.authorization);
+const user = await verifyUser(req.headers.authorization);
   const postId = req.params.postId;
-  deletePostHelper(postId)
+  deletePostHelper(user,postId)
     .then((response) => {
       console.log(response);
 

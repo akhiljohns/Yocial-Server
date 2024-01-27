@@ -3,8 +3,9 @@ import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
 // Verify user from decoded token
-const verifyUser = (decodedToken) => {
-  return User.findOne({ _id: decodedToken?.userId }).select("-password");
+export const verifyUser = (accessToken) => {
+  const decoded = jwt.verify(accessToken, process.env.JWT_KEY_SECRET);
+  return User.findOne({ _id: decoded?.userId }).select("-password");
 };
 
 // Renew the access token
@@ -17,9 +18,8 @@ const protect = async (req, res, next) => {
   // Check for access token
   if (req.headers.authorization) {
     try {
-      const accessToken = req.headers.authorization;
-      const decoded = jwt.verify(accessToken, process.env.JWT_KEY_SECRET);
-      const user = await verifyUser(decoded);
+
+      const user = await verifyUser(req.headers.authorization);
 
       if (user) {
         if (user.verified) {

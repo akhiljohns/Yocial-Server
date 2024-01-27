@@ -25,8 +25,6 @@ const generateRefreshToken = (payload) => {
   });
 };
 
-
-
 // @desc    Sign JWT token
 // @file   < Middleware >
 // @access  Private
@@ -35,7 +33,7 @@ const generateJwt = (data) => {
     try {
       const tokens = {};
       const options = { expiresIn: "360000" },
-        payload = {};
+      payload = {};
       if (data._id) {
         payload.userId = data._id;
       } else if (data.email) {
@@ -64,11 +62,12 @@ const generateJwt = (data) => {
               });
           }
         }
-      );
+        );
     } catch (error) {
       reject(error);
     }
   });
 };
 
+       
 export default generateJwt;

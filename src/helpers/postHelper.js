@@ -26,7 +26,7 @@ export const createPostHelper = ({ image, caption, userId }) => {
         .then((response) => {
           resolve({
             status: 200,
-            message: "Post Has Been Created Succcefully.",
+            message: "Post Has Been Created",
           });
         })
         .catch((error) => {
@@ -138,7 +138,7 @@ export const fetchUserPosts = (userId) => {
 // @desc    Delete post
 // @route   GET /delete/post/:postId
 // @access  Authenticated user
-export const deletePostHelper = (postId) => {
+export const deletePostHelper = (user, postId) => {
   return new Promise(async (resolve, reject) => {
     const postExist = await Post.findById({ _id: postId });
 
@@ -146,6 +146,17 @@ export const deletePostHelper = (postId) => {
       reject({
         status: 404,
         message: "Post Not Found",
+      });
+    }
+
+    const userID1 = postExist?.userId;
+    const userID2 = user._id;
+
+    if (userID1 !== userID2) {
+      reject({
+        status: 401,
+        message: "You are not authorized to delete this post",
+        error_code: "UNAUTHORIZED_USER",
       });
     }
 
