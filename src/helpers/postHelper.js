@@ -70,8 +70,8 @@ export const updatePostHelper = ({ caption, postId }) => {
       .then((res) => {
         resolve({
           status: 200,
-          message: "Post Has Been Updated Succcefully.",
-          res,
+          message: "Post Has Been Updated.",
+          post: res,
         });
       })
       .catch((error) => {
@@ -122,7 +122,7 @@ export const fetchUserPosts = (userId) => {
         .then((posts) => {
           resolve({
             status: 200,
-            message: "Fetched Used Posts Succesfully.",
+            message: "Fetched User Posts.",
             posts,
           });
         })
@@ -153,7 +153,7 @@ export const deletePostHelper = (postId) => {
       .then((response) => {
         resolve({
           status: 200,
-          message: "Post Has Been Deleted Succcefully.",
+          message: "Post Has Been Deleted.",
           response,
         });
       })
@@ -191,7 +191,7 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
 
       return {
         status: 200,
-        message: "Like Has Been Added To The Post Successfully.",
+        message: "Like Has Been Added To The Post.",
         result,
       };
     } else {
@@ -203,7 +203,7 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
 
       return {
         status: 200,
-        message: "Like Has Been Removed From The Post Successfully.",
+        message: "Like Has Been Removed From The Post.",
         result,
       };
     }

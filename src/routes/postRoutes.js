@@ -18,7 +18,7 @@ router.post("/create-post",protect,  createPost);
 
 // @desc    Update post
 // @access  Authenticated user
-router.put("/update-post/:postId", protect, updatePost);
+router.post("/update-post/:postId", protect, updatePost);
 
 // @desc    Fetch Single post
 // @access  Authenticated user

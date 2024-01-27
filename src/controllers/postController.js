@@ -36,6 +36,7 @@ export const updatePost = (req, res, next) => {
       caption: req.body.caption,
       postId: req.params.postId,
     };
+    console.log(data,"jfjfjfjfjfj");
     updatePostHelper(data)
       .then((response) => {
         console.log(response);
