@@ -14,7 +14,7 @@ import protect from "../middlewares/authMiddleware.js";
 // @desc    Create post
 // @access  Authenticated user
 // router.post("/create-post", protect, createPost);
-router.post("/create-post",  createPost);
+router.post("/create-post",protect, createPost);
 
 // @desc    Update post
 // @access  Authenticated user

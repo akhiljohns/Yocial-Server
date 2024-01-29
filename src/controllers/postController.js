@@ -94,7 +94,7 @@ const user = await verifyUser(req.headers.authorization);
   deletePostHelper(user,postId)
     .then((response) => {
 
-      res.status(response.status).send(response);
+      res.status(response.status || 200).send(response);
     })
     .catch((err) => {
       res.status(err.status).send(err);

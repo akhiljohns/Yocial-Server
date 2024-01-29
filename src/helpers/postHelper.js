@@ -148,8 +148,8 @@ export const deletePostHelper = (user, postId) => {
       });
     }
 
-    const id1 = postExist.userId.toString();
-    const id2 = user._id.toString();
+    const id1 = postExist?.userId.toString();
+    const id2 = user?._id.toString();
 
     if (id1 != id2) {
       reject({
