@@ -18,10 +18,8 @@ import { getConnectonHelper } from "../helpers/userHelper.js";
 // @access  Public
 export const createPost = (req, res, next) => {
   try {
-    console.log(req.body,"-=-=-=-=-=-==");
     createPostHelper(req.body)
       .then((response) => {
-        console.log(response);
         res.status(response.status || 200).send(response);
       })
       .catch((err) => {
@@ -41,10 +39,8 @@ export const updatePost = (req, res, next) => {
       caption: req.body.caption,
       postId: req.params.postId,
     };
-    console.log(data,"jfjfjfjfjfj");
     updatePostHelper(data)
       .then((response) => {
-        console.log(response);
 
         res.status(response.status).send(response);
       })
@@ -61,7 +57,6 @@ export const fetchSinglePost = (req, res, next) => {
   const postId = req.params.postId;
   fetchSinglePostHelper(postId)
     .then((response) => {
-      console.log(response);
 
       res.status(response.status).send(response);
     })
@@ -94,12 +89,10 @@ export const fetchUserDetails = async (req, res, next) => {
 // @route   GET /delete/post/:postId
 // @access  Authenticated user
 export const deletePost = async (req, res) => {
-  console.log("deletePost", req.params.postId,"-==-=-=-=-=",req.headers.authorization);
 const user = await verifyUser(req.headers.authorization);
   const postId = req.params.postId;
   deletePostHelper(user,postId)
     .then((response) => {
-      console.log(response);
 
       res.status(response.status).send(response);
     })

@@ -23,7 +23,6 @@ export const login = (req, res) => {
     };
     userLogin(userData)
       .then((response) => {
-        console.log(response);
         res.status(response.status).json(response);
       })
       .catch((err) => {
@@ -42,7 +41,6 @@ export const register = (req, res) => {
     const userData = req.body;
     registration(userData)
     .then((response) => {
-        console.log(response);
         // if (response.status == 200) {
         //   sendEmail(response.email).then((resp) => {
         //     res.status(resp.status).json(resp);

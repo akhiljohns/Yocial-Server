@@ -30,7 +30,6 @@ export const createPostHelper = ({ image, caption, userId }) => {
           });
         })
         .catch((error) => {
-          console.log(error);
 
           reject({
             error_code: error.error_code || "DB_SAVE_ERROR",
@@ -41,7 +40,6 @@ export const createPostHelper = ({ image, caption, userId }) => {
           });
         });
     } catch (error) {
-      console.log(error);
 
       reject({
         error_code: error.error_code || "INTERNAL_SERVER_ERROR",
@@ -146,34 +144,44 @@ export const deletePostHelper = (user, postId) => {
       reject({
         status: 404,
         message: "Post Not Found",
+        error_code: "POST_NOT_FOUND",
       });
     }
 
-    const userID1 = postExist?.userId;
-    const userID2 = user._id;
+    const id1 = postExist.userId.toString();
+    const id2 = user._id.toString();
 
-    if (userID1 !== userID2) {
+    if (id1 != id2) {
       reject({
-        status: 401,
+        status: 403,
         message: "You are not authorized to delete this post",
         error_code: "UNAUTHORIZED_USER",
       });
+    } else {
+      Post.deleteOne({ _id: postId })
+        .then((response) => {
+          if (response.deletedCount === 1) {
+            resolve({
+              status: 200,
+              message: "Post Has Been Deleted.",
+              response,
+            });
+          } else {
+            reject({
+              status: 400,
+              message: "Failed to delete post. Please try again later",
+              response,
+            });
+          }
+        })
+        .catch((error) => {
+          reject({
+            status: error.status || 500,
+            message:
+              error.message || "Something Went Wrong, Try After Sometime",
+          });
+        });
     }
-
-    Post.deleteOne({ _id: postId })
-      .then((response) => {
-        resolve({
-          status: 200,
-          message: "Post Has Been Deleted.",
-          response,
-        });
-      })
-      .catch((error) => {
-        reject({
-          status: error.status || 500,
-          message: error.message || "Something Went Wrong, Try After Sometime",
-        });
-      });
   });
 };
 
