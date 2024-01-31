@@ -77,7 +77,7 @@ export const userLogin = async ({ credential, password }) => {
     console.error("Error in userLogin:", error);
     return {
       error_code: error.error_code || "INTERNAL_SERVER_ERROR",
-      message: error.message || "Something Went Wrong, Try After Sometime",
+      message: "Something Went Wrong, Try After Sometime",
       status: error.status || 500,
       userVerified: error.userVerified,
     };

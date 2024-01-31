@@ -55,13 +55,13 @@ export  const refreshAccessToken = async (req, res) => {
         const newAccessToken = await renewAccessToken(decodedRefreshToken?.userId);
         res.status(200).send({ newToken: newAccessToken });
       } else {
-        res.status(401).json({ message: "User not authorized", status: 401, error_code: "AUTHENTICATION_FAILED" });
+        res.status(401).json({ message: "The Account has been block temporarily", status: 401, error_code: "AUTHENTICATION_FAILED" });
       }
     } else {
       res.status(401).json({ status: 401, message: "No token provided", error_code: "NO_TOKEN" });
     }
   } catch (error) {
-    res.status(401).json({ message: "User not authorized", status: 401, error_code: "AUTHENTICATION_FAILED", error });
+    res.status(401).json({ message: error.message || "User not authorized", status: error.status || 401, error_code: error.code ||  "AUTHENTICATION_FAILED", error });
   }
 };
 
