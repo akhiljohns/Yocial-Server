@@ -150,31 +150,33 @@ export const registration = async ({
 // @access  Public
 export const updateProfielHelper = async ({ userId, name, username, bio }) => {
   try {
+    console.log(userId, name, username,bio)
     return new Promise(async (resolve, reject) => {
       const existingUsername = await User.findOne({ username });
-      if (existingUsername) {
-        if (existingUsername?._id.toString() !== userId.toString()) {
+      
+        if (existingUsername && existingUsername?._id.toString() !== userId.toString()) {
           reject({
             status: 409,
             error_code: "USERNAME_TAKEN",
-            message: "Username already in use",
+            message: "Username not available",
           });
           return;
         } else {
-          User.updateOne(
+         await User.updateOne(
             { _id: userId },
             {
               $set: {
-                name: name,
-                username: username,
-                bio: bio,
+                name,
+                username,
+                bio
               },
-            }
+            },
+            { runValidators: true, setDefaultsOnInsert: true }
           )
             .then((response) => {
               resolve({
                 status: 200,
-                message: "User Updated Successfully",
+                message: "Profile has been Updated",
               });
             })
             .catch((error) => {
@@ -187,7 +189,6 @@ export const updateProfielHelper = async ({ userId, name, username, bio }) => {
               });
             });
         }
-      }
     });
   } catch (error) {
     return {

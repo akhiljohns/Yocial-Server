@@ -59,7 +59,7 @@ export const register = (req, res) => {
 };
 
 // @desc    Update user
-// @route   POST /users/update-profile
+// @route   POST /users/update/profiile
 // @access  Public
 export const updateProfile = (req, res) => {
   try {
