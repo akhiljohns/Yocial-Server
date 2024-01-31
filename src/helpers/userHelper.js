@@ -61,7 +61,6 @@ export const userLogin = async ({ credential, password }) => {
         status: 403,
         message: "Your Account Is Temporarily Blocked",
         error_code: "FORBIDDEN_LOGIN",
-
       };
     }
 
@@ -99,6 +98,7 @@ export const registration = async ({
   try {
     // Check if username exists
     const existingUsername = await User.findOne({ username });
+    console.log(`User ${existingUsername} already exists`);
     if (existingUsername) {
       return {
         status: 409,
@@ -129,7 +129,6 @@ export const registration = async ({
       phone: phone ? phone : null,
     });
 
-
     // Save the user to the database
     await newUser.save();
 
@@ -139,8 +138,58 @@ export const registration = async ({
       message: emailResp.message || "Account Created Successfully",
     };
   } catch (error) {
-    console.error(`Error during registration: ${error}`);
-
+    return {
+      error_code: "INTERNAL_SERVER_ERROR",
+      message: "Something went wrong, try again later",
+      status: 500,
+    };
+  }
+};
+// @desc    Update user
+// @route   POST /users/update-profile
+// @access  Public
+export const updateProfielHelper = async ({ userId, name, username, bio }) => {
+  try {
+    return new Promise(async (resolve, reject) => {
+      const existingUsername = await User.findOne({ username });
+      if (existingUsername) {
+        if (existingUsername?._id.toString() !== userId.toString()) {
+          reject({
+            status: 409,
+            error_code: "USERNAME_TAKEN",
+            message: "Username already in use",
+          });
+          return;
+        } else {
+          User.updateOne(
+            { _id: userId },
+            {
+              $set: {
+                name: name,
+                username: username,
+                bio: bio,
+              },
+            }
+          )
+            .then((response) => {
+              resolve({
+                status: 200,
+                message: "User Updated Successfully",
+              });
+            })
+            .catch((error) => {
+              reject({
+                error_code: error.error_code || "DB_SAVE_ERROR",
+                message:
+                  error.message || "Something Went Wrong, Try After Sometime",
+                status: error.status || 500,
+                error,
+              });
+            });
+        }
+      }
+    });
+  } catch (error) {
     return {
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Something went wrong, try again later",
@@ -243,7 +292,6 @@ export const followHelper = (userId, followeeId) => {
           )
             .exec()
             .then((followeeConnection) => {
-
               resolve({ userConnection, followeeConnection });
             })
             .catch((error) => {
@@ -284,7 +332,7 @@ export const unfollowHelper = (userId, followeeId) => {
         { $pull: { followers: userId } },
         { new: true }
       ).exec();
-      
+
       resolve({ userConnection, followeeConnection });
     } catch (error) {
       reject(error);
@@ -323,7 +371,6 @@ export const getConnectonHelper = async (userId) => {
     };
   }
 };
-
 
 ////////////////////////////////////////////////// EMAIL VERIFICATION //////////////////////////////////////////////////////////////////
 // @desc    Sent verification link
@@ -384,6 +431,8 @@ export const sendEmail = (credential) => {
     }
   });
 };
+
+/////////////////////////////////////////////////CHECK TOKEN //////////////////////////////////////////////////////////////////
 export const checkToken = async (userId, token) => {
   try {
     const user = await User.findOne({ _id: userId });
