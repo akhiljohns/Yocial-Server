@@ -9,6 +9,7 @@ import {
   checkToken,
   changePasswordRequestHelper,
   userByUsernameHelper,
+  updateProfielHelper,
 } from "../../src/helpers/userHelper.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
@@ -47,6 +48,24 @@ export const register = (req, res) => {
         //   });
         // }
 
+        res.status(response.status).json(response);
+      })
+      .catch((err) => {
+        res.status(err.status).send(err);
+      });
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+};
+
+// @desc    Update user
+// @route   POST /users/update-profile
+// @access  Public
+export const updateProfile = (req, res) => {
+  try {
+    const userData = req.body;
+    updateProfielHelper(userData)
+    .then((response) => {
         res.status(response.status).json(response);
       })
       .catch((err) => {
