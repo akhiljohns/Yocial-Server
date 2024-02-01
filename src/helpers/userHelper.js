@@ -103,7 +103,7 @@ export const registration = async ({
       return {
         status: 409,
         error_code: "USERNAME_TAKEN",
-        message: "Username already in use",
+        message: "Username not available",
       };
     }
 
@@ -119,7 +119,7 @@ export const registration = async ({
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+    
     // Create a new user instance
     const newUser = new User({
       username,
@@ -128,7 +128,7 @@ export const registration = async ({
       name: fName + " " + lName,
       phone: phone ? phone : null,
     });
-
+    
     // Save the user to the database
     await newUser.save();
 
@@ -145,6 +145,7 @@ export const registration = async ({
     };
   }
 };
+  ////////////////////////////////////////////////// USER PROFILE UPDATE //////////////////////////////////////////////////////////////////
 // @desc    Update user
 // @route   POST /users/update-profile
 // @access  Public
@@ -199,6 +200,28 @@ export const updateProfielHelper = async ({ userId, name, username, bio }) => {
   }
 };
 
+
+// @desc    Update user
+// @route   POST /users/update-profile
+// @access  Public
+export const updateEmailHelper = ({userId,email}) => {
+  try {
+    return new Promise(async(resolve, reject) => {
+      const existingUsername = await User.findOne({ email });
+      
+      if (existingUsername && existingUsername?._id.toString() !== userId.toString()) {
+        reject({
+          status: 409,
+          error_code: "EMAIL_TAKEN",
+          message: "Email is not available",
+        });
+        return;
+      } 
+    })
+  } catch (error) {
+    
+  }
+}
 ////////////////////////////////////////////////// USER FETCH //////////////////////////////////////////////////////////////////
 // @desc    Get users
 // @route   GET /user/fetch-users

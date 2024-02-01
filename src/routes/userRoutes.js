@@ -25,9 +25,14 @@ router.post("/register", register);
 // @desc    Follow user
 // @access  Registerd users
 router.post("/:userId/follow/:followeeUserId", protect, followUser);
+
 // @desc    update user profiel
 // @access  Registerd users
 router.post("/update/profile", protect, updateProfile);
+
+// @desc    update user profiel
+// @access  Registerd users
+// router.post("/update/email", protect, updateEmail);
 
 // @desc    Unfollow user
 // @access  Registerd users

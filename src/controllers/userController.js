@@ -11,6 +11,7 @@ import {
   userByUsernameHelper,
   updateProfielHelper,
 } from "../../src/helpers/userHelper.js";
+import { verifyEmailChange } from "../services/nodemailer.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
@@ -170,7 +171,7 @@ export const getConnection = (req, res) => {
   }
 };
 
-////////////////////////////////////////////////// EMAIL VERIFICATION //////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// FOR REGISTERING EMAIL //////////////////////////////////////////////////////////////////
 // @desc    To send user verification email
 // @route   POST /user/send-verification
 // @access  Public
@@ -216,6 +217,34 @@ export const verifyEmail = async (req, res) => {
     });
   }
 };
+
+////////////////////////////////////////////////// FOR CHANGING EMAIL //////////////////////////////////////////////////////////////////
+// @desc    To send user verification email
+// @route   POST /user/send-verification
+// @access  Public
+export const sendEmailConfirmation = (req, res) => {
+  try {
+    const userDetails = req.body;
+    verifyEmailChange(userDetails)
+      .then((response) => {
+        res.status(response.status || 200).send(response);
+      })
+      .catch((error) => {
+        res.status(error.status || 500).send(error);
+      });
+  } catch (error) {
+    res.status(error.status || 500).send({
+      status: error.status || 500,
+      error_code: error.code || "INTERNAL_SERVER_ERROR",
+      message: error.message || "Something went wrong, please try after sometime.",
+    });
+  }
+};
+
+
+
+
+
 
 /////////////// password management //////////////
 export const requestVerification = (req, res) => {

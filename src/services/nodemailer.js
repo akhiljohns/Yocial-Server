@@ -2,7 +2,6 @@ import crypto from "crypto";
 import { Verify } from "../models/verifyModel.js";
 import { sentEmail, sentVerificationEmail } from "./sentmail.js";
 
-
 export const verificationEmail = async (email, username, userId) => {
   try {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
@@ -46,31 +45,79 @@ export const verificationEmail = async (email, username, userId) => {
   }
 };
 
+///////////// CHANGE EMAIL VERIFICATION ///////////////
+export const verifyEmailChange = async ({
+  email,
+  username,
+  userId,
+  newEmail,
+}) => {
+  try {
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    // const thirtyMinutesAgo = new Date(Date.now() - 10 * 1000);
+
+    let existingToken = await Verify.findOne({
+      email: email,
+    });
+
+    let token;
+
+    if (existingToken && existingToken?.token2 !== "") {
+      if (existingToken?.token2CreatedAt >= thirtyMinutesAgo) {
+        token = existingToken?.token2;
+      } else {
+        existingToken.token2 = crypto.randomBytes(32).toString("hex");
+        token = existingToken?.token2;
+        const newToken = await Verify.findOneAndUpdate(
+          { email },
+          { token2: token, userId: userId, newEmail: newEmail }
+        );
+      }
+    } else {
+      const createdAt = new Date(Date.now());
+      token = crypto.randomBytes(32).toString("hex");
+      const newToken = await Verify.findOneAndUpdate(
+        { email },
+        { token2: token, userId: userId, newEmail: newEmail , token2CreatedAt: createdAt }
+      );
+    }
+let update = true;
+    const message = `${process.env.BASE_URL}/auth/change-email/${userId}/${token}`;
+    const response = await sentEmail(newEmail, username, message , update);
+
+    return { status: 200, message: "A Verification Email has been sent, Check your mail inbox for further details", data: response };
+  } catch (error) {
+    console.error("Error in verificationEmail:", error);
+    return { status: 500, message: "Internal Server Error", error: error };
+  }
+};
+
 ///////////// password management ///////////////
 
 export const generateTokenForPassword = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const token = crypto.randomBytes(32).toString('hex');
+      const token = crypto.randomBytes(32).toString("hex");
       const verify = new Verify({
         username: data?.username,
         email: data?.email,
         token: token,
-        password: data?.password
-      })
+        password: data?.password,
+      });
 
       await verify.save();
 
       const verificationLink = `${process.env.BASE_URL}/auth/change-password/verify/${data?.username}/${token}`;
 
-      sentVerificationEmail(data?.email, data?.username, verificationLink).then((response)=> {
-        resolve(response);
-      }).catch((error)=> {
-        reject(error);
-      })
-
+      sentVerificationEmail(data?.email, data?.username, verificationLink)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     } catch (error) {
-        reject(error);
+      reject(error);
     }
-  })
-}
+  });
+};
