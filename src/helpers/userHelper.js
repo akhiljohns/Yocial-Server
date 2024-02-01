@@ -401,7 +401,7 @@ export const sendEmail = (credential) => {
                 resolve({
                   status: 200,
                   message:
-                    "A Verification email has been sent to the registered Email Address,kindly verify the email before proceeding",
+                    "A Verification Email has been sent to the registered Email Address,kindly verify the email before proceeding",
                 });
               })
               .catch((error) => {
