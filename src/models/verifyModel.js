@@ -6,9 +6,7 @@ const verifySchema = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "user",
-      required: true,
-      default: "",
-    },
+    },    
     email: {
       type: String,
       required: true,
@@ -32,14 +30,12 @@ const verifySchema = new Schema(
     },
     newEmail: {
       type: String,
-      required: true,
-      default: "",
+      default: null,
       trim: true,
     },
     token2: {
       type: String,
-      default: "",
-      required: true,
+      default: null,
     },
     token2used: {
       type: Boolean,
@@ -47,7 +43,7 @@ const verifySchema = new Schema(
     },
     token2CreatedAt: {
       type: Date,
-      default: Date.now,
+      default: null,
     },
   },
   {

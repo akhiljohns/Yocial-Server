@@ -21,7 +21,7 @@ export const verificationEmail = async (email, username, userId) => {
         token = existingToken.token;
         const newToken = await Verify.findOneAndUpdate(
           { email: email },
-          { token: token }
+          { token: token ,userId: userId },
         );
       }
     } else {
@@ -57,32 +57,32 @@ export const verifyEmailChange = async ({
     // const thirtyMinutesAgo = new Date(Date.now() - 10 * 1000);
 
     let existingToken = await Verify.findOne({
-      email: email,
+      userId: userId,
     });
 
     let token;
 
-    if (existingToken && existingToken?.token2 !== "") {
-      if (existingToken?.token2CreatedAt >= thirtyMinutesAgo) {
+    if (existingToken && existingToken?.token2 !== null) {
+      if (existingToken?.token2CreatedAt <= thirtyMinutesAgo) {
         token = existingToken?.token2;
       } else {
         existingToken.token2 = crypto.randomBytes(32).toString("hex");
         token = existingToken?.token2;
         const newToken = await Verify.findOneAndUpdate(
-          { email },
+          { userId },
           { token2: token, userId: userId, newEmail: newEmail }
-        );
-      }
-    } else {
+          );
+        }
+      } else {
       const createdAt = new Date(Date.now());
       token = crypto.randomBytes(32).toString("hex");
       const newToken = await Verify.findOneAndUpdate(
         { email },
-        { token2: token, userId: userId, newEmail: newEmail , token2CreatedAt: createdAt }
+        { token2: token, userId: userId, newEmail: newEmail , token2CreatedAt: createdAt , token2used: false }  
       );
     }
 let update = true;
-    const message = `${process.env.BASE_URL}/auth/change-email/${userId}/${token}`;
+    const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}`;
     const response = await sentEmail(newEmail, username, message , update);
 
     return { status: 200, message: "A Verification Email has been sent, Check your mail inbox for further details", data: response };

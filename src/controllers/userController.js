@@ -201,8 +201,8 @@ export const verifyEmail = async (req, res) => {
   try {
     const userId = req.params.id;
     const token = req.params.token;
-
-    checkToken(userId, token)
+    const type = "register"
+    checkToken(userId, token , type)
       .then((response) => {
         res.status(response.status).send(response);
       })
@@ -241,6 +241,29 @@ export const sendEmailConfirmation = (req, res) => {
   }
 };
 
+// @desc    To verify changing email
+// @route   GET /auth/verify/:id/:token
+// @access  Public
+export const verifyEmailConfirmation = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const token = req.params.token;
+    const type = "update"
+    checkToken(userId, token , type)
+    .then((response) => {
+      res.status(response.status || 200).send(response);
+    })
+    .catch((error) => {
+        res.status(error.status || 500).send(error);
+      });
+    } catch (error) {
+    res.status(error.status || 500).send({
+      status: 500,
+      error_code: "INTERNAL_SERVER_ERROR",
+      message: "Somethings wrong please try after sometime.",
+    });
+  }
+};
 
 
 

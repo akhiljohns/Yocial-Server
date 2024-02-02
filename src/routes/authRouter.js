@@ -7,6 +7,7 @@ import {
   sendEmailConfirmation,
   sendVerificationEmail,
   verifyEmail,
+  verifyEmailConfirmation,
 } from "../controllers/userController.js";
 import protect, { refreshAccessToken } from "../middlewares/authMiddleware.js";
 import { refreshAdminAccessToken } from "../middlewares/adminAuth.js";
@@ -22,8 +23,8 @@ router.get("/verify/:id/:token", verifyEmail);
 // @access  Registerd users
 router.post("/update/email", sendEmailConfirmation);
 
-//@desc Verify email for changing email
-router.get("/change-email/:id/:token", verifyEmail);
+// @desc    Verify email for changing email
+router.post("/change-email/:id/:token", verifyEmailConfirmation);
 
 // @desc    Renew user access token
 // @access  Private

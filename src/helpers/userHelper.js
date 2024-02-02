@@ -98,7 +98,6 @@ export const registration = async ({
   try {
     // Check if username exists
     const existingUsername = await User.findOne({ username });
-    console.log(`User ${existingUsername} already exists`);
     if (existingUsername) {
       return {
         status: 409,
@@ -119,7 +118,7 @@ export const registration = async ({
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    
+
     // Create a new user instance
     const newUser = new User({
       username,
@@ -128,7 +127,7 @@ export const registration = async ({
       name: fName + " " + lName,
       phone: phone ? phone : null,
     });
-    
+
     // Save the user to the database
     await newUser.save();
 
@@ -145,51 +144,53 @@ export const registration = async ({
     };
   }
 };
-  ////////////////////////////////////////////////// USER PROFILE UPDATE //////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// USER PROFILE UPDATE //////////////////////////////////////////////////////////////////
 // @desc    Update user
 // @route   POST /users/update-profile
 // @access  Public
 export const updateProfielHelper = async ({ userId, name, username, bio }) => {
   try {
-    console.log(userId, name, username,bio)
     return new Promise(async (resolve, reject) => {
       const existingUsername = await User.findOne({ username });
-      
-        if (existingUsername && existingUsername?._id.toString() !== userId.toString()) {
-          reject({
-            status: 409,
-            error_code: "USERNAME_TAKEN",
-            message: "Username not available",
-          });
-          return;
-        } else {
-         await User.updateOne(
-            { _id: userId },
-            {
-              $set: {
-                name,
-                username,
-                bio
-              },
+
+      if (
+        existingUsername &&
+        existingUsername?._id.toString() !== userId.toString()
+      ) {
+        reject({
+          status: 409,
+          error_code: "USERNAME_TAKEN",
+          message: "Username not available",
+        });
+        return;
+      } else {
+        await User.updateOne(
+          { _id: userId },
+          {
+            $set: {
+              name,
+              username,
+              bio,
             },
-            { runValidators: true, setDefaultsOnInsert: true }
-          )
-            .then((response) => {
-              resolve({
-                status: 200,
-                message: "Profile has been Updated",
-              });
-            })
-            .catch((error) => {
-              reject({
-                error_code: error.error_code || "DB_SAVE_ERROR",
-                message:
-                  error.message || "Something Went Wrong, Try After Sometime",
-                status: error.status || 500,
-                error,
-              });
+          },
+          { runValidators: true, setDefaultsOnInsert: true }
+        )
+          .then((response) => {
+            resolve({
+              status: 200,
+              message: "Profile has been Updated",
             });
-        }
+          })
+          .catch((error) => {
+            reject({
+              error_code: error.error_code || "DB_SAVE_ERROR",
+              message:
+                error.message || "Something Went Wrong, Try After Sometime",
+              status: error.status || 500,
+              error,
+            });
+          });
+      }
     });
   } catch (error) {
     return {
@@ -200,28 +201,28 @@ export const updateProfielHelper = async ({ userId, name, username, bio }) => {
   }
 };
 
-
 // @desc    Update user
 // @route   POST /users/update-profile
 // @access  Public
-export const updateEmailHelper = ({userId,email}) => {
+export const updateEmailHelper = ({ userId, email }) => {
   try {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const existingUsername = await User.findOne({ email });
-      
-      if (existingUsername && existingUsername?._id.toString() !== userId.toString()) {
+
+      if (
+        existingUsername &&
+        existingUsername?._id.toString() !== userId.toString()
+      ) {
         reject({
           status: 409,
           error_code: "EMAIL_TAKEN",
           message: "Email is not available",
         });
         return;
-      } 
-    })
-  } catch (error) {
-    
-  }
-}
+      }
+    });
+  } catch (error) {}
+};
 ////////////////////////////////////////////////// USER FETCH //////////////////////////////////////////////////////////////////
 // @desc    Get users
 // @route   GET /user/fetch-users
@@ -457,41 +458,71 @@ export const sendEmail = (credential) => {
 };
 
 /////////////////////////////////////////////////CHECK TOKEN //////////////////////////////////////////////////////////////////
-export const checkToken = async (userId, token) => {
+export const checkToken = async (userId, token, type) => {
   try {
     const user = await User.findOne({ _id: userId });
-
     if (!user) {
       return Promise.reject({ status: 404, message: "User not found" });
     }
-    if (user.verified) {
+
+    if (type === "register" && user.verified) {
       return Promise.reject({ status: 400, message: "User Already verified" });
     }
 
-    const existingToken = await Verify.findOne({
-      token: token,
-    });
-
-    if (!existingToken) {
-      return Promise.reject({
-        status: 400,
-        message:
-          "Token is expired or invalid. Try Sending Another Verification Mail",
+    if (type === "register") {
+      const existingToken = await Verify.findOne({
+        token: token,
       });
-    }
 
-    // Update the 'used' key in the Verify schema to true
-    existingToken.used = true;
-    await existingToken.save();
+      if (!existingToken) {
+        return Promise.reject({
+          status: 400,
+          message:
+            "Token is expired or invalid. Try Sending Another Verification Mail",
+        });
+      }
 
-    // Update the 'verified' key in the User schema to true
-    user.verified = true;
-    await user.save();
+      // Update the 'used' key in the Verify schema to true
+      existingToken.used = true;
+      await existingToken.save();
 
-    return Promise.resolve({
-      status: 200,
-      message: "Token is valid, user verified",
-    });
+      // Update the 'verified' key in the User schema to true
+      user.verified = true;
+      await user.save();
+
+      return Promise.resolve({
+        status: 200,
+        message: "Token is valid, user verified",
+      });
+    } else if (type === "update") {
+      const existingToken = await Verify.findOne({
+        token2: token,
+      });
+      const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30);
+
+      if (existingToken && existingToken?.token2CreatedAt <= thirtyMinutesAgo) {
+        existingToken.token2used = true;
+        await existingToken.save();
+
+        const newEmail = existingToken.newEmail;
+
+        const user = await User.findOneAndUpdate(
+          { _id: userId },
+          { email: newEmail }
+        );
+        return Promise.resolve({
+          status: 200,
+          message: "Email Has Been Updated",
+          email:newEmail
+          
+        });
+      } else {
+        return Promise.reject({
+          status: 500,
+          message: "Invalid Token",
+        });
+      }
+      }
   } catch (error) {
     return Promise.reject({
       status: 500,
