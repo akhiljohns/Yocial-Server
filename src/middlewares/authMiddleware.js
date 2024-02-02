@@ -8,6 +8,20 @@ export const verifyUser = (accessToken) => {
   return User.findOne({ _id: decoded?.userId }).select("-password");
 };
 
+
+// @desc    To et user from decoded token
+// @route   < Middleware - Helper >
+// @access  Private
+const userVerify = (decodedToken) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({_id: decodedToken?.userId}).select("-password").then((user) => {
+      resolve(user);
+    }).catch((err) => reject(err));
+  })
+} ;
+
+
+
 // Renew the access token
 const renewAccessToken = async (userId) => {
   return await jwt.sign({ userId: userId }, process.env.JWT_KEY_SECRET, { expiresIn: "1hr" });
@@ -49,7 +63,7 @@ export  const refreshAccessToken = async (req, res) => {
     if (req.headers.authorization) {
       const refreshToken = req.headers.authorization;
       const decodedRefreshToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-      const user = await verifyUser(decodedRefreshToken);
+      const user = await userVerify(decodedRefreshToken);
 
       if (user && !user?.blocked) {
         const newAccessToken = await renewAccessToken(decodedRefreshToken?.userId);
