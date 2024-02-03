@@ -3,6 +3,8 @@ import {
   deletePostHelper,
   fetchSinglePostHelper,
   fetchUserPosts,
+  getAllPosts,
+  getPostsCount,
   likeUnlikeHelper,
   updatePostHelper,
 } from "../helpers/postHelper.js";

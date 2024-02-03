@@ -8,6 +8,8 @@ import {
   fetchSinglePost,
   likeUnlikePost,
   updatePost,
+  getPostsCountController,
+  fetchAllPosts,
 } from "../controllers/postController.js";
 import protect from "../middlewares/authMiddleware.js";
 
