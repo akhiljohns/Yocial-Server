@@ -242,3 +242,47 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
     }
   }
 };
+
+
+
+// @desc    Fetch posts
+// @route   POST /users/fetch-posts
+// @access  Public
+export const getAllPosts = (perPage, page) => {
+  return new Promise((resolve, reject) => {
+    try {
+      Post.find({ blocked: false })
+        .skip((page - 1) * perPage)
+        .limit(perPage)
+        .sort({ createdAt: -1 })
+        .exec()
+        .then((posts) => {
+          if (posts) {
+            resolve({
+              status: 200,
+              message: "post fetched successfully",
+              posts,
+            });
+          } else {
+            throw new Error("No posts found");
+          }
+        })
+        .catch((err) => {
+          reject({
+            status: 500,
+            error_code: "DB_FETCH_ERROR",
+            message: "Somethings wrong, Please try again later.",
+            error_message: err.message,
+          });
+        });
+    } catch (error) {
+      reject({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Somethings wrong, Please try again later.",
+        error_message: error.message,
+      });
+    }
+  });
+};
+

@@ -64,6 +64,37 @@ export const fetchSinglePost = (req, res, next) => {
       res.status(err.status).send(err);
     });
 };
+
+
+// @desc    Get post data
+// @route   GET /post/fetch-posts
+// @access  Public
+export const fetchAllPosts = (req, res) => {
+  try{
+      const perPage = 5, page = req.query.page || 1;
+      getAllPosts(perPage, page).then((response)=>{
+          res.status(response.status).json(response);
+      }).catch((error)=>{
+          res
+            .status(500)
+            .json({
+              status: 500,
+              error_code: "INTERNAL_SERVER_ERROR",
+              message: "Somethings wrong, Please try after sometime.",
+              error_message: error.message
+            });
+      });
+  } catch (error) {
+      res.status(500).json({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Somethings wrong, Please try after sometime.",
+        error_message: error.message,
+      });
+  }
+};
+
+
 // @desc    Fetch a user's posts
 // @route   GET /post/fetchUserPosts
 // @access  Registered users

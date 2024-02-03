@@ -24,6 +24,11 @@ router.post("/update-post/:postId", protect, updatePost);
 // @access  Authenticated user
 router.get("/fetch-single-post/:postId", protect, fetchSinglePost);
 
+
+// @desc    Fetch all posts
+// @access  Authenticated user
+router.get('/fetch-posts', protect, fetchAllPosts);
+
 // @desc    Fetch a user's posts
 // @access  Registerd users
 router.get("/fetchUserDetails",protect,  fetchUserDetails);
