@@ -95,6 +95,23 @@ export const fetchAllPosts = (req, res) => {
 };
 
 
+// @desc    Fetch posts count
+// @route   GET /post/fetch-count
+// @access  Private
+export const getPostsCountController = (req, res) => {
+  try {
+      getPostsCount().then((count)=> {
+          res.status(200).send(count);
+      }).catch((error) => {
+          res.status(500).json(error)
+      })
+  } catch (error) {
+      res.status(500).json(error);
+  }
+}
+
+
+
 // @desc    Fetch a user's posts
 // @route   GET /post/fetchUserPosts
 // @access  Registered users

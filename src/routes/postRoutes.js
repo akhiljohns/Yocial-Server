@@ -25,6 +25,10 @@ router.post("/update-post/:postId", protect, updatePost);
 router.get("/fetch-single-post/:postId", protect, fetchSinglePost);
 
 
+// @desc    Fetch posts count
+// @access  Private
+router.get("/fetch-count", protect, getPostsCountController)
+
 // @desc    Fetch all posts
 // @access  Authenticated user
 router.get('/fetch-posts', protect, fetchAllPosts);

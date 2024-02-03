@@ -286,3 +286,20 @@ export const getAllPosts = (perPage, page) => {
   });
 };
 
+
+// @desc    Fetch posts count
+// @route   GET /post/fetch-count
+// @access  Private
+export const getPostsCount = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      Post.countDocuments({}).then((count) => {
+        resolve(count);
+      }).catch((err)=> {
+        reject(err)
+      })
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
