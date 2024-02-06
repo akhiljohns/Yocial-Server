@@ -10,6 +10,7 @@ import {
   updatePost,
   getPostsCountController,
   fetchAllPosts,
+  ctrlFetchUserPosts,
 } from "../controllers/postController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -26,6 +27,9 @@ router.post("/update-post/:postId", protect, updatePost);
 // @access  Authenticated user
 router.get("/fetch-single-post/:postId", protect, fetchSinglePost);
 
+// @desc    Fetch a user's posts
+// @access  Registerd users
+router.get("/fetchUserPosts", protect, ctrlFetchUserPosts);
 
 // @desc    Fetch posts count
 // @access  Private

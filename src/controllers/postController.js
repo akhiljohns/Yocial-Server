@@ -96,6 +96,21 @@ export const fetchAllPosts = (req, res) => {
   }
 };
 
+// @desc    Fetch a user's posts
+// @route   GET /post/fetchUserPosts
+// @access  Registerd users
+export const ctrlFetchUserPosts = (req, res, next) => {
+  try {
+      const userId = req.query.userId;
+      fetchUserPosts(userId).then((posts)=> {
+          res.status(200).send({status:200, posts:posts});
+      }).catch((error) => {
+          res.status(500).send(error)
+      })
+  } catch (error) {
+      res.status(500).send(error);
+  }
+};
 
 // @desc    Fetch posts count
 // @route   GET /post/fetch-count
