@@ -255,6 +255,7 @@ export const getAllPosts = (perPage, page) => {
         .skip((page - 1) * perPage)
         .limit(perPage)
         .sort({ createdAt: -1 })
+        .populate("userId", "-password")
         .exec()
         .then((posts) => {
           if (posts) {

@@ -86,13 +86,13 @@ export const fetch_Users = (req, res) => {
     const { userId } = req.query || "";
     fetchUserById(userId)
       .then((response) => {
-        res.status(response.status).json(response);
+        res.status(response.status || 200).json(response);
       })
       .catch((err) => {
-        res.status(err.status).json(err);
+        res.status(err.status || 500).json(err);
       });
   } catch (error) {
-    res.status(error.status).json(err);
+    res.status(error.status || 500).json(err);
   }
 };
 
