@@ -24,10 +24,13 @@ export const createPostHelper = ({ image, caption, userId }) => {
       newPost
         .save()
         .then((response) => {
-          resolve({
-            status: 200,
-            message: "Post Has Been Created",
-          });
+          Post.findById(response._id).populate("userId", "-password").then((post)=>{
+            resolve({
+              status: 200,
+              message: "Post Has Been Created",
+              post
+            });
+          })
         })
         .catch((error) => {
 
