@@ -211,10 +211,13 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
         { new: true }
       );
 
+      const post = await Post.findById(result?._id).populate("userId", "-password");
+
+      console.log('result :>> ', result);
       return {
         status: 200,
         message: "Like Has Been Added To The Post.",
-        result,
+        post,
       };
     } else {
       const result = await Post.findOneAndUpdate(
@@ -222,11 +225,11 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
         { $pull: { likes: userId } },
         { new: true }
       );
-
+      const post = await Post.findById(result?._id).populate("userId", "-password");
       return {
         status: 200,
         message: "Like Has Been Removed From The Post.",
-        result,
+        post,
       };
     }
   } catch (error) {

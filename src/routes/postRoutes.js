@@ -49,5 +49,5 @@ router.delete("/delete/post/:postId", protect, deletePost);
 
 // @desc    like&unlike Post
 // @access  Authenticated user
-router.get("/like-unlike/:postId/:userId", protect, likeUnlikePost);
+router.patch("/like-unlike/:postId/:userId", protect, likeUnlikePost);
 export default router;
