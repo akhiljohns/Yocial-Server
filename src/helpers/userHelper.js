@@ -4,6 +4,7 @@ import generateJwt from "../services/jwt.js"; //imporing jwt
 
 // importing models
 import User from "../models/userModel.js"; //userModel
+import { Post } from "../models/postModel.js";
 import { Connection } from "../models/connectionModel.js"; //CollectionModel
 import { Verify } from "../models/verifyModel.js";
 
@@ -513,8 +514,7 @@ export const checkToken = async (userId, token, type) => {
         return Promise.resolve({
           status: 200,
           message: "Email Has Been Updated",
-          email:newEmail
-          
+          email: newEmail,
         });
       } else {
         return Promise.reject({
@@ -522,7 +522,7 @@ export const checkToken = async (userId, token, type) => {
           message: "Invalid Token",
         });
       }
-      }
+    }
   } catch (error) {
     return Promise.reject({
       status: 500,
@@ -555,7 +555,8 @@ export const changePasswordRequestHelper = (userId, password) => {
         })
         .catch((err) => {
           reject({
-            status: err.status,
+            status: err.status || 500,
+
             message: err.message || "went wrong",
             err,
           });
@@ -573,17 +574,39 @@ export const changePasswordRequestHelper = (userId, password) => {
 export const savePostHelper = (userId, postId) => {
   return new Promise((resolve, reject) => {
     try {
-      User.findOneAndUpdate({_id: userId}, {$push: {savedPosts: postId}}, {new: true}).then((user)=> {
-        Post.findOneAndUpdate({_id: postId}, {$push: {saved: userId}}, {new: true}).then((post)=> {
-          resolve({user, post})
-        }).catch((error) => reject(error))
-      }).catch((err) => {
-        reject(err);
-      })
-    } catch (error) {
-      reject(err);
+      User.findOneAndUpdate(
+        { _id: userId },
+        { $push: { savedPosts: postId } },
+        { new: true }
+      )
+        .then((user) => {
+          Post.findOneAndUpdate(
+            { _id: postId },
+            { $push: { saved: userId } },
+            { new: true }
+          )
+            .then((post) => {
+              resolve({ status: 200, message: "Post Saved", user, post });
+            })
+            .catch((error) => reject(error));
+        })
+        .catch((err) => {
+          reject({
+            status: err.status || 500,
+
+            message: err.message || "went wrong",
+            err,
+          });
+        });
+    } catch (err) {
+      reject({
+        status: err.status || 500,
+
+        message: err.message || "went wrong",
+        err,
+      });
     }
-  })
+  });
 };
 
 // @desc    Remove from saved
@@ -592,16 +615,42 @@ export const savePostHelper = (userId, postId) => {
 export const removeSavePostHelper = (userId, postId) => {
   return new Promise((resolve, reject) => {
     try {
-      User.findOneAndUpdate({_id: userId}, {$pull: {savedPosts: postId}}, {new: true}).then((user)=> {
-        Post.findOneAndUpdate({_id:postId}, {$pull: {saved: userId}}, {new: true}).then((post)=> {
-          resolve({user, post})
-        }).catch((error) => reject(error))
-      }).catch((error)=> {
-        reject(error);
-      })
-    } catch (error) {
-      reject(error);
-    }
-  })
-};
+      User.findOneAndUpdate(
+        { _id: userId },
+        { $pull: { savedPosts: postId } },
+        { new: true }
+      )
+        .then((user) => {
+          Post.findOneAndUpdate(
+            { _id: postId },
+            { $pull: { saved: userId } },
+            { new: true }
+          )
+            .then((post) => {
+              resolve({
+                status: 200,
+                message: "Post Removed From Saved List",
+                user,
+                post,
+              });
+            })
+            .catch((error) => reject(error));
+        })
+        .catch((err) => {
+          reject({
+            status: err.status || 500,
 
+            message: err.message || "went wrong",
+            err,
+          });
+        });
+    } catch (err) {
+      reject({
+        status: err.status || 500,
+
+        message: err.message || "went wrong",
+        err,
+      });
+    }
+  });
+};

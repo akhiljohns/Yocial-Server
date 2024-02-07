@@ -213,7 +213,6 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
 
       const post = await Post.findById(result?._id).populate("userId", "-password");
 
-      console.log('result :>> ', result);
       return {
         status: 200,
         message: "Like Has Been Added To The Post.",
