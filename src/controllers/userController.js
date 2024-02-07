@@ -10,6 +10,8 @@ import {
   changePasswordRequestHelper,
   userByUsernameHelper,
   updateProfielHelper,
+  removeSavePostHelper,
+  savePostHelper,
 } from "../../src/helpers/userHelper.js";
 import { verifyEmailChange } from "../services/nodemailer.js";
 
@@ -265,6 +267,40 @@ export const verifyEmailConfirmation = async (req, res) => {
   }
 };
 
+
+
+////////////////////////////////////////////////// POST SAVE SECTION //////////////////////////////////////////////////////////////////
+// @desc    Save post
+// @route   PUT /user/:userId/save/post/:postId
+// @access  Registerd users
+export const savePost = (req, res) => {
+  try {
+    const {userId, postId} = req.params;
+    savePostHelper(userId, postId).then((response) => {
+      res.status(200).json(response);
+    }).catch((error) => {
+      res.status(500).send(error);
+    })
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+// @desc    Remove saved post
+// @route   PUT /user/:userId/save/post/remove/:postId
+// @access  Registerd users
+export const removeSavedPost = (req, res) => {
+  try {
+    const { userId, postId } = req.params;
+    removeSavePostHelper(userId, postId).then((response)=> {
+      res.status(200).json(response);
+    }).catch((error) => {
+      res.status(500).send(error);
+    })
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
 
 
 

@@ -565,3 +565,43 @@ export const changePasswordRequestHelper = (userId, password) => {
     }
   });
 };
+
+////////////////////////////////////////////////// POST SAVE SECTION //////////////////////////////////////////////////////////////////
+// @desc    Save post
+// @route   PUT /user/:userId/save/post/:postId
+// @access  Registerd users
+export const savePostHelper = (userId, postId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      User.findOneAndUpdate({_id: userId}, {$push: {savedPosts: postId}}, {new: true}).then((user)=> {
+        Post.findOneAndUpdate({_id: postId}, {$push: {saved: userId}}, {new: true}).then((post)=> {
+          resolve({user, post})
+        }).catch((error) => reject(error))
+      }).catch((err) => {
+        reject(err);
+      })
+    } catch (error) {
+      reject(err);
+    }
+  })
+};
+
+// @desc    Remove from saved
+// @route   DELETE /user/:userId/save/post/remove/:postId
+// @access  Registerd users
+export const removeSavePostHelper = (userId, postId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      User.findOneAndUpdate({_id: userId}, {$pull: {savedPosts: postId}}, {new: true}).then((user)=> {
+        Post.findOneAndUpdate({_id:postId}, {$pull: {saved: userId}}, {new: true}).then((post)=> {
+          resolve({user, post})
+        }).catch((error) => reject(error))
+      }).catch((error)=> {
+        reject(error);
+      })
+    } catch (error) {
+      reject(error);
+    }
+  })
+};
+
