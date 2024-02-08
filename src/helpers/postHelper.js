@@ -346,12 +346,21 @@ export const addCommentHelper = (userId, postId, content) => {
 // @desc    Delete comment
 //@route    DELETE /post/delete-comment
 // @access  Registerd users
-export const deleteCommentHelper = (commentId) => {
+export const deleteCommentHelper = (commentId,userId,user) => {
   return new Promise((resolve, reject) => {
     try {
+
+      const id1=userId.toString();
+      const id2=user._id.toString();
+
+
+      if (id1 != id2) {
+      reject({message: "You are not authorized to delete this comment.",status:405})
+      return
+      }
       Comment.findOneAndUpdate({ _id: commentId }, { deleted: true })
         .then((response) => {
-          resolve(response);
+          resolve({message:"Comment Deleted",response});
         })
         .catch((err) => reject(err));
     } catch (error) {

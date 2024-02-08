@@ -214,15 +214,17 @@ export const addComment = (req, res) => {
 // @desc    Delete comment
 //@route    DELETE /post/delete-comment
 // @access  Registerd users
-export const deleteComment = (req, res) => {
+export const deleteComment = async (req, res) => {
   try {
-    const { commentId } = req.body;
-    deleteCommentHelper(commentId)
+    const { commentId , userId } = req.body;
+    const user = await verifyUser(req.headers.authorization);
+   
+    deleteCommentHelper(commentId,userId,user)
       .then((response) => {
         res.status(200).send(response);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        res.status(error.status || 500).send(error);
       });
   } catch (error) {
     res.status(500).send(error);

@@ -63,7 +63,7 @@ router.post('/add-comment', protect, addComment);
 
 // @desc    Delete comment
 // @access  Registerd users
-router.delete('/delete-comment', protect, deleteComment);
+router.post('/delete-comment', protect, deleteComment);
 
 // @desc    Get comment
 // @access  Registerd users
