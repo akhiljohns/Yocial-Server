@@ -1,6 +1,9 @@
 import {
+  addCommentHelper,
   createPostHelper,
+  deleteCommentHelper,
   deletePostHelper,
+  fetchCommentHelper,
   fetchSinglePostHelper,
   fetchUserPosts,
   getAllPosts,
@@ -189,5 +192,56 @@ export const likeUnlikePost = (req, res) => {
       error_code: error.code || "INTERNAL_SERVER_ERROR",
       message: error.message || "Somethings wrong please try after sometime.",
     });
+  }
+};
+
+//------------------------COMMENT--------------------------------------------------------
+
+
+// @desc    Comment a post
+//@route    POST /post/add-comment
+// @access  Registerd users
+export const addComment = (req, res) => {
+  try {
+      const {userId, postId, content} = req.body;
+      addCommentHelper(userId, postId, content).then((response)=> {
+          res.status(200).send(response);
+      }).catch((error)=> {
+          res.status(500).send(error);
+      })
+  } catch (error) {
+      res.status(500).send(error);
+  }
+};
+
+// @desc    Delete comment
+//@route    DELETE /post/delete-comment
+// @access  Registerd users
+export const deleteComment = (req, res) => {
+  try {
+      const {commentId} = req.body;
+      deleteCommentHelper(commentId).then((response) => {
+          res.status(200).send(response);
+      }).catch((error) => {
+          res.status(500).send(error);
+      })
+  } catch (error) {
+      res.status(500).send(error);
+  }
+};
+
+// @desc    Get comment
+//@route    GET /post/fetch-comment
+// @access  Registerd users
+export const fetchComment = (req, res) => {
+  try {
+      const {postId} = req.params;
+      fetchCommentHelper(postId).then((comments) => {
+          res.status(200).send(comments);
+      }).catch((error) => {
+          res.status(500).send(error);
+      })
+  } catch (error) {
+      res.status(500).send(error);
   }
 };

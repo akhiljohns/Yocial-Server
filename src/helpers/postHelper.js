@@ -1,4 +1,5 @@
 import { Post } from "../models/postModel.js";
+import { Comment } from "../models/commentModel.js";
 
 // @desc    Create post
 // @route   POST /post/create-post
@@ -309,3 +310,64 @@ export const getPostsCount = () => {
     }
   })
 }
+
+//------------------------COMMENT--------------------------------------------------------
+
+
+// @desc    Add comment
+//@route    POST /post/add-comment
+// @access  Registerd users
+export const addCommentHelper = (userId, postId, content) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const newComment = new Comment({
+        userId: userId,
+        postId: postId,
+        content: content,
+      });
+
+      newComment
+        .save()
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => reject(error));
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+// @desc    Delete comment
+//@route    DELETE /post/delete-comment
+// @access  Registerd users
+export const deleteCommentHelper = (commentId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      Comment.findOneAndUpdate({_id: commentId}, {deleted: true}).then((response) => {
+        resolve(response)
+      }).catch((err) => reject(err))
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+// @desc    Get comment
+//@route    GET /post/fetch-comment
+// @access  Registerd users
+export const fetchCommentHelper = (postId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      Comment.find({ postId: postId, deleted: false })
+        .sort({ createdAt: -1 })
+        .exec()
+        .then((comments) => {
+          resolve(comments);
+        })
+        .catch((err) => reject(err));
+    } catch (error) {
+      reject(error);
+    }
+  });
+};

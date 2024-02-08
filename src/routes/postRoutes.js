@@ -11,6 +11,9 @@ import {
   getPostsCountController,
   fetchAllPosts,
   ctrlFetchUserPosts,
+  addComment,
+  deleteComment,
+  fetchComment,
 } from "../controllers/postController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -50,4 +53,19 @@ router.delete("/delete/post/:postId", protect, deletePost);
 // @desc    like&unlike Post
 // @access  Authenticated user
 router.patch("/like-unlike/:postId/:userId", protect, likeUnlikePost);
+
+
+// COMMENTS
+
+// @desc    Add comment
+// @access  Registerd users
+router.post('/add-comment', addComment);
+
+// @desc    Delete comment
+// @access  Registerd users
+router.delete('/delete-comment', deleteComment);
+
+// @desc    Get comment
+// @access  Registerd users
+router.get('/fetch-comments/:postId', fetchComment);
 export default router;
