@@ -25,16 +25,17 @@ export const createPostHelper = ({ image, caption, userId }) => {
       newPost
         .save()
         .then((response) => {
-          Post.findById(response._id).populate("userId", "-password").then((post)=>{
-            resolve({
-              status: 200,
-              message: "Post Has Been Created",
-              post
+          Post.findById(response._id)
+            .populate("userId", "-password")
+            .then((post) => {
+              resolve({
+                status: 200,
+                message: "Post Has Been Created",
+                post,
+              });
             });
-          })
         })
         .catch((error) => {
-
           reject({
             error_code: error.error_code || "DB_SAVE_ERROR",
             message:
@@ -44,7 +45,6 @@ export const createPostHelper = ({ image, caption, userId }) => {
           });
         });
     } catch (error) {
-
       reject({
         error_code: error.error_code || "INTERNAL_SERVER_ERROR",
         message: error.message || "Something Went Wrong, Try After Sometime",
@@ -212,7 +212,10 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
         { new: true }
       );
 
-      const post = await Post.findById(result?._id).populate("userId", "-password");
+      const post = await Post.findById(result?._id).populate(
+        "userId",
+        "-password"
+      );
 
       return {
         status: 200,
@@ -225,7 +228,10 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
         { $pull: { likes: userId } },
         { new: true }
       );
-      const post = await Post.findById(result?._id).populate("userId", "-password");
+      const post = await Post.findById(result?._id).populate(
+        "userId",
+        "-password"
+      );
       return {
         status: 200,
         message: "Like Has Been Removed From The Post.",
@@ -248,8 +254,6 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
     }
   }
 };
-
-
 
 // @desc    Fetch posts
 // @route   POST /users/fetch-posts
@@ -293,26 +297,26 @@ export const getAllPosts = (perPage, page) => {
   });
 };
 
-
 // @desc    Fetch posts count
 // @route   GET /post/fetch-count
 // @access  Private
 export const getPostsCount = () => {
   return new Promise((resolve, reject) => {
     try {
-      Post.countDocuments({}).then((count) => {
-        resolve(count);
-      }).catch((err)=> {
-        reject(err)
-      })
+      Post.countDocuments({})
+        .then((count) => {
+          resolve(count);
+        })
+        .catch((err) => {
+          reject(err);
+        });
     } catch (error) {
-      reject(error)
+      reject(error);
     }
-  })
-}
+  });
+};
 
 //------------------------COMMENT--------------------------------------------------------
-
 
 // @desc    Add comment
 //@route    POST /post/add-comment
@@ -328,7 +332,8 @@ export const addCommentHelper = (userId, postId, content) => {
 
       newComment
         .save()
-        .then((response) => {
+        .then((res) => {
+          const response = res.populate("userId", "-password");
           resolve(response);
         })
         .catch((error) => reject(error));
@@ -344,14 +349,16 @@ export const addCommentHelper = (userId, postId, content) => {
 export const deleteCommentHelper = (commentId) => {
   return new Promise((resolve, reject) => {
     try {
-      Comment.findOneAndUpdate({_id: commentId}, {deleted: true}).then((response) => {
-        resolve(response)
-      }).catch((err) => reject(err))
+      Comment.findOneAndUpdate({ _id: commentId }, { deleted: true })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((err) => reject(err));
     } catch (error) {
-      reject(error)
+      reject(error);
     }
-  })
-}
+  });
+};
 
 // @desc    Get comment
 //@route    GET /post/fetch-comment
@@ -361,6 +368,7 @@ export const fetchCommentHelper = (postId) => {
     try {
       Comment.find({ postId: postId, deleted: false })
         .sort({ createdAt: -1 })
+        .populate("userId", "-password")
         .exec()
         .then((comments) => {
           resolve(comments);

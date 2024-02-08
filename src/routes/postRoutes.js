@@ -59,13 +59,13 @@ router.patch("/like-unlike/:postId/:userId", protect, likeUnlikePost);
 
 // @desc    Add comment
 // @access  Registerd users
-router.post('/add-comment', addComment);
+router.post('/add-comment', protect, addComment);
 
 // @desc    Delete comment
 // @access  Registerd users
-router.delete('/delete-comment', deleteComment);
+router.delete('/delete-comment', protect, deleteComment);
 
 // @desc    Get comment
 // @access  Registerd users
-router.get('/fetch-comments/:postId', fetchComment);
+router.get('/fetch-comments/:postId/:type', protect, fetchComment);
 export default router;
