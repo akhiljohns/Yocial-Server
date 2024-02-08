@@ -608,6 +608,35 @@ export const savePostHelper = (userId, postId) => {
     }
   });
 };
+// @desc    Fetch saved Posts
+// @route   GET /savedPosts/:userid
+// @access  Registered users
+export const fetchSavedPostsHelper = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return {
+        status: 404,
+        message: "User not found",
+      };
+    }
+
+    const posts = await user.populate("savedPosts");
+
+    return {
+      status: 200,
+      message: "Fetched Saved Posts",
+      posts: posts.savedPosts,
+    };
+  } catch (error) {
+    return {
+      status: error.status || 500,
+      error_code: error.code ||"INTERNAL_SERVER_ERROR",
+      message: error.message || "Something went wrong, please try again later",
+    };
+  }
+};
 
 // @desc    Remove from saved
 // @route   DELETE /user/:userId/save/post/remove/:postId

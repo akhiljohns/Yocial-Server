@@ -12,6 +12,7 @@ import {
   updateProfielHelper,
   removeSavePostHelper,
   savePostHelper,
+  fetchSavedPostsHelper,
 } from "../../src/helpers/userHelper.js";
 import { verifyEmailChange } from "../services/nodemailer.js";
 
@@ -277,6 +278,21 @@ export const savePost = (req, res) => {
   try {
     const {userId, postId} = req.params;
     savePostHelper(userId, postId).then((response) => {
+      res.status(200).json(response);
+    }).catch((error) => {
+      res.status(500).send(error);
+    })
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+// @desc    Fetch Saved post
+// @route   GET /savedposts/:userid
+// @access  Registerd users
+export const fetchSavedPosts = (req, res) => {
+  try {
+    const {userId} = req.params;
+    fetchSavedPostsHelper(userId).then((response) => {
       res.status(200).json(response);
     }).catch((error) => {
       res.status(500).send(error);

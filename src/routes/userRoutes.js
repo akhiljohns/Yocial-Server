@@ -14,6 +14,7 @@ import {
   updateProfile,
   savePost,
   removeSavedPost,
+  fetchSavedPosts,
 } from "../controllers/userController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -55,6 +56,10 @@ router.get("/fetch/username/:username", protect, fetchUserByUsername )
 // @desc    Save post
 // @access  Registerd users
 router.put("/:userId/save/post/:postId", protect, savePost)
+
+// @desc    Fetch Saved post
+// @access  Registerd users
+router.get("/savedposts/:userId", fetchSavedPosts)
 
 // @desc    Remove saved post
 // @access  Registerd users
