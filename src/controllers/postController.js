@@ -216,10 +216,10 @@ export const addComment = (req, res) => {
 // @access  Registerd users
 export const deleteComment = async (req, res) => {
   try {
-    const { commentId , userId } = req.body;
+    const { commentId, userId } = req.body;
     const user = await verifyUser(req.headers.authorization);
-   
-    deleteCommentHelper(commentId,userId,user)
+
+    deleteCommentHelper(commentId, userId, user)
       .then((response) => {
         res.status(200).send(response);
       })

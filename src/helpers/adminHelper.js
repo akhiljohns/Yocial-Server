@@ -53,7 +53,6 @@ export const adminLogin = async (data) => {
   }
 };
 
-
 ////////////////////////////////////////////////// USER RELATED //////////////////////////////////////////////////////////////////
 // @desc    Fetch users (with pagination and filters)
 // @route   GET /admin/fetch-users
@@ -92,7 +91,7 @@ export const getUsers = (page, perPage, search) => {
     }
   });
 };
-// @desc    Fetch all users 
+// @desc    Fetch all users
 // @route   GET /admin/fetch-users
 // @access  Admin - private
 export const getAllUsers = () => {
@@ -165,56 +164,56 @@ export const toggelBlockStatus = (userId, status) => {
 };
 
 //////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
-  export const register = ({ name, email, password }) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (await Admin.findOne({ email: email })) {
-          reject({
-            status: 409,
-            error_code: "USER_ALREADY_REGISTERED",
-            message: "Email has already been registered",
-          });
-        }
-
-        bcrypt
-          .hash(password, saltRounds)
-          .then((hashedPassword) => {
-            const newAdmin = new Admin({
-              name: name,
-              email: email,
-              password: hashedPassword,
-            });
-
-            newAdmin
-              .save()
-              .then((response) => {
-                resolve({
-                  status: 200,
-                  message: "Account created successfully",
-                });
-              })
-              .catch((error) => {
-                reject({
-                  error_code: "DB_SAVE_ERROR",
-                  message: "omethings wrong try after sometimes",
-                  status: 500,
-                });
-              });
-          })
-          .catch((error) => {
-            reject({
-              error_code: "PSW_HASHING_ERROR",
-              message: "Somethings wrong try after sometimes",
-              status: 500,
-            });
-          });
-      } catch (error) {
+export const register = ({ name, email, password }) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (await Admin.findOne({ email: email })) {
         reject({
-          error_code: "INTERNAL_SERVER_ERROR",
-          message: "Somethings wrong try after sometimes",
-          status: 500,
+          status: 409,
+          error_code: "USER_ALREADY_REGISTERED",
+          message: "Email has already been registered",
         });
-        ("Error in registration(userHelper): " + error);
       }
-    });
-  };
+
+      bcrypt
+        .hash(password, saltRounds)
+        .then((hashedPassword) => {
+          const newAdmin = new Admin({
+            name: name,
+            email: email,
+            password: hashedPassword,
+          });
+
+          newAdmin
+            .save()
+            .then((response) => {
+              resolve({
+                status: 200,
+                message: "Account created successfully",
+              });
+            })
+            .catch((error) => {
+              reject({
+                error_code: "DB_SAVE_ERROR",
+                message: "omethings wrong try after sometimes",
+                status: 500,
+              });
+            });
+        })
+        .catch((error) => {
+          reject({
+            error_code: "PSW_HASHING_ERROR",
+            message: "Somethings wrong try after sometimes",
+            status: 500,
+          });
+        });
+    } catch (error) {
+      reject({
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Somethings wrong try after sometimes",
+        status: 500,
+      });
+      "Error in registration(userHelper): " + error;
+    }
+  });
+};

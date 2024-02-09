@@ -6,7 +6,7 @@ const verifySchema = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "user",
-    },    
+    },
     email: {
       type: String,
       required: true,
@@ -49,7 +49,6 @@ const verifySchema = new Schema(
   {
     timestamps: true,
     capped: { size: 10000000, max: 1000, autoIndexId: true },
-
   }
 );
 

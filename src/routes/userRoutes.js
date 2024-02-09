@@ -43,28 +43,27 @@ router.post("/:userId/unfollow/:followeeUserId", protect, unfollowUser);
 
 // @desc    Get connections
 // @access  Registerd users
-router.get("/fetch/connection/:userId", protect, getConnection)
+router.get("/fetch/connection/:userId", protect, getConnection);
 
 // @desc    Fetch user by id
 // @access  Authenticated users
 router.get("/fetch-users", protect, fetch_Users);
 
-// @desc    Fetch user by username 
+// @desc    Fetch user by username
 // @access  Authenticated users
-router.get("/fetch/username/:username", protect, fetchUserByUsername )
+router.get("/fetch/username/:username", protect, fetchUserByUsername);
 
 // @desc    Save post
 // @access  Registerd users
-router.put("/:userId/save/post/:postId", protect, savePost)
+router.put("/:userId/save/post/:postId", protect, savePost);
 
 // @desc    Fetch Saved post
 // @access  Registerd users
-router.get("/savedposts/:userId", fetchSavedPosts)
+router.get("/savedposts/:userId", fetchSavedPosts);
 
 // @desc    Remove saved post
 // @access  Registerd users
-router.delete("/:userId/save/post/remove/:postId", protect, removeSavedPost)
-
+router.delete("/:userId/save/post/remove/:postId", protect, removeSavedPost);
 
 ///////////////////////// password management //////////////////
 router.post("/password/verify/email", protect, requestVerification);

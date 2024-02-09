@@ -33,7 +33,7 @@ export const login = (req, res) => {
       .catch((err) => {
         res.status(err.status).send(err);
       });
-    } catch (error) {
+  } catch (error) {
     res.status(err.status).send(error);
   }
 };
@@ -45,7 +45,7 @@ export const register = (req, res) => {
   try {
     const userData = req.body;
     registration(userData)
-    .then((response) => {
+      .then((response) => {
         // if (response.status == 200) {
         //   sendEmail(response.email).then((resp) => {
         //     res.status(resp.status).json(resp);
@@ -69,7 +69,7 @@ export const updateProfile = (req, res) => {
   try {
     const userData = req.body;
     updateProfielHelper(userData)
-    .then((response) => {
+      .then((response) => {
         res.status(response.status).json(response);
       })
       .catch((err) => {
@@ -104,19 +104,19 @@ export const fetch_Users = (req, res) => {
 // @access Authenticated users
 export const fetchUserByUsername = (req, res) => {
   try {
-    const {username} = req.params;
+    const { username } = req.params;
 
-     userByUsernameHelper(username).then((user)=> {
-      res.status(200).send(user);
-    }).catch((error) => {
-      res.status(500).send(error)
-    })
+    userByUsernameHelper(username)
+      .then((user) => {
+        res.status(200).send(user);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
   } catch (error) {
     res.status(500).send(error);
   }
-}
-
-
+};
 
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    Follow user
@@ -148,10 +148,9 @@ export const unfollowUser = (req, res) => {
         res.status(200).send(response);
       })
       .catch((error) => {
-        res.status(error?.status|| 500).send(error);
+        res.status(error?.status || 500).send(error);
       });
   } catch (error) {
-
     res.status(error.status || 500).send(error);
   }
 };
@@ -204,8 +203,8 @@ export const verifyEmail = async (req, res) => {
   try {
     const userId = req.params.id;
     const token = req.params.token;
-    const type = "register"
-    checkToken(userId, token , type)
+    const type = "register";
+    checkToken(userId, token, type)
       .then((response) => {
         res.status(response.status).send(response);
       })
@@ -239,7 +238,8 @@ export const sendEmailConfirmation = (req, res) => {
     res.status(error.status || 500).send({
       status: error.status || 500,
       error_code: error.code || "INTERNAL_SERVER_ERROR",
-      message: error.message || "Something went wrong, please try after sometime.",
+      message:
+        error.message || "Something went wrong, please try after sometime.",
     });
   }
 };
@@ -251,15 +251,15 @@ export const verifyEmailConfirmation = async (req, res) => {
   try {
     const userId = req.params.id;
     const token = req.params.token;
-    const type = "update"
-    checkToken(userId, token , type)
-    .then((response) => {
-      res.status(response.status || 200).send(response);
-    })
-    .catch((error) => {
+    const type = "update";
+    checkToken(userId, token, type)
+      .then((response) => {
+        res.status(response.status || 200).send(response);
+      })
+      .catch((error) => {
         res.status(error.status || 500).send(error);
       });
-    } catch (error) {
+  } catch (error) {
     res.status(error.status || 500).send({
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
@@ -268,39 +268,41 @@ export const verifyEmailConfirmation = async (req, res) => {
   }
 };
 
-
-
 ////////////////////////////////////////////////// POST SAVE SECTION //////////////////////////////////////////////////////////////////
 // @desc    Save post
 // @route   PUT /user/:userId/save/post/:postId
 // @access  Registerd users
 export const savePost = (req, res) => {
   try {
-    const {userId, postId} = req.params;
-    savePostHelper(userId, postId).then((response) => {
-      res.status(200).json(response);
-    }).catch((error) => {
-      res.status(500).send(error);
-    })
+    const { userId, postId } = req.params;
+    savePostHelper(userId, postId)
+      .then((response) => {
+        res.status(200).json(response);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
   } catch (error) {
     res.status(500).send(error);
   }
-}
+};
 // @desc    Fetch Saved post
 // @route   GET /savedposts/:userid
 // @access  Registerd users
 export const fetchSavedPosts = (req, res) => {
   try {
-    const {userId} = req.params;
-    fetchSavedPostsHelper(userId).then((response) => {
-      res.status(200).json(response);
-    }).catch((error) => {
-      res.status(500).send(error);
-    })
+    const { userId } = req.params;
+    fetchSavedPostsHelper(userId)
+      .then((response) => {
+        res.status(200).json(response);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
   } catch (error) {
     res.status(500).send(error);
   }
-}
+};
 
 // @desc    Remove saved post
 // @route   PUT /user/:userId/save/post/remove/:postId
@@ -308,18 +310,17 @@ export const fetchSavedPosts = (req, res) => {
 export const removeSavedPost = (req, res) => {
   try {
     const { userId, postId } = req.params;
-    removeSavePostHelper(userId, postId).then((response)=> {
-      res.status(200).json(response);
-    }).catch((error) => {
-      res.status(500).send(error);
-    })
+    removeSavePostHelper(userId, postId)
+      .then((response) => {
+        res.status(200).json(response);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
   } catch (error) {
     res.status(500).send(error);
   }
-}
-
-
-
+};
 
 /////////////// password management //////////////
 export const requestVerification = (req, res) => {

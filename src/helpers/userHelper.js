@@ -632,7 +632,7 @@ export const fetchSavedPostsHelper = async (userId) => {
   } catch (error) {
     return {
       status: error.status || 500,
-      error_code: error.code ||"INTERNAL_SERVER_ERROR",
+      error_code: error.code || "INTERNAL_SERVER_ERROR",
       message: error.message || "Something went wrong, please try again later",
     };
   }
