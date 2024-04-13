@@ -281,6 +281,27 @@ export const userByUsernameHelper = (username) => {
   });
 };
 
+// @desc    Search users by given key
+// @route   GET /user/fetch/user/key
+// @access  Registerd users
+export const userByKeywordHelper = (key) => {
+  return new Promise((resolve, reject) => {
+    try {
+      User.find({
+        $or: [
+          { username: { $regex: key, $options: "i" } },
+          { name: { $regex: key, $options: "i" } }
+        ]
+      }).then((users) => {
+       return resolve(users);
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    To check valid user
 // @access  Private

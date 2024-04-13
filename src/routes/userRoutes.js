@@ -15,6 +15,7 @@ import {
   savePost,
   removeSavedPost,
   fetchSavedPosts,
+  fetchUserByKeyword,
 } from "../controllers/userController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -52,6 +53,10 @@ router.get("/fetch-users", protect, fetch_Users);
 // @desc    Fetch user by username
 // @access  Authenticated users
 router.get("/fetch/username/:username", protect, fetchUserByUsername);
+
+// @desc    Fetch users by keyword
+// @access  Authenticated users
+router.get("/fetch/users/:key" ,protect, fetchUserByKeyword);
 
 // @desc    Save post
 // @access  Registerd users

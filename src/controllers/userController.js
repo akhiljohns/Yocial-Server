@@ -13,6 +13,7 @@ import {
   removeSavePostHelper,
   savePostHelper,
   fetchSavedPostsHelper,
+  userByKeywordHelper,
 } from "../../src/helpers/userHelper.js";
 import { verifyEmailChange } from "../services/nodemailer.js";
 
@@ -113,6 +114,21 @@ export const fetchUserByUsername = (req, res) => {
       .catch((error) => {
         res.status(500).send(error);
       });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+// @desc    Search users by given keyword
+// @route   GET /user/fetch/user/keyword
+// @access  Registered users
+export const fetchUserByKeyword = async (req, res) => {
+  try {
+    const { key } = req.params;
+    const users = await userByKeywordHelper(key);
+    users.length <= 0
+      ? res.status(404).json({ message: "No users found" })
+      : res.status(200).json(users);
   } catch (error) {
     res.status(500).send(error);
   }
