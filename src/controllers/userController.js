@@ -124,7 +124,11 @@ export const fetchUserByUsername = (req, res) => {
 // @access  Registered users
 export const fetchUserByKeyword = async (req, res) => {
   try {
-    const { key } = req.params;
+    const { key } = req.params || "";
+    if(!key) {
+      return res.status(400).json({ message: "Please provide a keyword" });
+    }
+    
     const users = await userByKeywordHelper(key);
     users.length <= 0
       ? res.status(404).json({ message: "No users found" })
