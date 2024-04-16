@@ -51,7 +51,9 @@ export const verifyEmailChange = async ({
   username,
   userId,
   newEmail,
+  type
 }) => {
+
   try {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
     // const thirtyMinutesAgo = new Date(Date.now() - 10 * 1000);
@@ -82,7 +84,7 @@ export const verifyEmailChange = async ({
       );
     }
 let update = true;
-    const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}`;
+    const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}/${type}`;
     const response = await sentEmail(newEmail, username, message , update);
 
     return { status: 200, message: "A Verification Email has been sent, Check your mail inbox for further details", data: response };

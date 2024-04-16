@@ -24,7 +24,7 @@ router.get("/verify/:id/:token", verifyEmail);
 router.post("/update/email", sendEmailConfirmation);
 
 // @desc    Verify email for changing email
-router.post("/change-email/:id/:token", verifyEmailConfirmation);
+router.post("/change-email/:id/:token/:type", verifyEmailConfirmation);
 
 // @desc    Renew user access token
 // @access  Private

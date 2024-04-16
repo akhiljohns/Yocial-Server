@@ -290,17 +290,16 @@ export const userByKeywordHelper = (key) => {
       User.find({
         $or: [
           { username: { $regex: key, $options: "i" } },
-          { name: { $regex: key, $options: "i" } }
-        ]
+          { name: { $regex: key, $options: "i" } },
+        ],
       }).then((users) => {
-       return resolve(users);
+        return resolve(users);
       });
     } catch (error) {
       reject(error);
     }
   });
-}
-
+};
 
 ////////////////////////////////////////////////// CONNECTION SECTION //////////////////////////////////////////////////////////////////
 // @desc    To check valid user
@@ -520,9 +519,10 @@ export const checkToken = async (userId, token, type) => {
       const existingToken = await Verify.findOne({
         token2: token,
       });
+
       const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30);
 
-      if (existingToken && existingToken?.token2CreatedAt <= thirtyMinutesAgo) {
+      if (existingToken && existingToken?.token2CreatedAt >= thirtyMinutesAgo) {
         existingToken.token2used = true;
         await existingToken.save();
 

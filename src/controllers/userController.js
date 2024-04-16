@@ -223,7 +223,7 @@ export const verifyEmail = async (req, res) => {
   try {
     const userId = req.params.id;
     const token = req.params.token;
-    const type = "register";
+    const type = "register";  
     checkToken(userId, token, type)
       .then((response) => {
         res.status(response.status).send(response);
@@ -271,7 +271,8 @@ export const verifyEmailConfirmation = async (req, res) => {
   try {
     const userId = req.params.id;
     const token = req.params.token;
-    const type = "update";
+    const type = req.params.type;
+
     checkToken(userId, token, type)
       .then((response) => {
         res.status(response.status || 200).send(response);
