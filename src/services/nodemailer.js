@@ -21,7 +21,7 @@ export const verificationEmail = async (email, username, userId) => {
         token = existingToken.token;
         const newToken = await Verify.findOneAndUpdate(
           { email: email },
-          { token: token ,userId: userId },
+          { token: token, userId: userId }
         );
       }
     } else {
@@ -46,50 +46,95 @@ export const verificationEmail = async (email, username, userId) => {
 };
 
 ///////////// CHANGE EMAIL VERIFICATION ///////////////
+// export const verifyEmailChange = async ({
+//   email,
+//   username,
+//   userId,
+//   newEmail,
+//   type
+// }) => {
+// console.log("-------->",email, username, userId, newEmail, type)
+//   try {
+//     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+//     // const thirtyMinutesAgo = new Date(Date.now() - 10 * 1000);
+
+//     let existingToken = await Verify.findOne({
+//       userId: userId,
+//     });
+
+//     let token;
+
+//     if (existingToken && existingToken?.token2 !== null) {
+//       if (existingToken?.token2CreatedAt <= thirtyMinutesAgo) {
+//         token = existingToken?.token2;
+//       } else {
+//         existingToken.token2 = crypto.randomBytes(32).toString("hex");
+//         token = existingToken?.token2;
+//         const newToken = await Verify.findOneAndUpdate(
+//           { userId },
+//           { token2: token, userId: userId, newEmail: newEmail }
+//           );
+//         }
+//       } else {
+//       const createdAt = new Date(Date.now());
+//       token = crypto.randomBytes(32).toString("hex");
+//       const newToken = await Verify.findOneAndUpdate(
+//         { email },
+//         { token2: token, userId: userId, newEmail: newEmail , token2CreatedAt: createdAt , token2used: false }
+//       );
+//     }
+// let update = true;
+//     const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}/${type}`;
+//     const response = await sentEmail(newEmail, username, message , update);
+
+//     return { status: 200, message: "A Verification Email has been sent, Check your mail inbox for further details", data: response };
+//   } catch (error) {
+//     console.error("Error in verificationEmail:", error);
+//     return { status: 500, message: "Internal Server Error", error: error };
+//   }
+// };
+
 export const verifyEmailChange = async ({
   email,
   username,
   userId,
   newEmail,
-  type
+  type,
 }) => {
-
   try {
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-    // const thirtyMinutesAgo = new Date(Date.now() - 10 * 1000);
-
-    let existingToken = await Verify.findOne({
-      userId: userId,
-    });
-
     let token;
-
-    if (existingToken && existingToken?.token2 !== null) {
-      if (existingToken?.token2CreatedAt <= thirtyMinutesAgo) {
-        token = existingToken?.token2;
-      } else {
-        existingToken.token2 = crypto.randomBytes(32).toString("hex");
-        token = existingToken?.token2;
-        const newToken = await Verify.findOneAndUpdate(
-          { userId },
-          { token2: token, userId: userId, newEmail: newEmail }
-          );
-        }
-      } else {
-      const createdAt = new Date(Date.now());
+    // Update new email in the Verify database
+    let existingToken = await Verify.findOne({ userId: userId });
+    if (existingToken) {
+      existingToken.newEmail = newEmail;
+      token = existingToken.token2;
+      await existingToken.save();
+    } else {
+      // Create a new verification token entry
       token = crypto.randomBytes(32).toString("hex");
-      const newToken = await Verify.findOneAndUpdate(
-        { email },
-        { token2: token, userId: userId, newEmail: newEmail , token2CreatedAt: createdAt , token2used: false }  
-      );
+      const createdAt = new Date();
+      const newToken = new Verify({
+        userId: userId,
+        newEmail: newEmail,
+        token2: token,
+        token2CreatedAt: createdAt,
+        token2used: false,
+      });
+      await newToken.save();
     }
-let update = true;
-    const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}/${type}`;
-    const response = await sentEmail(newEmail, username, message , update);
 
-    return { status: 200, message: "A Verification Email has been sent, Check your mail inbox for further details", data: response };
+    // Send confirmation email
+    let update = true;
+    const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}/${type}`;
+    const response = await sentEmail(newEmail, username, message, update);
+
+    return {
+      status: 200,
+      message: "Email has been updated successfully",
+      data: response,
+    };
   } catch (error) {
-    console.error("Error in verificationEmail:", error);
+    console.error("Error in updateEmailWithoutVerification:", error);
     return { status: 500, message: "Internal Server Error", error: error };
   }
 };

@@ -521,8 +521,7 @@ export const checkToken = async (userId, token, type) => {
       });
 
       const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30);
-
-      if (existingToken && existingToken?.token2CreatedAt >= thirtyMinutesAgo) {
+      if (existingToken) {
         existingToken.token2used = true;
         await existingToken.save();
 
