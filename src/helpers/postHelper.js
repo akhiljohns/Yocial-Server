@@ -58,7 +58,7 @@ export const createPostHelper = ({ image, caption, userId }) => {
 // @desc    Update post
 // @route   POST /post/update-post
 // @access  Logined Users
-export const updatePostHelper = ({ caption, postId }) => {
+export const updatePostHelper = ({ caption, postId, userId }) => {
   return new Promise(async (resolve, reject) => {
     const postExist = await Post.findById({ _id: postId });
 
@@ -68,6 +68,18 @@ export const updatePostHelper = ({ caption, postId }) => {
         message: "Post Not Found",
       });
     }
+
+    const id1 = postExist?.userId.toString();
+    const id2 = userId?.toString();
+
+    if (id1 != id2) {
+      return reject({
+        status: 403,
+        message: "You are not authorized to edit this post",
+        error_code: "UNAUTHORIZED_USER",
+      });
+    }
+
     Post.findOneAndUpdate({ _id: postId }, { caption: caption }, { new: true })
       .then((res) => {
         resolve({
@@ -346,21 +358,22 @@ export const addCommentHelper = (userId, postId, content) => {
 // @desc    Delete comment
 //@route    DELETE /post/delete-comment
 // @access  Registerd users
-export const deleteCommentHelper = (commentId,userId,user) => {
+export const deleteCommentHelper = (commentId, userId, user) => {
   return new Promise((resolve, reject) => {
     try {
-
-      const id1=userId.toString();
-      const id2=user._id.toString();
-
+      const id1 = userId.toString();
+      const id2 = user._id.toString();
 
       if (id1 != id2) {
-      reject({message: "You are not authorized to delete this comment.",status:405})
-      return
+        reject({
+          message: "You are not authorized to delete this comment.",
+          status: 405,
+        });
+        return;
       }
       Comment.findOneAndUpdate({ _id: commentId }, { deleted: true })
         .then((response) => {
-          resolve({message:"Comment Deleted",response});
+          resolve({ message: "Comment Deleted", response });
         })
         .catch((err) => reject(err));
     } catch (error) {

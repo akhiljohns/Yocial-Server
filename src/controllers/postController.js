@@ -35,11 +35,13 @@ export const createPost = (req, res, next) => {
     });
   }
 };
-export const updatePost = (req, res, next) => {
+export const updatePost = async (req, res, next) => {
   try {
+    const user = await verifyUser(req.headers.authorization);
     const data = {
       caption: req.body.caption,
       postId: req.params.postId,
+      userId: user._id,
     };
     updatePostHelper(data)
       .then((response) => {
