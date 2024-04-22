@@ -392,14 +392,13 @@ export const unfollowHelper = (userId, followeeId) => {
 export const getConnectonHelper = async (userId) => {
   try {
     const response = await Connection.findOne({ userId: userId });
-
     let connection = {};
     if (!response) {
-      connection = { followersCount: 0, followingCount: 0 };
+      connection = { followers: 0, following: 0 };
     } else {
       connection = {
-        followersCount: response.followers,
-        followingCount: response.following,
+        followers: response.followers,
+        following: response.following,
       };
     }
 
