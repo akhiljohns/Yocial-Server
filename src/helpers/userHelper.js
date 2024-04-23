@@ -201,6 +201,45 @@ export const updateProfielHelper = async ({ userId, name, username, bio }) => {
     };
   }
 };
+// @desc    Update user
+// @route   POST /users/update-profile
+// @access  Public
+export const updateAvatarHelper = async ({ userId, profilePic }) => {
+  try {
+    return new Promise(async (resolve, reject) => {
+      await User.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            profilePic,
+          },
+        },
+        { runValidators: true, setDefaultsOnInsert: true }
+      )
+        .then((response) => {
+          resolve({
+            status: 200,
+            message: "Profile Avatar Has been Updated",
+          });
+        })
+        .catch((error) => {
+          reject({
+            error_code: error.error_code || "DB_SAVE_ERROR",
+            message:
+              error.message || "Something Went Wrong, Try After Sometime",
+            status: error.status || 500,
+            error,
+          });
+        });
+    });
+  } catch (error) {
+    return {
+      error_code: "INTERNAL_SERVER_ERROR",
+      message: "Something went wrong, try again later",
+      status: 500,
+    };
+  }
+};
 
 // @desc    Update user
 // @route   POST /users/update-profile

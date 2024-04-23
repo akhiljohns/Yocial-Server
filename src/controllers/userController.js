@@ -14,6 +14,7 @@ import {
   savePostHelper,
   fetchSavedPostsHelper,
   userByKeywordHelper,
+  updateAvatarHelper,
 } from "../../src/helpers/userHelper.js";
 import { verifyEmailChange } from "../services/nodemailer.js";
 
@@ -70,6 +71,24 @@ export const updateProfile = (req, res) => {
   try {
     const userData = req.body;
     updateProfielHelper(userData)
+      .then((response) => {
+        res.status(response.status).json(response);
+      })
+      .catch((err) => {
+        res.status(err.status).send(err);
+      });
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+};
+
+// @desc    Update user avatar
+// @route   POST /users/update/avtar
+// @access  Public
+export const updateAvatar = (req, res) => {
+  try {
+    const userData = req.body;
+    updateAvatarHelper(userData)
       .then((response) => {
         res.status(response.status).json(response);
       })

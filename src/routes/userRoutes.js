@@ -16,6 +16,7 @@ import {
   removeSavedPost,
   fetchSavedPosts,
   fetchUserByKeyword,
+  updateAvatar,
 } from "../controllers/userController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -29,6 +30,10 @@ router.post("/register", register);
 // @desc    update user profiel
 // @access  Registerd users
 router.post("/update/profile", protect, updateProfile);
+
+// @desc    update user avatar
+// @access  Registerd users
+router.post("/update/avatar", protect, updateAvatar);
 
 // @desc    update user profiel
 // @access  Registerd users
