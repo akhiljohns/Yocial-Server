@@ -12,6 +12,7 @@ import userRouter from './src/routes/userRoutes.js'
 import postRouter from './src/routes/postRoutes.js'
 import adminRouter from './src/routes/adminRouter.js'
 import authRouter from './src/routes/authRouter.js'
+import messageRouter from "./src/routes/messageRouter.js";
 
 
 dotenv.config()
@@ -47,6 +48,7 @@ app.use("/api/user",userRouter)
 app.use("/api/admin",adminRouter)
 app.use("/api/post",postRouter)
 app.use("/api/auth", authRouter);
+app.use("/api/messages", messageRouter);
 
 
 

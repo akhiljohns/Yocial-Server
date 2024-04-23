@@ -41,7 +41,7 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       default:
-        "https://res.cloudinary.com/di9yf5j0d/image/upload/v1695795823/om0qyogv6dejgjseakej.png",
+        "https://www.pngitem.com/pimgs/m/404-4042710_circle-profile-picture-png-transparent-png.png",
     },
 
     phone: {
