@@ -317,45 +317,36 @@ const isValidUserId = async (userId) => {
 // @route   POST /user/:userId/follow/:followeeUserId
 // @access  Registerd users
 export const followHelper = (userId, followeeId) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       //Checking userIDs
       if (!isValidUserId(userId) && !isValidUserId(followeeId)) {
         reject(new Error("Invalid user ID"));
         return;
       }
-      Connection.findOneAndUpdate(
+      
+      // Create the Connection collection if it doesn't exist
+      await Connection.init();
+
+      const userConnection = await Connection.findOneAndUpdate(
         { userId: userId },
         { $addToSet: { following: followeeId } },
         { upsert: true, new: true }
-      )
-        .exec()
-        .then((userConnection) => {
-          Connection.findOneAndUpdate(
-            { userId: followeeId },
-            { $addToSet: { followers: userId } },
-            { upsert: true, new: true }
-          )
-            .exec()
-            .then((followeeConnection) => {
-              resolve({ userConnection, followeeConnection });
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        })
-        .catch((error) => {
-          reject(error);
-        });
+      ).exec();
+
+      const followeeConnection = await Connection.findOneAndUpdate(
+        { userId: followeeId },
+        { $addToSet: { followers: userId } },
+        { upsert: true, new: true }
+      ).exec();
+
+      resolve({ userConnection, followeeConnection });
     } catch (error) {
       reject(error);
     }
   });
 };
 
-// @desc    Unfollow user
-// @route   POST /user/:userId/unfollow/:followeeUserId
-// @access  Registerd users
 export const unfollowHelper = (userId, followeeId) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -365,14 +356,15 @@ export const unfollowHelper = (userId, followeeId) => {
         return;
       }
 
-      // Update the user's following list
+      // Create the Connection collection if it doesn't exist
+      await Connection.init();
+
       const userConnection = await Connection.findOneAndUpdate(
         { userId: userId },
         { $pull: { following: followeeId } },
         { new: true }
       ).exec();
 
-      // Update the followee's followers list
       const followeeConnection = await Connection.findOneAndUpdate(
         { userId: followeeId },
         { $pull: { followers: userId } },
@@ -385,6 +377,7 @@ export const unfollowHelper = (userId, followeeId) => {
     }
   });
 };
+
 
 // @desc    Get connections
 // @route   GET /user/fetch/connection/:userId

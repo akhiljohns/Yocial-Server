@@ -142,12 +142,12 @@ export const fetchUserDetails = async (req, res, next) => {
 
     const userDetails = {
       posts: postRepon.posts,
-      followers: connRespon.connection.followersCount,
-      followings: connRespon.connection.followingCount,
+      followers: connRespon.connection.followers,
+      followings: connRespon.connection.following,
       status: connRespon.status,
     };
 
-    res.status(connRespon.status).send(userDetails);
+    res.status(connRespon.status || 200).send(userDetails);
   } catch (error) {
     res.status(error.status || 500).send(error);
   }

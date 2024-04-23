@@ -125,10 +125,10 @@ export const fetchUserByUsername = (req, res) => {
 export const fetchUserByKeyword = async (req, res) => {
   try {
     const { key } = req.params || "";
-    if(!key) {
+    if (!key) {
       return res.status(400).json({ message: "Please provide a keyword" });
     }
-    
+
     const users = await userByKeywordHelper(key);
     users.length <= 0
       ? res.status(404).json({ message: "No users found" })
@@ -223,7 +223,7 @@ export const verifyEmail = async (req, res) => {
   try {
     const userId = req.params.id;
     const token = req.params.token;
-    const type = "register";  
+    const type = "register";
     checkToken(userId, token, type)
       .then((response) => {
         res.status(response.status).send(response);

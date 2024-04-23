@@ -26,10 +26,6 @@ router.post("/register", register);
 // EMAIL VERIFICATION
 // router.post('/sendverifyemail',sendVerificationEmail);
 
-// @desc    Follow user
-// @access  Registerd users
-router.post("/:userId/follow/:followeeUserId", protect, followUser);
-
 // @desc    update user profiel
 // @access  Registerd users
 router.post("/update/profile", protect, updateProfile);
@@ -37,6 +33,10 @@ router.post("/update/profile", protect, updateProfile);
 // @desc    update user profiel
 // @access  Registerd users
 // router.post("/update/email", protect, updateEmail);
+
+// @desc    Follow user
+// @access  Registerd users
+router.post("/:userId/follow/:followeeUserId", protect, followUser);
 
 // @desc    Unfollow user
 // @access  Registerd users
@@ -56,7 +56,7 @@ router.get("/fetch/username/:username", protect, fetchUserByUsername);
 
 // @desc    Fetch users by keyword
 // @access  Authenticated users
-router.get("/fetch/users/:key" ,protect, fetchUserByKeyword);
+router.get("/fetch/users/:key", protect, fetchUserByKeyword);
 
 // @desc    Save post
 // @access  Registerd users
