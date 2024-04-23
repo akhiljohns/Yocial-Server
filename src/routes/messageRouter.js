@@ -23,7 +23,7 @@ router.get("/inbox/:roomId", protect, getChats);
 
 // @desc    Create or get chatRoom of two
 // @access  Users - private
-router.put("/inbox/room/:firstId/:secondId", protect, setChatRoom);
+router.put("/inbox/room/:firstId/:secondId", setChatRoom);
                         //@user  //@other
 
 
