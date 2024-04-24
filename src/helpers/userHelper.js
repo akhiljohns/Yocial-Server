@@ -165,7 +165,7 @@ export const updateProfielHelper = async ({ userId, name, username, bio }) => {
         });
         return;
       } else {
-        await User.updateOne(
+        await User.findOneAndUpdate(
           { _id: userId },
           {
             $set: {
@@ -174,10 +174,11 @@ export const updateProfielHelper = async ({ userId, name, username, bio }) => {
               bio,
             },
           },
-          { runValidators: true, setDefaultsOnInsert: true }
-        )
+          { new: true, runValidators: true, setDefaultsOnInsert: true }
+        ).select("-password")
           .then((response) => {
             resolve({
+              user: response,
               status: 200,
               message: "Profile has been Updated",
             });
@@ -207,17 +208,18 @@ export const updateProfielHelper = async ({ userId, name, username, bio }) => {
 export const updateAvatarHelper = async ({ userId, profilePic }) => {
   try {
     return new Promise(async (resolve, reject) => {
-      await User.updateOne(
+      await User.findOneAndUpdate(
         { _id: userId },
         {
           $set: {
             profilePic,
           },
         },
-        { runValidators: true, setDefaultsOnInsert: true }
-      )
+        { new:true}
+      ).select("-password")
         .then((response) => {
           resolve({
+            user: response,
             status: 200,
             message: "Profile Avatar Has been Updated",
           });
