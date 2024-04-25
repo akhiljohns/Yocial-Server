@@ -129,7 +129,8 @@ export const fetchUserByUsername = (req, res) => {
 
     userByUsernameHelper(username)
       .then((user) => {
-        responseHandler(res, user);
+        console.log('user :>> ', user);
+        responseHandler(res, {status:200, user});
       })
       .catch((error) => {
         responseHandler(res, error);
