@@ -270,10 +270,10 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
 // @desc    Fetch posts
 // @route   POST /users/fetch-posts
 // @access  Public
-export const getAllPosts = (perPage, page) => {
+export const getAllPosts = (perPage, page ,user) => {
   return new Promise((resolve, reject) => {
     try {
-      Post.find({ blocked: false })
+      Post.find({ blocked: false, userId: { $ne: user?._id } })
         .skip((page - 1) * perPage)
         .limit(perPage)
         .sort({ createdAt: -1 })

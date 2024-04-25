@@ -76,7 +76,7 @@ export const fetchAllPosts = (req, res) => {
   try {
     const perPage = 5,
       page = req.query.page || 1;
-    getAllPosts(perPage, page)
+    getAllPosts(perPage, page ,req.user)
       .then((response) => {
         responseHandler(res, response);
       })
