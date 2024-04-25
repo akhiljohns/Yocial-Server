@@ -4,8 +4,9 @@ import {
   register,
   getUsers,
   toggelBlockStatus,
-  getAllUsers
+  getAllUsers,
 } from "../helpers/adminHelper.js";
+import responseHandler from "../utils/responseHandler.js";
 
 ////////////////////////////////////////////////// ADMIN LOGIN //////////////////////////////////////////////////////////////////
 // @desc    Login admin
@@ -16,16 +17,13 @@ export const adminPostLogin = (req, res, next) => {
     const data = req.body;
     adminLogin(data)
       .then((response) => {
-        res.status(response.status).json({ ...response });
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(error.status).json({
-          status: 500,
-          error_code: "INTERNAL_SERVER_ERROR",
-          message: error.message,
-        });
+        responseHandler(res, error);
       });
   } catch (error) {
+    responseHandler(res, error);
   }
 };
 
@@ -41,13 +39,13 @@ export const fetchUsers = (req, res) => {
 
     getUsers(page, perPage, search)
       .then((response) => {
-        res.status(response.status).json(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status).json(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error.status).json(err);
+    responseHandler(res, error);
   }
 };
 // @desc    Get all users
@@ -61,61 +59,47 @@ export const fetchAllUsers = (req, res) => {
 
     getAllUsers()
       .then((response) => {
-        res.status(response.status).json(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status).json(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error.status).json(err);
+    responseHandler(res, error);
   }
 };
-
 
 // @desc    Change user's block status
 // @route   PATCH /admin/:userId/change-status
 // @access  Admin - private
 export const changeStatus = (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const status = req.body.status;
-        toggelBlockStatus(userId, status).then((response) =>{
-            res.status(response.status).send(response);
-        }).catch((error) => {
-            res.status(error.status).send(error.message);
-        })
-    } catch (error) {
-        res.status(error.status).send(error.message);
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  try {
+    const userId = req.params.userId;
+    const status = req.body.status;
+    toggelBlockStatus(userId, status)
+      .then((response) => {
+        responseHandler(res, response);
+      })
+      .catch((error) => {
+        responseHandler(res, error);
+      });
+  } catch (error) {
+    responseHandler(res, error);
+  }
+};
 
 //////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
 export const adminPostRegister = (req, res) => {
-    try {
-      const userData = req.body;
-      register(userData)
-        .then((response) => {
-          res.status(200).json({...response})
-        })
-        .catch((err) => {
-          res.status(500).send(err);
-        });
-    } catch (error) {
-      res.status(500).send(error);
-    }
-  };
+  try {
+    const userData = req.body;
+    register(userData)
+      .then((response) => {
+        responseHandler(res, response);
+      })
+      .catch((err) => {
+        responseHandler(res, err);
+      });
+  } catch (error) {
+    responseHandler(res, error);
+  }
+};

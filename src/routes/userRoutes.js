@@ -41,7 +41,7 @@ router.post("/update/avatar", protect, updateAvatar);
 
 // @desc    Follow user
 // @access  Registerd users
-router.post("/:userId/follow/:followeeUserId", protect, followUser);
+router.post("/:userId/follow/:followeeUserId", followUser);
 
 // @desc    Unfollow user
 // @access  Registerd users

@@ -49,7 +49,7 @@ export const adminLogin = async (data) => {
       }
     });
   } catch (error) {
-    return { status: error.status, message: error.message };
+    reject({ status: error.status, message: error.message });
   }
 };
 
