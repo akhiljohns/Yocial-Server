@@ -12,8 +12,8 @@ import {
   updatePostHelper,
 } from "../helpers/postHelper.js";
 import { getConnectonHelper } from "../helpers/userHelper.js";
-
 import { verifyUser } from "../middlewares/authMiddleware.js";
+import responseHandler from "../utils/responseHandler.js";
 
 // @desc    Create new post
 // @route   POST /post/create-post
@@ -22,13 +22,13 @@ export const createPost = (req, res, next) => {
   try {
     createPostHelper(req.body)
       .then((response) => {
-        res.status(response.status || 200).send(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status || 500).send(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error.status || 500).send({
+    responseHandler(res, {
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",
@@ -45,12 +45,14 @@ export const updatePost = async (req, res, next) => {
     };
     updatePostHelper(data)
       .then((response) => {
-        res.status(response.status).send(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status).send(err);
+        responseHandler(res, err);
       });
-  } catch (error) {}
+  } catch (error) {
+    responseHandler(res, error);
+  }
 };
 
 // @desc    Fetch single posts
@@ -60,10 +62,10 @@ export const fetchSinglePost = (req, res, next) => {
   const postId = req.params.postId;
   fetchSinglePostHelper(postId)
     .then((response) => {
-      res.status(response.status).send(response);
+      responseHandler(res, response);
     })
     .catch((err) => {
-      res.status(err.status).send(err);
+      responseHandler(res, err);
     });
 };
 
@@ -76,10 +78,10 @@ export const fetchAllPosts = (req, res) => {
       page = req.query.page || 1;
     getAllPosts(perPage, page)
       .then((response) => {
-        res.status(response.status).json(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(500).json({
+        responseHandler(res, {
           status: 500,
           error_code: "INTERNAL_SERVER_ERROR",
           message: "Somethings wrong, Please try after sometime.",
@@ -87,7 +89,7 @@ export const fetchAllPosts = (req, res) => {
         });
       });
   } catch (error) {
-    res.status(500).json({
+    responseHandler(res, {
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong, Please try after sometime.",
@@ -104,13 +106,13 @@ export const ctrlFetchUserPosts = (req, res, next) => {
     const userId = req.query.userId;
     fetchUserPosts(userId)
       .then((posts) => {
-        res.status(200).send({ status: 200, posts: posts });
+        responseHandler(res, posts);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -121,13 +123,13 @@ export const getPostsCountController = (req, res) => {
   try {
     getPostsCount()
       .then((count) => {
-        res.status(200).send(count);
+        responseHandler(res, count);
       })
       .catch((error) => {
-        res.status(500).json(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).json(error);
+    responseHandler(res, error);
   }
 };
 
@@ -146,10 +148,9 @@ export const fetchUserDetails = async (req, res, next) => {
       followings: connRespon.connection.following,
       status: connRespon.status,
     };
-
     res.status(connRespon.status || 200).send(userDetails);
   } catch (error) {
-    res.status(error.status || 500).send(error);
+    responseHandler(res, error);
   }
 };
 // @desc    Delete post
@@ -160,10 +161,10 @@ export const deletePost = async (req, res) => {
   const postId = req.params.postId;
   deletePostHelper(user, postId)
     .then((response) => {
-      res.status(response.status || 200).send(response);
+      responseHandler(res, response);
     })
     .catch((err) => {
-      res.status(err.status).send(err);
+      responseHandler(res, err);
     });
 };
 
@@ -179,13 +180,13 @@ export const likeUnlikePost = (req, res) => {
 
     likeUnlikeHelper(data)
       .then((response) => {
-        res.status(response.status).send(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status).send(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error).send({
+    responseHandler(res, {
       status: error.status || 500,
       error_code: error.code || "INTERNAL_SERVER_ERROR",
       message: error.message || "Somethings wrong please try after sometime.",
@@ -203,13 +204,13 @@ export const addComment = (req, res) => {
     const { userId, postId, content } = req.body;
     addCommentHelper(userId, postId, content)
       .then((response) => {
-        res.status(200).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -223,13 +224,13 @@ export const deleteComment = async (req, res) => {
 
     deleteCommentHelper(commentId, userId, user)
       .then((response) => {
-        res.status(200).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(error.status || 500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -249,9 +250,9 @@ export const fetchComment = (req, res) => {
         }
       })
       .catch((error) => {
-        res.status(500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };

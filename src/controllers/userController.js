@@ -17,6 +17,7 @@ import {
   updateAvatarHelper,
 } from "../../src/helpers/userHelper.js";
 import { verifyEmailChange } from "../services/nodemailer.js";
+import responseHandler from "../utils/responseHandler.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
@@ -30,13 +31,13 @@ export const login = (req, res) => {
     };
     userLogin(userData)
       .then((response) => {
-        res.status(response.status).json(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status).send(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(err.status).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -54,13 +55,13 @@ export const register = (req, res) => {
         //   });
         // }
 
-        res.status(response.status).json(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status).send(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error.status).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -72,13 +73,13 @@ export const updateProfile = (req, res) => {
     const userData = req.body;
     updateProfielHelper(userData)
       .then((response) => {
-        res.status(response.status).json(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status).send(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error.status).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -90,13 +91,13 @@ export const updateAvatar = (req, res) => {
     const userData = req.body;
     updateAvatarHelper(userData)
       .then((response) => {
-        res.status(response.status).json(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status).send(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error.status).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -109,13 +110,13 @@ export const fetch_Users = (req, res) => {
     const { userId } = req.query || "";
     fetchUserById(userId)
       .then((response) => {
-        res.status(response.status || 200).json(response);
+        responseHandler(res, response);
       })
       .catch((err) => {
-        res.status(err.status || 500).json(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error.status || 500).json(err);
+    responseHandler(res, error);
   }
 };
 
@@ -128,13 +129,13 @@ export const fetchUserByUsername = (req, res) => {
 
     userByUsernameHelper(username)
       .then((user) => {
-        res.status(200).send(user);
+        responseHandler(res, user);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -153,7 +154,7 @@ export const fetchUserByKeyword = async (req, res) => {
       ? res.status(404).json({ message: "No users found" })
       : res.status(200).json(users);
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -166,13 +167,13 @@ export const followUser = (req, res) => {
     const { userId, followeeUserId } = req.params;
     followHelper(userId, followeeUserId)
       .then((response) => {
-        res.status(200).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(error.status || 500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -184,13 +185,13 @@ export const unfollowUser = (req, res) => {
     const { userId, followeeUserId } = req.params;
     unfollowHelper(userId, followeeUserId)
       .then((response) => {
-        res.status(200).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(error?.status || 500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(error.status || 500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -202,13 +203,13 @@ export const getConnection = (req, res) => {
     const { userId } = req.params;
     getConnectonHelper(userId)
       .then((connection) => {
-        res.status(200).send(connection);
+        responseHandler(res, connection);
       })
       .catch((err) => {
-        res.status(err?.status || 500).send(err);
+        responseHandler(res, err);
       });
   } catch (error) {
-    res.status(error?.status || 500).send(err);
+    responseHandler(res, error);
   }
 };
 
@@ -221,13 +222,13 @@ export const sendVerificationEmail = (req, res) => {
     const credential = req.body.credential;
     sendEmail(credential)
       .then((response) => {
-        res.status(response.status).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(error.status).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(error.status).send({
+    responseHandler(res, {
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",
@@ -245,13 +246,13 @@ export const verifyEmail = async (req, res) => {
     const type = "register";
     checkToken(userId, token, type)
       .then((response) => {
-        res.status(response.status).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(error.status).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(error.status).send({
+    responseHandler(res, {
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",
@@ -268,18 +269,13 @@ export const sendEmailConfirmation = (req, res) => {
     const userDetails = req.body;
     verifyEmailChange(userDetails)
       .then((response) => {
-        res.status(response.status || 200).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(error.status || 500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(error.status || 500).send({
-      status: error.status || 500,
-      error_code: error.code || "INTERNAL_SERVER_ERROR",
-      message:
-        error.message || "Something went wrong, please try after sometime.",
-    });
+    responseHandler(res, error);
   }
 };
 
@@ -294,13 +290,13 @@ export const verifyEmailConfirmation = async (req, res) => {
 
     checkToken(userId, token, type)
       .then((response) => {
-        res.status(response.status || 200).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(error.status || 500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(error.status || 500).send({
+    responseHandler(res, {
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",
@@ -317,13 +313,13 @@ export const savePost = (req, res) => {
     const { userId, postId } = req.params;
     savePostHelper(userId, postId)
       .then((response) => {
-        res.status(200).json(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };
 // @desc    Fetch Saved post
@@ -334,13 +330,13 @@ export const fetchSavedPosts = (req, res) => {
     const { userId } = req.params;
     fetchSavedPostsHelper(userId)
       .then((response) => {
-        res.status(200).json(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -352,13 +348,13 @@ export const removeSavedPost = (req, res) => {
     const { userId, postId } = req.params;
     removeSavePostHelper(userId, postId)
       .then((response) => {
-        res.status(200).json(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(500).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(500).send(error);
+    responseHandler(res, error);
   }
 };
 
@@ -368,12 +364,12 @@ export const requestVerification = (req, res) => {
     const { password, userId } = req.body;
     changePasswordRequestHelper(userId, password)
       .then((response) => {
-        res.status(response.status).send(response);
+        responseHandler(res, response);
       })
       .catch((error) => {
-        res.status(error.status).send(error);
+        responseHandler(res, error);
       });
   } catch (error) {
-    res.status(error.status).send(error);
+    responseHandler(res, error);
   }
 };
