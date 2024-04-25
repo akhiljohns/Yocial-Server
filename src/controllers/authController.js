@@ -1,17 +1,20 @@
 import { changePasswordHelper } from "../helpers/authHelper.js";
+import responseHandler from "../utils/responseHandler.js";
 
 ///// change password
 
 export const changePassword = (req, res) => {
   try {
-    const {token, username} = req.params;
+    const { token, username } = req.params;
 
-    changePasswordHelper(token, username).then((response)=> {
-      res.status(response.status).send("password has been changed successfully, Please go back to home page.");
-    }).catch((error)=> {
-      res.status(error.status).send(error.message)
-    })
+    changePasswordHelper(token, username)
+      .then((response) => {
+        responseHandler(res, response);
+      })
+      .catch((error) => {
+        responseHandler(res, error);
+      });
   } catch (error) {
-    res.status(error.status).send(error.message);
+    responseHandler(res, error);
   }
-}
+};
