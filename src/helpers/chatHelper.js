@@ -1,9 +1,5 @@
 import { ChatRoom } from "../models/chatRoomModel.js";
-import { Messages } from "../models/messageModel.js"
-
-
-
-
+import { Messages } from "../models/messageModel.js";
 
 // @desc    Get chats from a room
 // @route   /messages/inbox/:roomId
@@ -13,7 +9,7 @@ export const getChatHelper = (roomId) => {
     try {
       Messages.find({ roomId: roomId })
         .then((messages) => {
-          resolve(messages)
+          resolve({ status: 200, messages });
         })
         .catch((err) =>
           reject({
@@ -22,48 +18,50 @@ export const getChatHelper = (roomId) => {
             message: "Somethings wrong.",
             err,
           })
-        )
+        );
     } catch (error) {
       reject({
         status: 500,
         error_code: "INTERNAL_SERVER_ERROR",
         message: "Somethings wrong.",
         error,
-      })
+      });
     }
-  })
-}
+  });
+};
 
 // @desc    Create or get chatRoom of two
 // @route   /messages/inbox/room/:firstId/:secondId
 // @access  Users - private
 export const chatRoomHelper = (userIds) => {
-    return new Promise((resolve, reject) => {
-        try {
-            userIds.sort();
-            ChatRoom.findOneAndUpdate(
-              { users: userIds },
-              { users: userIds },
-              { upsert: true, new: true }
-            ).then((room) => {
-                resolve(room)
-            }).catch((err)=> {
-                reject({
-                  status: 500,
-                  error_code: "DB_FETCH_ERROR",
-                  message: "Somethings wrong.",
-                  err,
-                })
-            })
-        } catch (error) {
-            reject({
-              status: 500,
-              error_code: "INTERNAL_SERVER_ERROR",
-              message: "Somethings wrong.",
-              error,
-            })
-        }
-    })
+  return new Promise((resolve, reject) => {
+    try {
+      userIds.sort();
+      ChatRoom.findOneAndUpdate(
+        { users: userIds },
+        { users: userIds },
+        { upsert: true, new: true }
+      )
+        .then((room) => {
+          resolve(room);
+        })
+        .catch((err) => {
+          reject({
+            status: 500,
+            error_code: "DB_FETCH_ERROR",
+            message: "Somethings wrong.",
+            err,
+          });
+        });
+    } catch (error) {
+      reject({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Somethings wrong.",
+        error,
+      });
+    }
+  });
 };
 
 // @desc    Get chatRoom of two
@@ -73,26 +71,28 @@ export const getRoomWithIds = (IDs) => {
   return new Promise((resolve, reject) => {
     try {
       IDs.sort();
-      ChatRoom.findOne({users: IDs}).then((room) => {
-        resolve(room);
-      }).catch((err)=> {
-        reject({
-          status: 500,
-          error_code: "DB_FETCH_ERROR",
-          message: "Error getting chat room.",
-          err,
+      ChatRoom.findOne({ users: IDs })
+        .then((room) => {
+          resolve(room);
+        })
+        .catch((err) => {
+          reject({
+            status: 500,
+            error_code: "DB_FETCH_ERROR",
+            message: "Error getting chat room.",
+            err,
+          });
         });
-      })
     } catch (error) {
       reject({
         status: 500,
         error_code: "INTERNAL_SERVER_ERROR",
         message: "Error getting chat room.",
-        error
-      })
+        error,
+      });
     }
-  })
-}
+  });
+};
 
 // @desc    Send new chat
 // @route   /messages/inbox/new-message/:roomId
@@ -103,26 +103,31 @@ export const newMessageHelper = (roomId, textMessage, senderId) => {
       const newMessage = new Messages({
         senderId: senderId,
         roomId: roomId,
-        textMessage: textMessage
+        textMessage: textMessage,
       });
 
-      newMessage.save().then(async (response)=> {
+      newMessage
+        .save()
+        .then(async (response) => {
+          await ChatRoom.findOneAndUpdate(
+            { _id: roomId },
+            { lastMessageTime: response?.createdAt, lastMessage: textMessage }
+          );
 
-        await ChatRoom.findOneAndUpdate({_id: roomId}, {lastMessageTime: response?.createdAt, lastMessage: textMessage});
-
-        resolve(response)
-      }).catch((err) => {
-        reject({
-          status: 500,
-          error_code: "DB_SAVE_ERROR",
-          message: "Error saving message",
-          err
+          resolve(response);
         })
-      })
+        .catch((err) => {
+          reject({
+            status: 500,
+            error_code: "DB_SAVE_ERROR",
+            message: "Error saving message",
+            err,
+          });
+        });
     } catch (error) {
-      reject(error)
+      reject(error);
     }
-  })
+  });
 };
 
 // @desc    Get rooms with userID
@@ -131,11 +136,14 @@ export const newMessageHelper = (roomId, textMessage, senderId) => {
 export const roomWithUserID = (userId) => {
   return new Promise((resolve, reject) => {
     try {
-      ChatRoom.find({users: userId}).sort({lastMessageTime: -1}).then((rooms) => {
-        resolve(rooms);
-      }).catch((err) => reject(err))
+      ChatRoom.find({ users: userId })
+        .sort({ lastMessageTime: -1 })
+        .then((rooms) => {
+          resolve(rooms);
+        })
+        .catch((err) => reject(err));
     } catch (error) {
       reject(error);
     }
-  })
-}
+  });
+};
