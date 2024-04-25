@@ -282,7 +282,7 @@ export const fetchUserById = (userId) => {
         .select("-password")
         .exec()
         .then((user) => {
-          resolve(user);
+          resolve({status:200 , user});
         })
         .catch((error) => {
           reject(error);
@@ -381,7 +381,7 @@ export const followHelper = (userId, followeeId) => {
         { upsert: true, new: true }
       ).exec();
 
-      resolve({ userConnection, followeeConnection });
+      resolve({ status:200,userConnection, followeeConnection });
     } catch (error) {
       reject(error);
     }
@@ -412,7 +412,7 @@ export const unfollowHelper = (userId, followeeId) => {
         { new: true }
       ).exec();
 
-      resolve({ userConnection, followeeConnection });
+      resolve({ status:200,userConnection, followeeConnection });
     } catch (error) {
       reject(error);
     }
