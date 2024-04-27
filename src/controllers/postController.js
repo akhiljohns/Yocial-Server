@@ -138,7 +138,7 @@ export const getPostsCountController = (req, res) => {
 // @access  Registered users
 export const fetchUserDetails = async (req, res, next) => {
   try {
-    const userId = req.query.userId;
+    const {userId} = req.query;
     const postRepon = await fetchUserPosts(userId);
     const connRespon = await getConnectonHelper(userId);
 
