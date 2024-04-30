@@ -9,7 +9,7 @@ export const getChatHelper = (roomId) => {
     try {
       Messages.find({ roomId: roomId })
         .then((messages) => {
-          resolve({ status: 200, messages });
+          resolve(messages);
         })
         .catch((err) =>
           reject({
@@ -109,11 +109,16 @@ export const newMessageHelper = (roomId, textMessage, senderId) => {
       newMessage
         .save()
         .then(async (response) => {
-          await ChatRoom.findOneAndUpdate(
+          const res = await ChatRoom.findOneAndUpdate(
             { _id: roomId },
-            { lastMessageTime: response?.createdAt, lastMessage: textMessage }
+            {
+              $set: {
+                lastMessageTime: response?.createdAt,
+                lastMessage: textMessage,
+              },
+            },
+            { new: true } // Return the updated document
           );
-
           resolve(response);
         })
         .catch((err) => {

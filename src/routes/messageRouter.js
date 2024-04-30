@@ -25,7 +25,7 @@ router.get("/inbox/room/fetch/:firstId/:secondId", protect, getChatRoomWithIds);
 
 // @desc    Send new chat
 // @access  Users - private
-router.post("/inbox/new-message/:roomId", protect, sendNewMessage);
+router.post("/inbox/new-message/:roomId", sendNewMessage);
 
 // @desc    Get rooms with userID
 // @access  Users - private

@@ -110,7 +110,7 @@ export const fetch_Users = (req, res) => {
     const { userId } = req.query || "";
     fetchUserById(userId)
       .then((response) => {
-        responseHandler(res, response);
+        res.status(200).json(response)
       })
       .catch((err) => {
         responseHandler(res, err);
