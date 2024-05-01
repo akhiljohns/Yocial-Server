@@ -8,12 +8,14 @@ import {
   fetchUserPosts,
   getAllPosts,
   getPostsCount,
+  getReplyComments,
   likeUnlikeHelper,
+  replyToComment,
   updatePostHelper,
 } from "../helpers/postHelper.js";
 import { getConnectonHelper } from "../helpers/userHelper.js";
+
 import { verifyUser } from "../middlewares/authMiddleware.js";
-import responseHandler from "../utils/responseHandler.js";
 
 // @desc    Create new post
 // @route   POST /post/create-post
@@ -22,13 +24,13 @@ export const createPost = (req, res, next) => {
   try {
     createPostHelper(req.body)
       .then((response) => {
-        responseHandler(res, response);
+        res.status(response.status || 200).send(response);
       })
       .catch((err) => {
-        responseHandler(res, err);
+        res.status(err.status || 500).send(err);
       });
   } catch (error) {
-    responseHandler(res, {
+    res.status(error.status || 500).send({
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong please try after sometime.",
@@ -45,14 +47,12 @@ export const updatePost = async (req, res, next) => {
     };
     updatePostHelper(data)
       .then((response) => {
-        responseHandler(res, response);
+        res.status(response.status).send(response);
       })
       .catch((err) => {
-        responseHandler(res, err);
+        res.status(err.status).send(err);
       });
-  } catch (error) {
-    responseHandler(res, error);
-  }
+  } catch (error) {}
 };
 
 // @desc    Fetch single posts
@@ -62,10 +62,10 @@ export const fetchSinglePost = (req, res, next) => {
   const postId = req.params.postId;
   fetchSinglePostHelper(postId)
     .then((response) => {
-      responseHandler(res, response);
+      res.status(response.status).send(response);
     })
     .catch((err) => {
-      responseHandler(res, err);
+      res.status(err.status).send(err);
     });
 };
 
@@ -76,12 +76,12 @@ export const fetchAllPosts = (req, res) => {
   try {
     const perPage = 5,
       page = req.query.page || 1;
-    getAllPosts(perPage, page ,req.user)
+    getAllPosts(perPage, page)
       .then((response) => {
-        responseHandler(res, response);
+        res.status(response.status).json(response);
       })
       .catch((error) => {
-        responseHandler(res, {
+        res.status(500).json({
           status: 500,
           error_code: "INTERNAL_SERVER_ERROR",
           message: "Somethings wrong, Please try after sometime.",
@@ -89,7 +89,7 @@ export const fetchAllPosts = (req, res) => {
         });
       });
   } catch (error) {
-    responseHandler(res, {
+    res.status(500).json({
       status: 500,
       error_code: "INTERNAL_SERVER_ERROR",
       message: "Somethings wrong, Please try after sometime.",
@@ -106,13 +106,13 @@ export const ctrlFetchUserPosts = (req, res, next) => {
     const userId = req.query.userId;
     fetchUserPosts(userId)
       .then((posts) => {
-        responseHandler(res, posts);
+        res.status(200).send({ status: 200, posts: posts });
       })
       .catch((error) => {
-        responseHandler(res, error);
+        res.status(500).send(error);
       });
   } catch (error) {
-    responseHandler(res, error);
+    res.status(500).send(error);
   }
 };
 
@@ -123,13 +123,13 @@ export const getPostsCountController = (req, res) => {
   try {
     getPostsCount()
       .then((count) => {
-        responseHandler(res, count);
+        res.status(200).send(count);
       })
       .catch((error) => {
-        responseHandler(res, error);
+        res.status(500).json(error);
       });
   } catch (error) {
-    responseHandler(res, error);
+    res.status(500).json(error);
   }
 };
 
@@ -138,7 +138,7 @@ export const getPostsCountController = (req, res) => {
 // @access  Registered users
 export const fetchUserDetails = async (req, res, next) => {
   try {
-    const {userId} = req.query;
+    const userId = req.query.userId;
     const postRepon = await fetchUserPosts(userId);
     const connRespon = await getConnectonHelper(userId);
 
@@ -148,9 +148,10 @@ export const fetchUserDetails = async (req, res, next) => {
       followings: connRespon.connection.following,
       status: connRespon.status,
     };
+
     res.status(connRespon.status || 200).send(userDetails);
   } catch (error) {
-    responseHandler(res, error);
+    res.status(error.status || 500).send(error);
   }
 };
 // @desc    Delete post
@@ -161,10 +162,10 @@ export const deletePost = async (req, res) => {
   const postId = req.params.postId;
   deletePostHelper(user, postId)
     .then((response) => {
-      responseHandler(res, response);
+      res.status(response.status || 200).send(response);
     })
     .catch((err) => {
-      responseHandler(res, err);
+      res.status(err.status).send(err);
     });
 };
 
@@ -180,13 +181,13 @@ export const likeUnlikePost = (req, res) => {
 
     likeUnlikeHelper(data)
       .then((response) => {
-        responseHandler(res, response);
+        res.status(response.status).send(response);
       })
       .catch((err) => {
-        responseHandler(res, err);
+        res.status(err.status).send(err);
       });
   } catch (error) {
-    responseHandler(res, {
+    res.status(error).send({
       status: error.status || 500,
       error_code: error.code || "INTERNAL_SERVER_ERROR",
       message: error.message || "Somethings wrong please try after sometime.",
@@ -204,13 +205,13 @@ export const addComment = (req, res) => {
     const { userId, postId, content } = req.body;
     addCommentHelper(userId, postId, content)
       .then((response) => {
-        responseHandler(res, response);
+        res.status(200).send(response);
       })
       .catch((error) => {
-        responseHandler(res, error);
+        res.status(500).send(error);
       });
   } catch (error) {
-    responseHandler(res, error);
+    res.status(500).send(error);
   }
 };
 
@@ -224,13 +225,13 @@ export const deleteComment = async (req, res) => {
 
     deleteCommentHelper(commentId, userId, user)
       .then((response) => {
-        responseHandler(res, response);
+        res.status(200).send(response);
       })
       .catch((error) => {
-        responseHandler(res, error);
+        res.status(error.status || 500).send(error);
       });
   } catch (error) {
-    responseHandler(res, error);
+    res.status(500).send(error);
   }
 };
 
@@ -250,13 +251,12 @@ export const fetchComment = (req, res) => {
         }
       })
       .catch((error) => {
-        responseHandler(res, error);
+        res.status(500).send(error);
       });
   } catch (error) {
-    responseHandler(res, error);
+    res.status(500).send(error);
   }
 };
-
 // @desc    Get reply comments
 //@route    GET /post/comments/replies/:commentId
 // @access  Registerd users
@@ -292,6 +292,42 @@ export const addReply = (req, res) => {
           res.status(200).send(response);
       }).catch((error) => {
           res.status(500).send(error)
+      })
+  } catch (error) {
+      res.status(500).send(error);
+  }
+}
+
+
+
+////////////////////////////////////////////////// REPORT SECTION //////////////////////////////////////////////////////////////////
+
+// @desc    Report user
+// @route   POST /post/report/post/:userId
+// @access  Registerd users
+export const reportPost = (req, res) => {
+try {
+  const {userId, username} = req.params;
+  const {targetId, details} = req.body;
+  reportPostHelper(userId, username, targetId, details).then((response)=> {
+    res.status(200).send(response)
+  }).catch((err)=> {
+    res.status(500).send(err)
+  })
+} catch (error) {
+  res.status(500).send(error);
+}
+}
+
+
+
+export const getEveryPostCtrl = (req, res) => {
+  try {
+      const {page} = req.query || 1
+      getEveryPost(page).then((response) => {
+          res.status(200).send(response);
+      }).catch((error) => {
+          res.status(500).send(error);
       })
   } catch (error) {
       res.status(500).send(error);

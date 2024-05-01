@@ -270,7 +270,7 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
 // @desc    Fetch posts
 // @route   POST /users/fetch-posts
 // @access  Public
-export const getAllPosts = (perPage, page ,user) => {
+export const getAllPosts = (perPage, page, user) => {
   return new Promise((resolve, reject) => {
     try {
       Post.find({ blocked: false, userId: { $ne: user?._id } })
@@ -402,27 +402,27 @@ export const fetchCommentHelper = (postId) => {
   });
 };
 
-
-
 // @desc    Get reply comments
 //@route    GET /post/comments/replies/:commentId
 // @access  Registerd users
 export const getReplyComments = (commentId) => {
   return new Promise((resolve, reject) => {
     try {
-      Comment.find({parentId: commentId, deleted: false})
-      .sort({createdAt: -1})
-      .exec()
-      .then((comments) => {
-        resolve(comments)
-      }).catch((err) => {
-        reject({
-          status: '500',
-          error_code: "DB_FETCH_ERROR",
-          message: "Error fetching comments.",
-          err
+      Comment.find({ parentId: commentId, deleted: false })
+        .sort({ createdAt: -1 })
+        .populate("userId", "-password")
+        .exec()
+        .then((comments) => {
+          resolve(comments);
         })
-      })
+        .catch((err) => {
+          reject({
+            status: "500",
+            error_code: "DB_FETCH_ERROR",
+            message: "Error fetching comments.",
+            err,
+          });
+        });
     } catch (error) {
       reject({
         status: "500",
@@ -431,8 +431,8 @@ export const getReplyComments = (commentId) => {
         error,
       });
     }
-  })
-}
+  });
+};
 
 // @desc    Reply comment
 //@route    POST /post/comments/reply-to/:commentId
@@ -447,23 +447,27 @@ export const replyToComment = (data) => {
         parentId: data.parentId,
       });
 
-      newReply.save().then((response) => {
-        resolve(response);
-      }).catch((err)=> {
-        reject({
-          status:500,
-          error_code:"DB_SAVE_ERROR",
-          message: "Error replying to this comment.",
-          err
+      newReply
+        .save()
+        .then(async (response) => {
+          await response.populate("userId", "-password");
+          resolve(response);
         })
-      })
+        .catch((err) => {
+          reject({
+            status: 500,
+            error_code: "DB_SAVE_ERROR",
+            message: "Error replying to this comment.",
+            err,
+          });
+        });
     } catch (error) {
       reject({
-        status:500,
+        status: 500,
         error_code: "INTERNAL_SERVER_ERROR",
         message: "Can't replay to this comment, server error",
-        error
-      })
+        error,
+      });
     }
-  })
-}
+  });
+};
