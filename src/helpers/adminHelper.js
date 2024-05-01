@@ -5,6 +5,7 @@ const saltRounds = 10; //setting salt rounds
 //importing models
 import Admin from "../models/adminModel.js";
 import User from "../models/userModel.js";
+import { Comment } from "../models/commentModel.js";
 
 ////////////////////////////////////////////////// ADMIN LOGIN //////////////////////////////////////////////////////////////////
 // @desc    Login admin
@@ -126,6 +127,7 @@ export const getAllUsers = () => {
   });
 };
 
+
 //function to update user block status
 export const toggelBlockStatus = (userId, status) => {
   return new Promise((resolve, reject) => {
@@ -216,4 +218,22 @@ export const register = ({ name, email, password }) => {
       "Error in registration(userHelper): " + error;
     }
   });
+};
+
+// @desc    Fetch no of comments
+// @route   GET /admin/fetch-comment-count
+// @access  Admin - private
+export const fetchCommentCountHelper = async (postId) => {
+  try {
+    const commentCount = await Comment.countDocuments({ postId });
+
+    return {
+      status: 200,
+      message: "Succesfully Fetched Comment Count",
+      commentCount,
+    };
+  } catch (error) {
+    console.error("Error fetching comment count for post:", error);
+    throw error;
+  }
 };

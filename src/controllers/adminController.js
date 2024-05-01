@@ -5,6 +5,7 @@ import {
   getUsers,
   toggelBlockStatus,
   getAllUsers,
+  fetchCommentCountHelper,
 } from "../helpers/adminHelper.js";
 import responseHandler from "../utils/responseHandler.js";
 
@@ -94,6 +95,26 @@ export const adminPostRegister = (req, res) => {
     const userData = req.body;
     register(userData)
       .then((response) => {
+        responseHandler(res, response);
+      })
+      .catch((err) => {
+        responseHandler(res, err);
+      });
+  } catch (error) {
+    responseHandler(res, error);
+  }
+};
+
+// @desc    Get all users
+// @route   GET /admin/fetch-users
+// @access  Admin - private
+export const fetchCommentCount = (req, res) => {
+  try {
+    const postId = req.body.postId;
+
+    fetchCommentCountHelper(postId)
+      .then((response) => {
+        console.log(response);
         responseHandler(res, response);
       })
       .catch((err) => {
