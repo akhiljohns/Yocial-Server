@@ -401,3 +401,69 @@ export const fetchCommentHelper = (postId) => {
     }
   });
 };
+
+
+
+// @desc    Get reply comments
+//@route    GET /post/comments/replies/:commentId
+// @access  Registerd users
+export const getReplyComments = (commentId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      Comment.find({parentId: commentId, deleted: false})
+      .sort({createdAt: -1})
+      .exec()
+      .then((comments) => {
+        resolve(comments)
+      }).catch((err) => {
+        reject({
+          status: '500',
+          error_code: "DB_FETCH_ERROR",
+          message: "Error fetching comments.",
+          err
+        })
+      })
+    } catch (error) {
+      reject({
+        status: "500",
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Error fetching comments. Server error",
+        error,
+      });
+    }
+  })
+}
+
+// @desc    Reply comment
+//@route    POST /post/comments/reply-to/:commentId
+// @access  Registerd users
+export const replyToComment = (data) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const newReply = new Comment({
+        content: data.content,
+        postId: data.postId,
+        userId: data.userId,
+        parentId: data.parentId,
+      });
+
+      newReply.save().then((response) => {
+        resolve(response);
+      }).catch((err)=> {
+        reject({
+          status:500,
+          error_code:"DB_SAVE_ERROR",
+          message: "Error replying to this comment.",
+          err
+        })
+      })
+    } catch (error) {
+      reject({
+        status:500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Can't replay to this comment, server error",
+        error
+      })
+    }
+  })
+}

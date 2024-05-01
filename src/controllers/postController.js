@@ -256,3 +256,44 @@ export const fetchComment = (req, res) => {
     responseHandler(res, error);
   }
 };
+
+// @desc    Get reply comments
+//@route    GET /post/comments/replies/:commentId
+// @access  Registerd users
+export const fetchReplyComments = (req, res) => {
+  try {
+      const commentId = req.params.commentId;
+      getReplyComments(commentId).then((comments) => {
+          res.status(200).json(comments);
+      }).catch((error) => {
+          res.status(500).json(error)
+      })
+  } catch (error) {
+      res.status(500).json(error);
+  }
+}
+
+// @desc    Reply comment
+//@route    POST /post/comments/reply-to/:commentId
+// @access  Registerd users
+export const addReply = (req, res) => {
+  try {
+      const commentId = req.params.commentId;
+      const {postId, content, userId} = req.body;
+
+      const data = {
+          userId: userId,
+          parentId: commentId,
+          postId: postId,
+          content: content
+      }
+
+      replyToComment(data).then((response) => {
+          res.status(200).send(response);
+      }).catch((error) => {
+          res.status(500).send(error)
+      })
+  } catch (error) {
+      res.status(500).send(error);
+  }
+}

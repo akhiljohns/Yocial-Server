@@ -14,6 +14,8 @@ import {
   addComment,
   deleteComment,
   fetchComment,
+  fetchReplyComments,
+  addReply,
 } from "../controllers/postController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -67,4 +69,13 @@ router.post("/delete-comment", protect, deleteComment);
 // @desc    Get comment
 // @access  Registerd users
 router.get("/fetch-comments/:postId/:type", protect, fetchComment);
+
+// @desc    Get reply comments
+// @access  Registerd users
+router.get('/comments/replies/:commentId', protect, fetchReplyComments);
+// @desc    Reply comment
+// @access  Registerd users
+router.post('/comments/reply-to/:commentId', protect, addReply);
+
+
 export default router;
