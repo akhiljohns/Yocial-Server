@@ -23,7 +23,7 @@ router.get("/verify/:id/:token", verifyEmail);
 // @access  Registerd users
 router.post("/update/email", sendEmailConfirmation);
 
-// @desc    Verify email for changing email
+// @desc    Verify email for user Register & changing email
 router.post("/change-email/:id/:token/:type", verifyEmailConfirmation);
 
 // @desc    Renew user access token

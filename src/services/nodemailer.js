@@ -35,7 +35,7 @@ export const verificationEmail = async (email, username, userId) => {
       await newToken.save();
     }
 
-    const message = `${process.env.BASE_URL}/auth/verify/${userId}/${token}`;
+    const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}/register`;
     const response = await sentEmail(email, username, message);
 
     return { status: 200, message: "Email sent successfully", data: response };
