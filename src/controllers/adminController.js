@@ -76,7 +76,6 @@ export const changeStatus = (req, res) => {
   try {
     const userId = req.params.userId;
     const status = req.body.status;
-    console.log(userId, status);
     toggelBlockStatus(userId, status)
       .then((response) => {
         res.status(response.status).send(response);
@@ -96,7 +95,6 @@ export const fetchAllPosts = (req, res) => {
   try {
     const perPage = 5,
       page = req.query.page || 1;
-      console.log(' dsfadfdf:>> ', );
     getAllPosts(perPage, page)
       .then((response) => {
         res.status(response.status).json(response);
@@ -118,8 +116,6 @@ export const fetchAllPosts = (req, res) => {
     });
   }
 };
-
-
 
 // @desc    Get all users
 // @route   GET /admin/fetch-users

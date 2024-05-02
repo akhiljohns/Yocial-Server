@@ -27,7 +27,9 @@ router.get("/fetch-posts", fetchAllPosts);
 // @access  Admins
 router.patch('/:userId/change-status', changeStatus);
 
-
+// @desc    fetch singel post comment count
+// @access  Admins
+router.get('/fetch-comment-count/:postId', fetchCommentCount);
 
 
 router.post('/register', adminPostRegister);

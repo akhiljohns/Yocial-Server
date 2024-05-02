@@ -210,7 +210,6 @@ export const register = ({ name, email, password }) => {
   });
 };
 
-
 // @desc    Fetch posts
 // @route   POST /users/fetch-posts
 // @access  Public
@@ -224,7 +223,6 @@ export const getAllPosts = (perPage, page, user) => {
         .populate("userId", "-password")
         .exec()
         .then((posts) => {
-          console.log('posts :>> ', posts);
           if (posts) {
             resolve({
               status: 200,
@@ -254,7 +252,6 @@ export const getAllPosts = (perPage, page, user) => {
   });
 };
 
-
 // @desc    Fetch no of comments
 // @route   GET /admin/fetch-comment-count
 // @access  Admin - private
@@ -271,4 +268,4 @@ export const fetchCommentCountHelper = async (postId) => {
     console.error("Error fetching comment count for post:", error);
     throw error;
   }
-}
+};
