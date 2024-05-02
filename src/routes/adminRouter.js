@@ -6,7 +6,9 @@ import {
   adminPostRegister,
   fetchUsers,
   changeStatus,
-  fetchAllUsers
+  fetchAllUsers,
+  fetchCommentCount,
+  fetchAllPosts
 } from "../controllers/adminController.js";
 
 // @desc    Login admin
@@ -20,8 +22,13 @@ router.get("/fetch-users", fetchAllUsers);
 // @desc    Change block status
 // @access  Admins
 router.patch('/:userId/change-status', changeStatus);
+// @desc    fetch single posts comment count 
+// @access  Admins
+router.get('/fetch-comment-count/:postId', fetchCommentCount);
 
-
+// @desc    Fetch all posts
+// @access  Admins
+router.get("/fetch-posts", fetchAllPosts);
 
 
 router.post('/register', adminPostRegister);

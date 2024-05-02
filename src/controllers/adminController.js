@@ -4,7 +4,9 @@ import {
   register,
   getUsers,
   toggelBlockStatus,
-  getAllUsers
+  getAllUsers,
+  fetchCommentCountHelper,
+  getAllPosts,
 } from "../helpers/adminHelper.js";
 
 ////////////////////////////////////////////////// ADMIN LOGIN //////////////////////////////////////////////////////////////////
@@ -25,8 +27,7 @@ export const adminPostLogin = (req, res, next) => {
           message: error.message,
         });
       });
-  } catch (error) {
-  }
+  } catch (error) {}
 };
 
 ////////////////////////////////////////////////// USER RELATED //////////////////////////////////////////////////////////////////
@@ -71,52 +72,89 @@ export const fetchAllUsers = (req, res) => {
   }
 };
 
-
 // @desc    Change user's block status
 // @route   PATCH /admin/:userId/change-status
 // @access  Admin - private
 export const changeStatus = (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const status = req.body.status;
-        console.log(userId,status);
-        toggelBlockStatus(userId, status).then((response) =>{
-            res.status(response.status).send(response);
-        }).catch((error) => {
-            res.status(error.status).send(error.message);
-        })
-    } catch (error) {
+  try {
+    const userId = req.params.userId;
+    const status = req.body.status;
+    console.log(userId, status);
+    toggelBlockStatus(userId, status)
+      .then((response) => {
+        res.status(response.status).send(response);
+      })
+      .catch((error) => {
         res.status(error.status).send(error.message);
-    }
-}
+      });
+  } catch (error) {
+    res.status(error.status).send(error.message);
+  }
+};
+
+// @desc    Get post data
+// @route   GET /post/fetch-posts
+// @access  Public
+export const fetchAllPosts = (req, res) => {
+  try {
+    const perPage = 5,
+      page = req.query.page || 1;
+      console.log(' dsfadfdf:>> ', );
+    getAllPosts(perPage, page)
+      .then((response) => {
+        res.status(response.status).json(response);
+      })
+      .catch((error) => {
+        res.status(500).json({
+          status: 500,
+          error_code: "INTERNAL_SERVER_ERROR",
+          message: "Somethings wrong, Please try after sometime.",
+          error_message: error.message,
+        });
+      });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      error_code: "INTERNAL_SERVER_ERROR",
+      message: "Somethings wrong, Please try after sometime.",
+      error_message: error.message,
+    });
+  }
+};
 
 
 
+// @desc    Get all users
+// @route   GET /admin/fetch-users
+// @access  Admin - private
+export const fetchCommentCount = (req, res) => {
+  try {
+    const postId = req.params.postId;
 
-
-
-
-
-
-
-
-
-
-
-
+    fetchCommentCountHelper(postId)
+      .then((response) => {
+        res.status(response.status).send(response);
+      })
+      .catch((err) => {
+        res.status(err.status).send(err);
+      });
+  } catch (error) {
+    responseHandler(res, error);
+  }
+};
 
 //////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
 export const adminPostRegister = (req, res) => {
-    try {
-      const userData = req.body;
-      register(userData)
-        .then((response) => {
-          res.status(200).json({...response})
-        })
-        .catch((err) => {
-          res.status(500).send(err);
-        });
-    } catch (error) {
-      res.status(500).send(error);
-    }
-  };
+  try {
+    const userData = req.body;
+    register(userData)
+      .then((response) => {
+        res.status(200).json({ ...response });
+      })
+      .catch((err) => {
+        res.status(500).send(err);
+      });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
