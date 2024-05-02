@@ -8,6 +8,7 @@ import {
   changeStatus,
   fetchAllUsers,
   fetchCommentCount,
+  fetchPostsController,
 } from "../controllers/adminController.js";
 import { fetchAllPosts } from "../controllers/postController.js";
 
@@ -21,7 +22,7 @@ router.get("/fetch-users", fetchAllUsers);
 
 // @desc    Fetch all posts
 // @access  Admins
-router.get("/fetch-posts", fetchAllPosts);
+router.get("/fetch-posts", fetchPostsController);
 
 // @desc    Change block status
 // @access  Admins

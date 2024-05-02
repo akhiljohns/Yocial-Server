@@ -6,6 +6,7 @@ const saltRounds = 10; //setting salt rounds
 import Admin from "../models/adminModel.js";
 import User from "../models/userModel.js";
 import { Comment } from "../models/commentModel.js";
+import { Post } from "../models/postModel.js";
 
 ////////////////////////////////////////////////// ADMIN LOGIN //////////////////////////////////////////////////////////////////
 // @desc    Login admin
@@ -213,21 +214,30 @@ export const register = ({ name, email, password }) => {
 // @desc    Fetch posts
 // @route   POST /users/fetch-posts
 // @access  Public
-export const getAllPosts = (perPage, page, user) => {
+export const fetchPostsHelper = (perPage, page) => {
   return new Promise((resolve, reject) => {
     try {
-      Post.find({ blocked: false, userId: { $ne: user?._id } })
+      Post.find({ blocked: false })
         .skip((page - 1) * perPage)
         .limit(perPage)
         .sort({ createdAt: -1 })
         .populate("userId", "-password")
         .exec()
-        .then((posts) => {
+        .then(async (posts) => {
           if (posts) {
+            const postsWithCommentCount = await Promise.all(
+              posts.map(async (post) => {
+                const commentCount = await fetchCommentCountHelper(post._id);
+                return {
+                  ...post.toObject(),
+                  commentCount,
+                };
+              })
+            );
             resolve({
               status: 200,
-              message: "post fetched successfully",
-              posts,
+              message: "Posts fetched successfully",
+              posts: postsWithCommentCount,
             });
           } else {
             throw new Error("No posts found");
@@ -237,16 +247,18 @@ export const getAllPosts = (perPage, page, user) => {
           reject({
             status: 500,
             error_code: "DB_FETCH_ERROR",
-            message: "Somethings wrong, Please try again later.",
+            message: "Something's wrong. Please try again later.",
             error_message: err.message,
+            err,
           });
         });
     } catch (error) {
       reject({
         status: 500,
         error_code: "INTERNAL_SERVER_ERROR",
-        message: "Somethings wrong, Please try again later.",
+        message: "Something's wrong. Please try again later.",
         error_message: error.message,
+        error: error,
       });
     }
   });

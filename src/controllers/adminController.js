@@ -6,7 +6,7 @@ import {
   toggelBlockStatus,
   getAllUsers,
   fetchCommentCountHelper,
-  getAllPosts,
+  fetchPostsHelper,
 } from "../helpers/adminHelper.js";
 import responseHandler from "../utils/responseHandler.js";
 
@@ -91,11 +91,11 @@ export const changeStatus = (req, res) => {
 // @desc    Get post data
 // @route   GET /post/fetch-posts
 // @access  Public
-export const fetchAllPosts = (req, res) => {
+export const fetchPostsController = (req, res) => {
   try {
     const perPage = 5,
       page = req.query.page || 1;
-    getAllPosts(perPage, page)
+    fetchPostsHelper(perPage, page)
       .then((response) => {
         res.status(response.status).json(response);
       })
@@ -105,6 +105,7 @@ export const fetchAllPosts = (req, res) => {
           error_code: "INTERNAL_SERVER_ERROR",
           message: "Somethings wrong, Please try after sometime.",
           error_message: error.message,
+          error,
         });
       });
   } catch (error) {

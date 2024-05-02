@@ -262,43 +262,45 @@ export const fetchComment = (req, res) => {
 // @access  Registerd users
 export const fetchReplyComments = (req, res) => {
   try {
-      const commentId = req.params.commentId;
-      getReplyComments(commentId).then((comments) => {
-          res.status(200).json(comments);
-      }).catch((error) => {
-          res.status(500).json(error)
+    const commentId = req.params.commentId;
+    getReplyComments(commentId)
+      .then((comments) => {
+        res.status(200).json(comments);
       })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
   } catch (error) {
-      res.status(500).json(error);
+    res.status(500).json(error);
   }
-}
+};
 
 // @desc    Reply comment
 //@route    POST /post/comments/reply-to/:commentId
 // @access  Registerd users
 export const addReply = (req, res) => {
   try {
-      const commentId = req.params.commentId;
-      const {postId, content, userId} = req.body;
+    const commentId = req.params.commentId;
+    const { postId, content, userId } = req.body;
 
-      const data = {
-          userId: userId,
-          parentId: commentId,
-          postId: postId,
-          content: content
-      }
+    const data = {
+      userId: userId,
+      parentId: commentId,
+      postId: postId,
+      content: content,
+    };
 
-      replyToComment(data).then((response) => {
-          res.status(200).send(response);
-      }).catch((error) => {
-          res.status(500).send(error)
+    replyToComment(data)
+      .then((response) => {
+        res.status(200).send(response);
       })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
   } catch (error) {
-      res.status(500).send(error);
+    res.status(500).send(error);
   }
-}
-
-
+};
 
 ////////////////////////////////////////////////// REPORT SECTION //////////////////////////////////////////////////////////////////
 
@@ -306,30 +308,32 @@ export const addReply = (req, res) => {
 // @route   POST /post/report/post/:userId
 // @access  Registerd users
 export const reportPost = (req, res) => {
-try {
-  const {userId, username} = req.params;
-  const {targetId, details} = req.body;
-  reportPostHelper(userId, username, targetId, details).then((response)=> {
-    res.status(200).send(response)
-  }).catch((err)=> {
-    res.status(500).send(err)
-  })
-} catch (error) {
-  res.status(500).send(error);
-}
-}
-
-
+  try {
+    const { userId, username } = req.params;
+    const { targetId, details } = req.body;
+    reportPostHelper(userId, username, targetId, details)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((err) => {
+        res.status(500).send(err);
+      });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 export const getEveryPostCtrl = (req, res) => {
   try {
-      const {page} = req.query || 1
-      getEveryPost(page).then((response) => {
-          res.status(200).send(response);
-      }).catch((error) => {
-          res.status(500).send(error);
+    const { page } = req.query || 1;
+    getEveryPost(page)
+      .then((response) => {
+        res.status(200).send(response);
       })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
   } catch (error) {
-      res.status(500).send(error);
+    res.status(500).send(error);
   }
-}
+};
