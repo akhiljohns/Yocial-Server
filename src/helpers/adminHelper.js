@@ -5,7 +5,7 @@ const saltRounds = 10; //setting salt rounds
 //importing models
 import Admin from "../models/adminModel.js";
 import User from "../models/userModel.js";
-import { Comment } from "../models/commentModel.js";
+import { Comment } from "../models/commentModel.js";import { Comment } from "../models/commentModel.js";
 
 ////////////////////////////////////////////////// ADMIN LOGIN //////////////////////////////////////////////////////////////////
 // @desc    Login admin
@@ -227,3 +227,66 @@ export const fetchCommentCountHelper = async (postId) => {
     throw error;
   }
 };
+
+
+// @desc    Fetch posts
+// @route   POST /users/fetch-posts
+// @access  Public
+export const getAllPosts = (perPage, page, user) => {
+  return new Promise((resolve, reject) => {
+    try {
+      Post.find({ blocked: false, userId: { $ne: user?._id } })
+        .skip((page - 1) * perPage)
+        .limit(perPage)
+        .sort({ createdAt: -1 })
+        .populate("userId", "-password")
+        .exec()
+        .then((posts) => {
+          console.log('posts :>> ', posts);
+          if (posts) {
+            resolve({
+              status: 200,
+              message: "post fetched successfully",
+              posts,
+            });
+          } else {
+            throw new Error("No posts found");
+          }
+        })
+        .catch((err) => {
+          reject({
+            status: 500,
+            error_code: "DB_FETCH_ERROR",
+            message: "Somethings wrong, Please try again later.",
+            error_message: err.message,
+          });
+        });
+    } catch (error) {
+      reject({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Somethings wrong, Please try again later.",
+        error_message: error.message,
+      });
+    }
+  });
+};
+
+
+// @desc    Fetch no of comments
+// @route   GET /admin/fetch-comment-count
+// @access  Admin - private
+export const fetchCommentCountHelper = async (postId) => {
+  try {
+    const commentCount = await Comment.countDocuments({ postId });
+
+    return {
+      status: 200,
+      message: "Succesfully Fetched Comment Count",
+      commentCount,
+    };
+  } catch (error) {
+    console.error("Error fetching comment count for post:", error);
+    throw error;
+  }
+}
