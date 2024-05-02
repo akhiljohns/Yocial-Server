@@ -1,6 +1,6 @@
 export default function responseHandler(res, data) {
   try {
-    console.log(data);
+    console.log("data",data);
     switch (data?.status) {
       case 200:
         res.status(200).send({ ...data, status_code: "OK" });

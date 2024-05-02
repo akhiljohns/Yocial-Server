@@ -3,43 +3,44 @@ import jwt from "jsonwebtoken"; //importing jwt from jsonwebtoken
 //importing models
 import Admin from "../models/adminModel.js";
 
-
 // @desc    To renew the access token
 // @route   < Middleware - Helper >
 // @access  Private
 const renewAccessToken = (userId) => {
   return new Promise((resolve, reject) => {
-    jwt.sign({userId: userId}, process.env.JWT_KEY_SECRET, {expiresIn: '1hr'}, (err, token) => {
-      if(err){
-        reject(err);
-      } else {
-        resolve(token)
+    jwt.sign(
+      { userId: userId },
+      process.env.JWT_KEY_SECRET,
+      { expiresIn: "1hr" },
+      (err, token) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(token);
+        }
       }
-    })
-  })
+    );
+  });
 };
-
-
 
 // @desc    To et user from decoded token
 // @route   < Middleware - Helper >
 // @access  Private
 const verifyAdmin = (decodedToken) => {
   return new Promise((resolve, reject) => {
-    Admin.findOne({_id: decodedToken?.userId}).select("-password").then((user) => {
-      resolve(user);
-    }).catch((err) => reject(err));
-  })
-} ;
-
-
-
-
+    Admin.findOne({ _id: decodedToken?.userId })
+      .select("-password")
+      .then((user) => {
+        resolve(user);
+      })
+      .catch((err) => reject(err));
+  });
+};
 
 // @desc    Admin authentication
 // @route   < Middleware >
 // @access  Private
-const protectAdmin = async (req, res, next) => {
+const adminProtect = async (req, res, next) => {
   let adminToken;
   if (req.headers.authorization) {
     try {
@@ -89,18 +90,7 @@ const protectAdmin = async (req, res, next) => {
   }
 };
 
-
-export default protectAdmin
-
-
-
-
-
-
-
-
-
-
+export default adminProtect;
 
 export const refreshAdminAccessToken = (req, res) => {
   try {
