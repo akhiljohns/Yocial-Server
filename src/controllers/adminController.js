@@ -74,20 +74,34 @@ export const fetchAllUsers = (req, res) => {
 // @route   PATCH /admin/:userId/change-status
 // @access  Admin - private
 export const changeStatus = (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const status = req.body.status;
-    toggelBlockStatus(userId, status)
-      .then((response) => {
-        responseHandler(res, response);
-      })
-      .catch((error) => {
-        responseHandler(res, error);
-      });
-  } catch (error) {
-    responseHandler(res, error);
-  }
-};
+    try {
+        const userId = req.params.userId;
+        const status = req.body.status;
+        console.log(userId,status);
+        toggelBlockStatus(userId, status).then((response) =>{
+            res.status(response.status).send(response);
+        }).catch((error) => {
+            res.status(error.status).send(error.message);
+        })
+    } catch (error) {
+        res.status(error.status).send(error.message);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////////////////////////////////////////// ADMIN REGISTER //////////////////////////////////////////////////////////////////
 export const adminPostRegister = (req, res) => {
