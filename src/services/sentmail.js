@@ -14,8 +14,8 @@ export const sentEmail = async (email, username, message ,update=false ) => {
     });
 
     const verificationMessage = update
-    ? "Use The Below Link To Update Your Email in Yocial"
-    : "Use The Below Link To Verify Your Email In Yocial";
+    ? "Use The Below Link To Verify & Update Your Email in Yocial"
+    : "Use The Below Link To Verify & Register Your Email In Yocial";
 
   const template = `<!DOCTYPE html>
               <html lang="en">
