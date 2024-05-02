@@ -8,7 +8,6 @@ import {
   changeStatus,
   fetchAllUsers,
   fetchCommentCount,
-  fetchAllPosts
 } from "../controllers/adminController.js";
 import { fetchAllPosts } from "../controllers/postController.js";
 
