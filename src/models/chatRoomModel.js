@@ -18,7 +18,7 @@ const chatRoomSchema = new Schema({
         type: String,
     },
     lastMessageTime: {
-        type: String
+        type: Date,
     }
 }, {
     timestamps: true,
