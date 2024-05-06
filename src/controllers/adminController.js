@@ -7,6 +7,7 @@ import {
   getAllUsers,
   fetchCommentCountHelper,
   fetchPostsHelper,
+  getPostReportsHelper,
 } from "../helpers/adminHelper.js";
 import responseHandler from "../utils/responseHandler.js";
 
@@ -152,3 +153,21 @@ export const adminPostRegister = (req, res) => {
     res.status(500).send(error);
   }
 };
+
+// @desc    Fetch post reports
+// @route   GET /admin/reports/users
+// @access  Admins
+export const getPostReports = (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const perPage = req.query.perPage || 7;
+    const search = req.query.search || '';
+    getPostReportsHelper(page, perPage, search).then((response)=> {
+      res.status(200).json(response);
+    }).catch((err)=> {
+      res.status(500).json(err);
+    })
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}

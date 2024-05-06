@@ -281,3 +281,35 @@ export const fetchCommentCountHelper = async (postId) => {
     throw error;
   }
 };
+
+// @desc    Fetch post reports
+// @route   GET /admin/reports/users
+// @access  Admins
+export const getPostReportsHelper = (page, perPage, search) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const regex = search ? new RegExp(search, "i") : /.*/;
+      Report.find({ reporterUsername: regex, reportType: "PostReport" })
+        .skip((page - 1) * perPage)
+        .limit(perPage).then((reports) => {
+          resolve(reports);
+        }).catch((err) =>{
+          reject({
+            status: 500,
+            error_code: "DB_FETCH_ERROR",
+            message: "Error fetching DB",
+            err
+          })
+        })
+    } catch (error) {
+      reject({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Internal server error",
+        error,
+      });
+    }
+  })
+};
+
+
