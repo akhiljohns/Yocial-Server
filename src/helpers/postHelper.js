@@ -1,5 +1,6 @@
 import { Post } from "../models/postModel.js";
 import { Comment } from "../models/commentModel.js";
+import { Report } from "../models/reportsModel.js";
 
 // @desc    Create post
 // @route   POST /post/create-post
@@ -466,6 +467,45 @@ export const replyToComment = (data) => {
         status: 500,
         error_code: "INTERNAL_SERVER_ERROR",
         message: "Can't replay to this comment, server error",
+        error,
+      });
+    }
+  });
+};
+
+////////////////////////////////////////////////// REPORT SECTION //////////////////////////////////////////////////////////////////
+// @desc    Report post
+// @route   POST /post/report/post/:userId
+// @access  Registerd users
+export const reportPostHelper = (userId, username, targetId, details) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const newReport = new Report({
+        reporterId: userId,
+        targetId: targetId,
+        details: details,
+        reportType: "PostReport",
+        reporterUsername: username,
+      });
+
+      newReport
+        .save()
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((err) => {
+          reject({
+            status: 500,
+            error_code: "DB_FETCH_ERROR",
+            message: "Error saving to DB",
+            err,
+          });
+        });
+    } catch (error) {
+      reject({
+        status: 500,
+        error_code: "INTERNAL_SERVER_ERROR",
+        message: "Server side error",
         error,
       });
     }
