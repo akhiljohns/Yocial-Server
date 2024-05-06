@@ -1,41 +1,44 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const reportSchema = new Schema({
-
+const reportSchema = new Schema(
+  {
     reporterId: {
-        type: mongoose.Types.ObjectId,
-        ref: 'user',
-        require: true
+      type: mongoose.Types.ObjectId,
+      ref: "user",
+      require: true,
     },
 
     reporterUsername: {
-        type: String,
-        require: true
+      type: String,
+      require: true,
     },
 
     reportType: {
-        type: String,
-        require: true
+      type: String,
+      require: true,
     },
 
+    reportPostUrl: {
+      type: String,
+    },
     targetId: {
-        type: mongoose.Types.ObjectId,
-        require: true
+      type: mongoose.Types.ObjectId,
+      require: true,
     },
 
     details: {
-        type: String,
-        // require: true
+      type: String,
+      // require: true
     },
 
     actionTaken: {
-        type: Boolean,
-        default: false
-    }
-
-}, {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
     timestamps: true,
-})
+  }
+);
 
-
-export const Report = model('report', reportSchema);
+export const Report = model("report", reportSchema);

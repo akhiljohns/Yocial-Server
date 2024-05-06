@@ -477,13 +477,20 @@ export const replyToComment = (data) => {
 // @desc    Report post
 // @route   POST /post/report/post/:userId
 // @access  Registerd users
-export const reportPostHelper = (userId, username, targetId, details) => {
+export const reportPostHelper = (
+  userId,
+  username,
+  targetId,
+  reason,
+  postImageUrl
+) => {
   return new Promise((resolve, reject) => {
     try {
       const newReport = new Report({
         reporterId: userId,
         targetId: targetId,
-        details: details,
+        details: reason,
+        reportPostUrl: postImageUrl,
         reportType: "PostReport",
         reporterUsername: username,
       });
