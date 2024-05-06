@@ -309,20 +309,20 @@ export const addReply = (req, res) => {
 // @route   POST /post/report/post/:userId
 // @access  Registerd users
 export const reportPost = (req, res) => {
-  try {
-    const { userId, username } = req.params;
-    const { targetId, details } = req.body;
-    reportPostHelper(userId, username, targetId, details)
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((err) => {
-        res.status(500).send(err);
-      });
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+try {
+  const {userId, username} = req.params;
+  const {targetId, reason,postImageUrl} = req.body;
+  reportPostHelper(userId, username, targetId, reason,postImageUrl).then((response)=> {
+    res.status(200).send(response)
+  }).catch((err)=> {
+    res.status(500).send(err)
+  })
+} catch (error) {
+  res.status(500).send(error);
+}
+}
+
+
 
 export const getEveryPostCtrl = (req, res) => {
   try {
