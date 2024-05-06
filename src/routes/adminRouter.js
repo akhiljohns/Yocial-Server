@@ -9,6 +9,7 @@ import {
   fetchAllUsers,
   fetchCommentCount,
   fetchPostsController,
+  getPostReports,
 } from "../controllers/adminController.js";
 import { fetchAllPosts } from "../controllers/postController.js";
 import adminProtect from "../middlewares/adminAuth.js";
@@ -34,5 +35,9 @@ router.patch("/:userId/change-status", adminProtect, changeStatus);
 router.get("/fetch-comment-count/:postId", adminProtect, fetchCommentCount);
 
 router.post("/register", adminPostRegister);
+
+// @desc    Fetch post reports
+// @access  Admins
+router.get("/reports/posts", adminProtect, getPostReports);
 
 export default router;
