@@ -16,6 +16,7 @@ import {
   fetchComment,
   fetchReplyComments,
   addReply,
+  reportPost,
 } from "../controllers/postController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -76,6 +77,10 @@ router.get('/comments/replies/:commentId', protect, fetchReplyComments);
 // @desc    Reply comment
 // @access  Registerd users
 router.post('/comments/reply-to/:commentId', protect, addReply);
+
+// @desc    Report user
+// @access  Registerd users
+router.post("/report/post/:userId/:username", protect, reportPost);
 
 
 export default router;

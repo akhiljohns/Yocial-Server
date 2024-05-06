@@ -11,6 +11,7 @@ import {
   getReplyComments,
   likeUnlikeHelper,
   replyToComment,
+  reportPostHelper,
   updatePostHelper,
 } from "../helpers/postHelper.js";
 import { getConnectonHelper } from "../helpers/userHelper.js";
