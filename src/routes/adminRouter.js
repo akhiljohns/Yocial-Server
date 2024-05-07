@@ -39,5 +39,6 @@ router.post("/register", adminPostRegister);
 // @desc    Fetch post reports
 // @access  Admins
 router.get("/reports/posts", adminProtect, getPostReports);
+// router.get("/reports/posts/:perPage/:page", adminProtect, getPostReports);
 
 export default router;
