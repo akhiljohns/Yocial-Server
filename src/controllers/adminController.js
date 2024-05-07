@@ -159,9 +159,9 @@ export const adminPostRegister = (req, res) => {
 // @access  Admins
 export const getPostReports = (req, res) => {
   try {
-    const page = req.query.page || 1;
-    const perPage = req.query.perPage || 7;
-    const search = req.query.search || '';
+    const page = req.body.page || 1;
+    const perPage = req.body.perPage || 7;
+    const search = req.body.search || '';
     getPostReportsHelper(page, perPage, search).then((response)=> {
       res.status(200).json(response);
     }).catch((err)=> {

@@ -7,6 +7,7 @@ import Admin from "../models/adminModel.js";
 import User from "../models/userModel.js";
 import { Comment } from "../models/commentModel.js";
 import { Post } from "../models/postModel.js";
+import { Report } from "../models/reportsModel.js";
 
 ////////////////////////////////////////////////// ADMIN LOGIN //////////////////////////////////////////////////////////////////
 // @desc    Login admin
