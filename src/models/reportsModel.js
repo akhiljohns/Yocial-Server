@@ -21,6 +21,9 @@ const reportSchema = new Schema(
     reportPostUrl: {
       type: String,
     },
+    postOwner: {
+      type: String,
+    },
     targetId: {
       type: mongoose.Types.ObjectId,
       require: true,

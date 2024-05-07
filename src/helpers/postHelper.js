@@ -482,7 +482,8 @@ export const reportPostHelper = (
   username,
   targetId,
   reason,
-  postImageUrl
+  postImageUrl,
+  postOwner
 ) => {
   return new Promise((resolve, reject) => {
     try {
@@ -493,6 +494,7 @@ export const reportPostHelper = (
         reportPostUrl: postImageUrl,
         reportType: "PostReport",
         reporterUsername: username,
+        postOwner:postOwner
       });
 
       newReport
