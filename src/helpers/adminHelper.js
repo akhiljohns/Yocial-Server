@@ -218,7 +218,7 @@ export const register = ({ name, email, password }) => {
 export const fetchPostsHelper = (perPage, page) => {
   return new Promise((resolve, reject) => {
     try {
-      Post.find({ blocked: false })
+      Post.find()
         .skip((page - 1) * perPage)
         .limit(perPage)
         .sort({ createdAt: -1 })
@@ -292,16 +292,19 @@ export const getPostReportsHelper = (page, perPage, search) => {
       const regex = search ? new RegExp(search, "i") : /.*/;
       Report.find({ reporterUsername: regex, reportType: "PostReport" })
         .skip((page - 1) * perPage)
-        .limit(perPage).then((reports) => {
+        .limit(perPage)
+        .populate("targetId")
+        .then((reports) => {
           resolve(reports);
-        }).catch((err) =>{
+        })
+        .catch((err) => {
           reject({
             status: 500,
             error_code: "DB_FETCH_ERROR",
             message: "Error fetching DB",
-            err
-          })
-        })
+            err,
+          });
+        });
     } catch (error) {
       reject({
         status: 500,
@@ -310,7 +313,39 @@ export const getPostReportsHelper = (page, perPage, search) => {
         error,
       });
     }
-  })
+  });
 };
 
+// @desc   toggle action taken status of post report
+// @route   GET /admin/post/toggleactiontaken
+// @access  Admins
+export const toggleActionTakenHelper = async (reportId) => {
+  try {
+    const report = await Report.findById(reportId);
+    if (!report) {
+      throw new Error("Report not found");
+    }
+    report.actionTaken = !report.actionTaken;
+    await report.save();
+    return report;
+  } catch (error) {
+    throw error;
+  }
+};
 
+// @desc   toggle block status of post
+// @route   GET /admin/post/toggleblock
+// @access  Admins
+export const togglePostBlockedHelper = async (postId) => {
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      throw new Error("Post not found");
+    }
+    post.blocked = !post.blocked;
+    await post.save();
+    return post;
+  } catch (error) {
+    throw error;
+  }
+};

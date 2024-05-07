@@ -8,6 +8,8 @@ import {
   fetchCommentCountHelper,
   fetchPostsHelper,
   getPostReportsHelper,
+  togglePostBlockedHelper,
+  toggleActionTakenHelper,
 } from "../helpers/adminHelper.js";
 import responseHandler from "../utils/responseHandler.js";
 
@@ -163,6 +165,37 @@ export const getPostReports = (req, res) => {
     const perPage = req.body.perPage || 7;
     const search = req.body.search || '';
     getPostReportsHelper(page, perPage, search).then((response)=> {
+      res.status(200).json(response);
+    }).catch((err)=> {
+      res.status(500).json(err);
+    })
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
+
+// @desc   toggle action taken status of post report
+// @route   GET /admin/post/toggleactiontaken
+// @access  Admins
+export const toggleActionTaken = (req, res) => {
+  try {
+    const reportId = req.params.reportId;
+    toggleActionTakenHelper(reportId).then((response)=> {
+      res.status(200).json(response);
+    }).catch((err)=> {
+      res.status(500).json(err);
+    })
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
+// @desc   toggle block status of post
+// @route   GET /admin/post/toggleblock
+// @access  Admins
+export const togglePostBlock = (req, res) => {
+  try {
+    const postId = req.params.postId;
+    togglePostBlockedHelper(postId).then((response)=> {
       res.status(200).json(response);
     }).catch((err)=> {
       res.status(500).json(err);

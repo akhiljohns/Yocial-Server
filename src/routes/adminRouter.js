@@ -10,6 +10,8 @@ import {
   fetchCommentCount,
   fetchPostsController,
   getPostReports,
+  togglePostBlock,
+  toggleActionTaken,
 } from "../controllers/adminController.js";
 import { fetchAllPosts } from "../controllers/postController.js";
 import adminProtect from "../middlewares/adminAuth.js";
@@ -40,5 +42,13 @@ router.post("/register", adminPostRegister);
 // @access  Admins
 router.get("/reports/posts", adminProtect, getPostReports);
 // router.get("/reports/posts/:perPage/:page", adminProtect, getPostReports);
+
+// @desc    Block a Post
+// @access  Admins
+router.patch('/post/block/:postId', adminProtect, togglePostBlock)
+
+// @desc    update the action taken status of post
+// @access  Admins
+router.patch('/post/toggleactiontaken/:reportId', adminProtect, toggleActionTaken )
 
 export default router;

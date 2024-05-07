@@ -26,6 +26,7 @@ const reportSchema = new Schema(
     },
     targetId: {
       type: mongoose.Types.ObjectId,
+      ref: "post",
       require: true,
     },
 
