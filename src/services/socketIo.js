@@ -14,6 +14,10 @@ const socketIo_Config = (io) => {
           io.to(roomId).emit("recieveMessage", message);
         });
       });
+
+      socket.on("videoCall", (callerId, receiverId) => {
+        io.emit("startVideoCall", callerId, receiverId);
+      });
       //disconnecting user
       socket.on("disconnect", () => {
         console.log("User disconnected.");

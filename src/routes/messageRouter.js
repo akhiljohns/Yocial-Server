@@ -31,4 +31,9 @@ router.post("/inbox/new-message/:roomId", sendNewMessage);
 // @access  Users - private
 router.get("/inbox/get-room/userID/:userId", protect, getRoomwithUserID);
 
+// @desc    video call between two users
+// @route   GET /messages/inbox/videocall/callerId/receiverId
+// @access  Users - private
+router.get("/inbox/videocall/:callerId/:receiverId", protect, getRoomwithUserID);
+
 export default router;

@@ -4,6 +4,7 @@ import {
   getRoomWithIds,
   newMessageHelper,
   roomWithUserID,
+  startVideoCallHelper,
 } from "../helpers/chatHelper.js";
 
 
@@ -83,6 +84,22 @@ export const getRoomwithUserID = (req, res) => {
     try {
     const { userId } = req.params;
         roomWithUserID(userId).then((rooms)=> {
+            res.status(200).send(rooms);
+        }).catch((err)=> {
+            res.status(500).send(err);
+        })
+    } catch (error) {
+        res.status(500).send(error);
+    }    
+}
+
+// @desc    video call between two users
+// @route   GET /messages/inbox/videocall/callerId/receiverId
+// @access  Users - private
+export const startVideoCall = (req, res) => {
+    try {
+    const { callerId,receiverId } = req.params;
+    startVideoCallHelper( callerId,receiverId).then((rooms)=> {
             res.status(200).send(rooms);
         }).catch((err)=> {
             res.status(500).send(err);
