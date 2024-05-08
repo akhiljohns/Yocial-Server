@@ -33,7 +33,7 @@ const generateJwt = (data) => {
     try {
       const tokens = {};
       const options = { expiresIn: "360000" },
-      payload = {};
+      payload = {role:data.role};
       if (data._id) {
         payload.userId = data._id;
       } else if (data.email) {

@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken"; //importing jwt from jsonwebtoken
 
 //importing models
 import Admin from "../models/adminModel.js";
+import User from "../models/userModel.js";
 
 // @desc    To renew the access token
 // @route   < Middleware - Helper >
@@ -41,16 +42,17 @@ const verifyAdmin = (decodedToken) => {
 // @route   < Middleware >
 // @access  Private
 const adminProtect = async (req, res, next) => {
+  console.log('decoded :>> ');
   let adminToken;
   if (req.headers.authorization) {
     try {
       adminToken = req.headers.authorization;
       const decoded = jwt.verify(adminToken, process.env.JWT_KEY_SECRET);
 
-      Admin.findOne({ _id: decoded.userId })
+      User.findOne({ _id: decoded.userId })
         .select("-password")
         .then((admin) => {
-          if (admin) {
+          if (admin && admin.role === 'admin') {
             req.admin = admin;
             next();
           } else {
