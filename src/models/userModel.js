@@ -43,7 +43,10 @@ const userSchema = new Schema(
       default:
         "https://www.pngitem.com/pimgs/m/404-4042710_circle-profile-picture-png-transparent-png.png",
     },
-
+    role: {
+      type: String,
+      default: "user",
+    },
     phone: {
       type: String,
       trim: true,
@@ -60,8 +63,8 @@ const userSchema = new Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "post"
-        }
+          ref: "post",
+        },
       ],
       default: [],
     },
