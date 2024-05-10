@@ -36,15 +36,6 @@ const db = connect();
 // path
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const publicPath = path.join(__dirname, "public");
-
-// Serve static files from the public directory
-app.use(express.static(publicPath));
-
-// Handle 404 errors
-app.use((req, res) => {
-  res.status(404).sendFile(path.join(publicPath, "404.html"));
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
