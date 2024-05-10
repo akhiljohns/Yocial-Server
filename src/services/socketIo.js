@@ -18,6 +18,13 @@ const socketIo_Config = (io) => {
       socket.on("videoCall", (callerId, receiverId) => {
         io.emit("startVideoCall", callerId, receiverId);
       });
+
+      socket.on("emailupdate",(userId)=>{
+      console.log('userId :>> ', userId);
+      io.emit("changeEmail", userId, );
+
+      })
+
       //disconnecting user
       socket.on("disconnect", () => {
         console.log("User disconnected.");
