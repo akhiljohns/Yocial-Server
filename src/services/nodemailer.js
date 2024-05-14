@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { Verify } from "../models/verifyModel.js";
+import User from "../models/userModel.js"; //userModel
 import { sentEmail, sentVerificationEmail } from "./sentmail.js";
 
 export const verificationEmail = async (email, username, userId) => {
@@ -101,44 +102,52 @@ export const verifyEmailChange = async ({
   newEmail,
   type,
 }) => {
-  try {
+
+ const emailExist = await User.findOne({ email: newEmail });
+  if(emailExist) {
+  return {
+    status: 500,
+    message: "Email Already Registered",
+  }
+}
+  return Verify.findOne({ userId: userId }).then((existingToken) => {
     let token;
-    // Update new email in the Verify database
-    let existingToken = await Verify.findOne({ userId: userId });
+
     if (existingToken) {
       existingToken.newEmail = newEmail;
-      token = existingToken.token2;
-      await existingToken.save();
+      token = existingToken.token; // Assuming 'token' is the field you want to use
+      return existingToken.save().then(() => token);
     } else {
-      // Create a new verification token entry
       token = crypto.randomBytes(32).toString("hex");
       const createdAt = new Date();
       const newToken = new Verify({
         userId: userId,
         newEmail: newEmail,
-        token2: token,
-        token2CreatedAt: createdAt,
-        token2used: false,
+        username,
+        email,
+        token: token,
+        tokenCreatedAt: createdAt,
+        tokenUsed: false,
       });
-      await newToken.save();
+      return newToken.save().then(() => token);
     }
-
+  }).then((token) => {
     // Send confirmation email
     let update = true;
     const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}/${type}`;
-    const response = await sentEmail(newEmail, username, message, update);
-
+    return sentEmail(newEmail, username, message, update);
+  }).then((response) => {
     return {
       status: 200,
-      message: "Email has been updated successfully",
+      message: "Check your Email for further instructions",
       data: response,
     };
-  } catch (error) {
-    console.error("Error in updateEmailWithoutVerification:", error);
+  }).catch((error) => {
+    console.error('Error in updateEmailWithoutVerification:', error);
+    console.error('Validation error details:', error.errors);
     return { status: 500, message: "Internal Server Error", error: error };
-  }
+  });
 };
-
 ///////////// password management ///////////////
 
 export const generateTokenForPassword = (data) => {

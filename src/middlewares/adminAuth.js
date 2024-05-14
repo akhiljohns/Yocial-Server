@@ -42,7 +42,6 @@ const verifyAdmin = (decodedToken) => {
 // @route   < Middleware >
 // @access  Private
 const adminProtect = async (req, res, next) => {
-  console.log('decoded :>> ');
   let adminToken;
   if (req.headers.authorization) {
     try {

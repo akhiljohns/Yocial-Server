@@ -550,9 +550,8 @@ export const checkToken = async (userId, token, type) => {
       });
     } else if (type === "update") {
       const existingToken = await Verify.findOne({
-        token2: token,
+        token : token,
       });
-
       const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30);
       if (existingToken) {
         existingToken.token2used = true;
