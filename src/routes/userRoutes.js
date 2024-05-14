@@ -17,6 +17,7 @@ import {
   fetchSavedPosts,
   fetchUserByKeyword,
   updateAvatar,
+  getMutualFriends,
 } from "../controllers/userController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -74,6 +75,10 @@ router.get("/savedposts/:userId", fetchSavedPosts);
 // @desc    Remove saved post
 // @access  Registerd users
 router.delete("/:userId/save/post/remove/:postId", protect, removeSavedPost);
+
+// @desc    get mutual friends
+// @access  Registerd users
+router.get("/getmutuals/:userId", protect, getMutualFriends);
 
 ///////////////////////// password management //////////////////
 router.post("/password/verify/email", protect, requestVerification);

@@ -729,10 +729,52 @@ export const removeSavePostHelper = (userId, postId) => {
     } catch (err) {
       reject({
         status: err.status || 500,
-
+        
         message: err.message || "went wrong",
         err,
       });
     }
   });
 };
+
+  // @desc    Remove from saved
+  // @route   DELETE /user/:userId/save/post/remove/:postId
+  // @access  Registerd users
+export const  getMutualFriendsHelper = async (userId) =>{
+  try {
+    // Find the user's connections
+    const userConnections = await Connection.findOne({ userId }).populate('followers following', 'username');
+
+    if (!userConnections) {
+      throw new Error('User connections not found');
+    }
+
+    // Extract followers and following lists
+    const { followers, following } = userConnections;
+
+    // Find users who are friends with the same person but not friends with each other
+    const mutuals = [];
+    for (const follower of followers) {
+      for (const follow of following) {
+        if (follower._id.equals(follow._id)) continue; // Skip if the same user
+        const mutualConnection = await Connection.findOne({
+          userId: follow._id,
+          followers: follower._id,
+        });
+
+        if (mutualConnection) {
+          const mutualFriend = {
+            user1: follower.username,
+            user2: follow.username,
+            mutualFriend: mutualConnection.userId.username,
+          };
+          mutuals.push(mutualFriend);
+        }
+      }
+    }
+
+    return mutuals;
+  } catch (error) {
+    throw new Error(`Failed to fetch mutual friends: ${error.message}`);
+  }
+}

@@ -15,6 +15,7 @@ import {
   fetchSavedPostsHelper,
   userByKeywordHelper,
   updateAvatarHelper,
+  getMutualFriendsHelper,
 } from "../../src/helpers/userHelper.js";
 import { verifyEmailChange } from "../services/nodemailer.js";
 import responseHandler from "../utils/responseHandler.js";
@@ -369,7 +370,25 @@ export const requestVerification = (req, res) => {
       .catch((error) => {
         responseHandler(res, error);
       });
-  } catch (error) {
-    responseHandler(res, error);
-  }
-};
+    } catch (error) {
+      responseHandler(res, error);
+    }
+  };
+  
+  // @desc    Mutual friends
+  // @route   GET /getmutuals/:userId
+  // @access  Registerd users
+  export const getMutualFriends = (req, res) => {
+    try {
+      const { userId } = req.params;
+      getMutualFriendsHelper(userId,)
+        .then((response) => {
+          responseHandler(res, response);
+        })
+        .catch((error) => {
+          responseHandler(res, error);
+        });
+    } catch (error) {
+      responseHandler(res, error);
+    }
+  };
