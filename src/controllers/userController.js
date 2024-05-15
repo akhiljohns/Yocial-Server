@@ -422,7 +422,6 @@ export const blockUser = async (req, res) => {
 export const unblockUser = async (req, res) => {
   try {
     const { userId, unBlockUserId } = req.params;
-    console.log('userId,unBlockUserId :>> ', userId,unBlockUserId);
     unBlockUserHelper(userId, unBlockUserId)
       .then((response) => {
         responseHandler(res, response);

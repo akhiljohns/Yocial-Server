@@ -81,7 +81,6 @@ export const fetchAllPosts = async (req, res) => {
       page = req.query.page || 1;
     getAllPosts(perPage, page, user)
       .then((response) => {
-        console.log("response :>> ", response);
         res.status(response.status).json(response);
       })
       .catch((error) => {
