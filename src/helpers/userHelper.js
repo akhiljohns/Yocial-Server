@@ -419,7 +419,6 @@ export const unfollowHelper = (userId, followeeId) => {
   });
 };
 
-
 // @desc    Get connections
 // @route   GET /user/fetch/connection/:userId
 // @access  Registered users
@@ -450,6 +449,88 @@ export const getConnectonHelper = async (userId) => {
     };
   }
 };
+
+////////////////////////////////////////////////// USER BLOCK SECTION //////////////////////////////////////////////////////////////////
+
+// @desc    Block User
+// @route   GET /user/block/
+// @access  Registered users
+export const blockUserHelper = async (userId, blockUserId) => {
+  try {
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.blockedUsers.includes(blockUserId)) {
+      throw new Error("User Already Blocked");
+    } else {
+      user.blockedUsers.push(blockUserId);
+      await user.save();
+    }
+
+    return { status: 200, message: "User Has Been Blocked", user };
+  } catch (error) {
+    throw {
+      status: error.status || 500,
+      error_code: error?.error_code || "BLOCK_USER_ERROR",
+      message: error.message,
+      error,
+    };
+  }
+};
+
+// @desc    UnBlock User
+// @route   GET /user/unblock/
+// @access  Registered users
+export const unBlockUserHelper = async (userId, unBlockUserId) => {
+  try {
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.blockedUsers.includes(unBlockUserId)) {
+      user.blockedUsers = user.blockedUsers.filter(id => id.toString() !== unBlockUserId.toString());
+      await user.save();
+      return { status: 200, message: "User Has Been Unblocked", user };
+    } else {
+      return { status: 200, message: "User was not blocked" };
+    }
+  } catch (error) {
+    throw {
+      status: error.status || 500,
+      error_code: error?.error_code || "UNBLOCK_USER_ERROR",
+      message: error.message,
+      error,
+    };
+  }
+};
+
+// @desc    get blocked Users
+// @route   GET /user/blockedusers/
+// @access  Registered users
+export const getBlockedUsersHelper = async (userId) => {
+  try {
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return {status: 200, message: "Fetched Blocked Users", blockedUsers : user.blockedUsers}; 
+  } catch (error) {
+    throw {
+      status: error.status || 500,
+      error_code: error?.error_code || "GET_BLOCKED_USERS_ERROR",
+      message: error.message,
+      error,
+    };
+  }
+};
+
 
 ////////////////////////////////////////////////// EMAIL VERIFICATION //////////////////////////////////////////////////////////////////
 // @desc    Sent verification link

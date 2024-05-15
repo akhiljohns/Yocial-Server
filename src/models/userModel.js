@@ -77,6 +77,15 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    blockedUsers: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "user",
+        },
+      ],
+      default: [],
+    },
     verified: {
       type: Boolean,
       default: false,

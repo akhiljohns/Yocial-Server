@@ -18,6 +18,9 @@ import {
   fetchUserByKeyword,
   updateAvatar,
   getMutualFriends,
+  blockUser,
+  unblockUser,
+  getBlockedUsers,
 } from "../controllers/userController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -82,5 +85,18 @@ router.get("/getmutuals/:userId", protect, getMutualFriends);
 
 ///////////////////////// password management //////////////////
 router.post("/password/verify/email", protect, requestVerification);
+
+///////////////////////// USER BLOCK SECTION //////////////////
+// @desc    block user
+// @access  Registerd users
+router.get("/:userId/block/:blockUserId", blockUser);
+
+// @desc    unblock user
+// @access  Registerd users
+router.get("/:userId/unblock/:unBlockUserId", unblockUser);
+
+// @desc    get blocked users
+// @access  Registerd users
+router.get("/getblockedusers/:userId", getBlockedUsers);
 
 export default router;

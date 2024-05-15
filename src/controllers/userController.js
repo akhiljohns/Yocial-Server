@@ -16,6 +16,9 @@ import {
   userByKeywordHelper,
   updateAvatarHelper,
   getMutualFriendsHelper,
+  blockUserHelper,
+  unBlockUserHelper,
+  getBlockedUsersHelper
 } from "../../src/helpers/userHelper.js";
 import { verifyEmailChange } from "../services/nodemailer.js";
 import responseHandler from "../utils/responseHandler.js";
@@ -392,3 +395,60 @@ export const requestVerification = (req, res) => {
       responseHandler(res, error);
     }
   };
+
+////////////////////////////////////////////////// USER BLOCK SECTION //////////////////////////////////////////////////////////////////
+
+// @desc    Block User
+// @route   GET /user/block/
+// @access  Registered users
+export const blockUser = async (req, res) => {
+  try {
+    const { userId, blockUserId } = req.params;
+    blockUserHelper(userId, blockUserId)
+      .then((response) => {
+        responseHandler(res, response);
+      })
+      .catch((error) => {
+        responseHandler(res, error);
+      });
+  } catch (error) {
+    responseHandler(res, error);
+  }
+};
+
+// @desc    unblock User
+// @route   GET /user/block/
+// @access  Registered users
+export const unblockUser = async (req, res) => {
+  try {
+    const { userId, unBlockUserId } = req.params;
+    console.log('userId,unBlockUserId :>> ', userId,unBlockUserId);
+    unBlockUserHelper(userId, unBlockUserId)
+      .then((response) => {
+        responseHandler(res, response);
+      })
+      .catch((error) => {
+        responseHandler(res, error);
+      });
+  } catch (error) {
+    responseHandler(res, error);
+  }
+};
+
+// @desc    unblock User
+// @route   GET /user/block/
+// @access  Registered users
+export const getBlockedUsers = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    getBlockedUsersHelper(userId)
+      .then((response) => {
+        responseHandler(res, response);
+      })
+      .catch((error) => {
+        responseHandler(res, error);
+      });
+  } catch (error) {
+    responseHandler(res, error);
+  }
+};
