@@ -89,14 +89,14 @@ router.post("/password/verify/email", protect, requestVerification);
 ///////////////////////// USER BLOCK SECTION //////////////////
 // @desc    block user
 // @access  Registerd users
-router.get("/:userId/block/:blockUserId", blockUser);
+router.get("/:userId/block/:blockUserId", protect, blockUser);
 
 // @desc    unblock user
 // @access  Registerd users
-router.get("/:userId/unblock/:unBlockUserId", unblockUser);
+router.get("/:userId/unblock/:unBlockUserId", protect, unblockUser);
 
 // @desc    get blocked users
 // @access  Registerd users
-router.get("/getblockedusers/:userId", getBlockedUsers);
+router.get("/getblockedusers/:userId", protect, getBlockedUsers);
 
 export default router;
