@@ -274,7 +274,14 @@ export const likeUnlikeHelper = async ({ postId, userId }) => {
 export const getAllPosts = (perPage, page, user) => {
   return new Promise((resolve, reject) => {
     try {
-      Post.find({ blocked: false, userId: { $ne: user?._id } })
+      const blockedUserIds = user.blockedUsers.map((blockedUser) =>
+        blockedUser.toString()
+      );
+
+      Post.find({
+        blocked: false,
+        userId: { $nin: [...blockedUserIds, user._id] }, // Exclude posts from blocked users and the current user
+      })
         .skip((page - 1) * perPage)
         .limit(perPage)
         .sort({ createdAt: -1 })
@@ -295,7 +302,7 @@ export const getAllPosts = (perPage, page, user) => {
           reject({
             status: 500,
             error_code: "DB_FETCH_ERROR",
-            message: "Somethings wrong, Please try again later.",
+            message: "Something's wrong. Please try again later.",
             error_message: err.message,
           });
         });
@@ -303,7 +310,7 @@ export const getAllPosts = (perPage, page, user) => {
       reject({
         status: 500,
         error_code: "INTERNAL_SERVER_ERROR",
-        message: "Somethings wrong, Please try again later.",
+        message: "Something's wrong. Please try again later.",
         error_message: error.message,
       });
     }
@@ -494,7 +501,7 @@ export const reportPostHelper = (
         reportPostUrl: postImageUrl,
         reportType: "PostReport",
         reporterUsername: username,
-        postOwner:postOwner
+        postOwner: postOwner,
       });
 
       newReport

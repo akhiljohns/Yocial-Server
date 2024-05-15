@@ -38,6 +38,7 @@ export const createPost = (req, res, next) => {
     });
   }
 };
+
 export const updatePost = async (req, res, next) => {
   try {
     const user = await verifyUser(req.headers.authorization);
@@ -73,12 +74,14 @@ export const fetchSinglePost = (req, res, next) => {
 // @desc    Get post data
 // @route   GET /post/fetch-posts
 // @access  Public
-export const fetchAllPosts = (req, res) => {
+export const fetchAllPosts = async (req, res) => {
   try {
+    const user = await verifyUser(req.headers.authorization);
     const perPage = 5,
       page = req.query.page || 1;
-    getAllPosts(perPage, page)
+    getAllPosts(perPage, page, user)
       .then((response) => {
+        console.log("response :>> ", response);
         res.status(response.status).json(response);
       })
       .catch((error) => {
@@ -155,6 +158,7 @@ export const fetchUserDetails = async (req, res, next) => {
     res.status(error.status || 500).send(error);
   }
 };
+
 // @desc    Delete post
 // @route   GET /delete/post/:postId
 // @access  Authenticated user
@@ -258,6 +262,7 @@ export const fetchComment = (req, res) => {
     res.status(500).send(error);
   }
 };
+
 // @desc    Get reply comments
 //@route    GET /post/comments/replies/:commentId
 // @access  Registerd users
@@ -309,20 +314,27 @@ export const addReply = (req, res) => {
 // @route   POST /post/report/post/:userId
 // @access  Registerd users
 export const reportPost = (req, res) => {
-try {
-  const {userId, username} = req.params;
-  const {targetId, reason,postImageUrl,postOwner} = req.body;
-  reportPostHelper(userId, username, targetId, reason,postImageUrl,postOwner).then((response)=> {
-    res.status(200).send(response)
-  }).catch((err)=> {
-    res.status(500).send(err)
-  })
-} catch (error) {
-  res.status(500).send(error);
-}
-}
-
-
+  try {
+    const { userId, username } = req.params;
+    const { targetId, reason, postImageUrl, postOwner } = req.body;
+    reportPostHelper(
+      userId,
+      username,
+      targetId,
+      reason,
+      postImageUrl,
+      postOwner
+    )
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((err) => {
+        res.status(500).send(err);
+      });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 export const getEveryPostCtrl = (req, res) => {
   try {
