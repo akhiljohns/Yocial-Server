@@ -585,3 +585,66 @@ export const saveNotificationHelper = (
     }
   });
 };
+
+// @desc    fetch notification based on userid
+// @route   get /post/fetchnotifications/:userid
+// @access  Registerd users
+export const fetchNotificationsHelper = (userId) => {
+  return Notifications.find({ userId, isRead: false })
+    .populate("from", "username")
+    .sort({ createdAt: -1 })
+    .exec()
+    .then((notifications) => {
+      if (notifications.length === 0) {
+        return { status: 200, message: "No Notifications Found" };
+      }
+      return notifications;
+    })
+    .catch((error) => {
+      throw error;
+    });
+};
+
+// @desc    change notification read status
+// @route   POST /post/notification/readstatus/:notificationId
+// @access  Registerd users
+export const changeNotificationStatusHelper = (notificationId) => {
+  return new Promise((resolve, reject) => {
+    Notifications.findById(notificationId)
+      .exec()
+      .then((notification) => {
+        if (!notification) {
+          reject({ status: 500, message: "Notification Not Found" });
+        } else {
+          if (notification.isRead === true) {
+            return resolve({
+              status: 200,
+              message: "Notification Already Read",
+              notification,
+            });
+          }
+
+          notification.isRead = true;
+          notification
+            .save()
+            .then((updatedNotification) => {
+              resolve({
+                status: 200,
+                message: "Notification Status updated",
+                updatedNotification,
+              });
+            })
+            .catch((error) => {
+              reject({
+                status: error.status || 500,
+                message: error.message || "Something went wrong",
+                error,
+              });
+            });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};

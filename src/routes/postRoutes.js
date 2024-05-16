@@ -18,6 +18,8 @@ import {
   addReply,
   reportPost,
   saveNotification,
+  fetchNotifications,
+  changeNotifStatus,
 } from "../controllers/postController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -86,6 +88,14 @@ router.post("/report/post/:userId/:username", protect, reportPost);
 // @desc    Save notification
 // @access  Registerd users
 router.post("/newnotification", saveNotification);
+
+// @desc    fetch notifications
+// @access  Registerd users
+router.get("/fetch-notifications/:userId", fetchNotifications);
+
+// @desc    change notification status
+// @access  Registerd users
+router.get("/notification/status/:notificationId", changeNotifStatus);
 
 
 export default router;

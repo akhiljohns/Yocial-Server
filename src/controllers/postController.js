@@ -1,9 +1,11 @@
 import {
   addCommentHelper,
+  changeNotificationStatusHelper,
   createPostHelper,
   deleteCommentHelper,
   deletePostHelper,
   fetchCommentHelper,
+  fetchNotificationsHelper,
   fetchSinglePostHelper,
   fetchUserPosts,
   getAllPosts,
@@ -362,7 +364,43 @@ export const saveNotification = async (req, res) => {
     const { userId, postId, fromUserId, message ,fromUser } = req.body;
     saveNotificationHelper(userId, postId, fromUserId, message)
       .then((response) => {
-        console.log('response :>> ', response);
+        responseHandler(res, response);
+      })
+      .catch((error) => {
+        responseHandler(res, error);
+      });
+    } catch (error) {
+    responseHandler(res, error);
+
+  }
+};
+// @desc    Save notification
+// @route   POST /post/fetch-notifications/:id
+// @access  Registerd users
+export const fetchNotifications = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    fetchNotificationsHelper(userId)
+      .then((response) => {
+        responseHandler(res, response);
+      })
+      .catch((error) => {
+        responseHandler(res, error);
+      });
+    } catch (error) {
+    responseHandler(res, error);
+
+  }
+};
+// @desc    Save notification
+// @route   POST /post/newnotification/
+// @access  Registerd users
+export const changeNotifStatus = async (req, res) => {
+  try {
+    const { notificationId } = req.params;
+    changeNotificationStatusHelper(notificationId)
+      .then((response) => {
+        ('response :>> ', response);
         responseHandler(res, response);
       })
       .catch((error) => {
