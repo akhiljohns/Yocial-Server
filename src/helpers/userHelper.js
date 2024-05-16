@@ -869,42 +869,33 @@ export const removeSavePostHelper = (userId, postId) => {
 
 export const getMutualFriendsHelper = async (userId) => {
   try {
-    // Find the user's direct connections
     const userConnections = await Connection.findOne({ userId }).populate(
       "followers following",
-      "username"
+      "username profilePic"
     );
     if (!userConnections) {
       throw new Error("User connections not found");
     }
 
-    // Extract followers and following lists
     const { followers, following } = userConnections;
 
-    // Initialize an array to hold suggested mutual friends
     const suggestedMutualFriends = [];
 
-    // Iterate over the user's followers and following
     for (const connectedUser of [...followers, ...following]) {
-      // Find the connections of the connected user
       const connectedUserConnections = await Connection.findOne({
         userId: connectedUser._id,
       }).populate("followers following", "username profilePic");
       if (!connectedUserConnections) {
-        // If no connections are found, skip this user
         continue;
       }
 
-      // Extract the connected user's followers and following
       const { followers: connectedFollowers, following: connectedFollowing } =
         connectedUserConnections;
 
-      // Iterate over the connected user's followers and following
       for (const suggestedUser of [
         ...connectedFollowers,
         ...connectedFollowing,
       ]) {
-        // Skip if the suggested user is the original user or already a direct connection
         if (
           suggestedUser._id.equals(userId) ||
           followers.some((f) => f._id.equals(suggestedUser._id)) ||
@@ -912,7 +903,7 @@ export const getMutualFriendsHelper = async (userId) => {
         ) {
           continue;
         }
-        // Add the suggested user to the array
+
         suggestedMutualFriends.push({
           username: suggestedUser.username,
           userId: suggestedUser._id,
@@ -921,16 +912,25 @@ export const getMutualFriendsHelper = async (userId) => {
       }
     }
 
-    // Remove duplicates from the suggested mutual friends array
     const uniqueSuggestedMutualFriends = suggestedMutualFriends.filter(
       (value, index, self) =>
         self.findIndex((v) => v.userId.equals(value.userId)) === index
     );
 
+    for (let i = uniqueSuggestedMutualFriends.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [uniqueSuggestedMutualFriends[i], uniqueSuggestedMutualFriends[j]] = [
+        uniqueSuggestedMutualFriends[j],
+        uniqueSuggestedMutualFriends[i],
+      ];
+    }
+
+    const randomizedMutualFriends = uniqueSuggestedMutualFriends.slice(0, 5);
+
     return {
       status: 200,
-      message: "Fetched Mutuals Friends List",
-      uniqueSuggestedMutualFriends,
+      message: "Fetched Mutual Friends List",
+      uniqueSuggestedMutualFriends: randomizedMutualFriends,
     };
   } catch (error) {
     throw new Error(`Failed to suggest mutual friends: ${error.message}`);
