@@ -820,41 +820,112 @@ export const removeSavePostHelper = (userId, postId) => {
   // @desc    Remove from saved
   // @route   DELETE /user/:userId/save/post/remove/:postId
   // @access  Registerd users
-export const  getMutualFriendsHelper = async (userId) =>{
-  try {
-    // Find the user's connections
-    const userConnections = await Connection.findOne({ userId }).populate('followers following', 'username');
+// export const  getMutualFriendsHelper = async (userId) =>{
+//   try {
+//     // Find the user's connections
+//     const userConnections = await Connection.findOne({ userId }).populate('followers following', 'username');
+// console.log('userConnections :>> ', userConnections);
+//     if (!userConnections) {
+//       throw new Error('User connections not found');
+//     }
 
+//     // Extract followers and following lists
+//     const { followers, following } = userConnections;
+
+//   console.log('followers,following :>> ', followers,following);
+//     // Find users who are friends with the same person but not friends with each other
+//     const mutuals = [];
+//     for (const follower of followers) {
+//       for (const follow of following) {
+//         if (follower._id.equals(follow._id)) continue; // Skip if the same user
+//         const mutualConnection = await Connection.findOne({
+//           userId: follow._id,
+//           followers: follower._id,
+//         });
+
+//         if (mutualConnection) {
+//           const mutualFriend = {
+//             user1: follower.username,
+//             user2: follow.username,
+//             mutualFriend: mutualConnection.userId.username,
+//           };
+//           mutuals.push(mutualFriend);
+//         }
+//       }
+//     }
+
+//     return mutuals;
+//   } catch (error) {
+//     throw new Error(`Failed to fetch mutual friends: ${error.message}`);
+//   }
+// }
+
+export const getMutualFriendsHelper = async (userId) => {
+  try {
+    // Find the user's direct connections
+    const userConnections = await Connection.findOne({ userId }).populate(
+      "followers following",
+      "username"
+    );
     if (!userConnections) {
-      throw new Error('User connections not found');
+      throw new Error("User connections not found");
     }
 
     // Extract followers and following lists
     const { followers, following } = userConnections;
 
-    // Find users who are friends with the same person but not friends with each other
-    const mutuals = [];
-    for (const follower of followers) {
-      for (const follow of following) {
-        if (follower._id.equals(follow._id)) continue; // Skip if the same user
-        const mutualConnection = await Connection.findOne({
-          userId: follow._id,
-          followers: follower._id,
-        });
+    // Initialize an array to hold suggested mutual friends
+    const suggestedMutualFriends = [];
 
-        if (mutualConnection) {
-          const mutualFriend = {
-            user1: follower.username,
-            user2: follow.username,
-            mutualFriend: mutualConnection.userId.username,
-          };
-          mutuals.push(mutualFriend);
+    // Iterate over the user's followers and following
+    for (const connectedUser of [...followers, ...following]) {
+      // Find the connections of the connected user
+      const connectedUserConnections = await Connection.findOne({
+        userId: connectedUser._id,
+      }).populate("followers following", "username");
+      if (!connectedUserConnections) {
+        // If no connections are found, skip this user
+        continue;
+      }
+
+      // Extract the connected user's followers and following
+      const { followers: connectedFollowers, following: connectedFollowing } =
+        connectedUserConnections;
+
+      // Iterate over the connected user's followers and following
+      for (const suggestedUser of [
+        ...connectedFollowers,
+        ...connectedFollowing,
+      ]) {
+        // Skip if the suggested user is the original user or already a direct connection
+        if (
+          suggestedUser._id.equals(userId) ||
+          followers.some((f) => f._id.equals(suggestedUser._id)) ||
+          following.some((f) => f._id.equals(suggestedUser._id))
+        ) {
+          continue;
         }
+
+        // Add the suggested user to the array
+        suggestedMutualFriends.push({
+          username: suggestedUser.username,
+          userId: suggestedUser._id,
+        });
       }
     }
 
-    return mutuals;
+    // Remove duplicates from the suggested mutual friends array
+    const uniqueSuggestedMutualFriends = suggestedMutualFriends.filter(
+      (value, index, self) =>
+        self.findIndex((v) => v.userId.equals(value.userId)) === index
+    );
+
+    return {
+      status: 200,
+      message: "Fetched Mutuals Friends List",
+      uniqueSuggestedMutualFriends,
+    };
   } catch (error) {
-    throw new Error(`Failed to fetch mutual friends: ${error.message}`);
+    throw new Error(`Failed to suggest mutual friends: ${error.message}`);
   }
-}
+};
