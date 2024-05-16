@@ -12,11 +12,13 @@ import {
   likeUnlikeHelper,
   replyToComment,
   reportPostHelper,
+  saveNotificationHelper,
   updatePostHelper,
 } from "../helpers/postHelper.js";
 import { getConnectonHelper } from "../helpers/userHelper.js";
 
 import { verifyUser } from "../middlewares/authMiddleware.js";
+import responseHandler from "../utils/responseHandler.js";
 
 // @desc    Create new post
 // @route   POST /post/create-post
@@ -347,5 +349,27 @@ export const getEveryPostCtrl = (req, res) => {
       });
   } catch (error) {
     res.status(500).send(error);
+  }
+};
+
+////////////////////////////////////////////////// NOTIFICATION SECTION //////////////////////////////////////////////////////////////////
+
+// @desc    Save notification
+// @route   POST /post/newnotification/
+// @access  Registerd users
+export const saveNotification = async (req, res) => {
+  try {
+    const { userId, postId, fromUserId, message ,fromUser } = req.body;
+    saveNotificationHelper(userId, postId, fromUserId, message)
+      .then((response) => {
+        console.log('response :>> ', response);
+        responseHandler(res, response);
+      })
+      .catch((error) => {
+        responseHandler(res, error);
+      });
+    } catch (error) {
+    responseHandler(res, error);
+
   }
 };

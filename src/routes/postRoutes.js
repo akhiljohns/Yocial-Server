@@ -17,6 +17,7 @@ import {
   fetchReplyComments,
   addReply,
   reportPost,
+  saveNotification,
 } from "../controllers/postController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -81,6 +82,10 @@ router.post('/comments/reply-to/:commentId', protect, addReply);
 // @desc    Report user
 // @access  Registerd users
 router.post("/report/post/:userId/:username", protect, reportPost);
+
+// @desc    Save notification
+// @access  Registerd users
+router.post("/newnotification", saveNotification);
 
 
 export default router;

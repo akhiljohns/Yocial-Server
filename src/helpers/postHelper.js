@@ -1,6 +1,8 @@
 import { Post } from "../models/postModel.js";
 import { Comment } from "../models/commentModel.js";
 import { Report } from "../models/reportsModel.js";
+import { Notifications } from "../models/notificationModel.js";
+import User from "../models/userModel.js"; //userModel
 
 // @desc    Create post
 // @route   POST /post/create-post
@@ -523,6 +525,62 @@ export const reportPostHelper = (
         error_code: "INTERNAL_SERVER_ERROR",
         message: "Server side error",
         error,
+      });
+    }
+  });
+};
+
+////////////////////////////////////////////////// NOTIFICATION SECTION //////////////////////////////////////////////////////////////////
+
+// @desc    Save notification
+// @route   POST /post/newnotification/
+// @access  Registerd users
+export const saveNotificationHelper = (
+  userId,
+  postId,
+  fromUserId,
+  message,
+  fromUser
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const userExists = await User.exists({ _id: userId });
+      if (!userExists) {
+        reject({
+          status: 404,
+          message: `User with ID ${userId} does not exist`,
+        });
+        return;
+      }
+
+      const postExists = await Post.exists({ _id: postId });
+      if (!postExists) {
+        reject({
+          status: 404,
+          message: `Post with ID ${postId} does not exist`,
+        });
+        return;
+      }
+
+      const newNotification = new Notifications({
+        userId: userId,
+        postId: postId,
+        from: fromUserId,
+        message: message,
+        fromUser: fromUser,
+      });
+
+      const savedNotification = await newNotification.save();
+
+      resolve({
+        status: 200,
+        message: "Notification Has Been Saved",
+        savedNotification,
+      });
+    } catch (error) {
+      reject({
+        status: error.status || 500,
+        message: error.message || "Something Went Wrong, Try After Sometime",
       });
     }
   });
