@@ -76,10 +76,10 @@ router.get("/fetch-comments/:postId/:type", protect, fetchComment);
 
 // @desc    Get reply comments
 // @access  Registerd users
-router.get('/comments/replies/:commentId', protect, fetchReplyComments);
+router.get("/comments/replies/:commentId", protect, fetchReplyComments);
 // @desc    Reply comment
 // @access  Registerd users
-router.post('/comments/reply-to/:commentId', protect, addReply);
+router.post("/comments/reply-to/:commentId", protect, addReply);
 
 // @desc    Report user
 // @access  Registerd users
@@ -87,15 +87,14 @@ router.post("/report/post/:userId/:username", protect, reportPost);
 
 // @desc    Save notification
 // @access  Registerd users
-router.post("/newnotification", saveNotification);
+router.post("/newnotification", protect, saveNotification);
 
 // @desc    fetch notifications
 // @access  Registerd users
-router.get("/fetch-notifications/:userId", fetchNotifications);
+router.get("/fetch-notifications/:userId", protect, fetchNotifications);
 
 // @desc    change notification status
 // @access  Registerd users
-router.get("/notification/status/:notificationId", changeNotifStatus);
-
+router.get("/notification/status/:notificationId", protect, changeNotifStatus);
 
 export default router;

@@ -19,11 +19,15 @@ const socketIo_Config = (io) => {
         io.emit("startVideoCall", callerId, receiverId);
       });
 
-      socket.on("emailupdate",(userId)=>{
-      console.log('userId :>> ', userId);
-      io.emit("changeEmail", userId, );
+      socket.on("emailupdate", (userId) => {
+        console.log("userId :>> ", userId);
+        io.emit("changeEmail", userId);
+      });
 
-      })
+      socket.on("postInteraction", ({ userId, username, message }) => {
+        console.log("usedfdrId :>> ", userId , username, message);
+        io.emit("postInteraction", {userId, username, message});
+      });
 
       //disconnecting user
       socket.on("disconnect", () => {

@@ -598,7 +598,7 @@ export const fetchNotificationsHelper = (userId) => {
       if (notifications.length === 0) {
         return { status: 200, message: "No Notifications Found" };
       }
-      return notifications;
+      return {notifications ,status : 200, message: "Notifications Fetched" };
     })
     .catch((error) => {
       throw error;
