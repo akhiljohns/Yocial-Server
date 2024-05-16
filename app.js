@@ -36,12 +36,10 @@ const db = connect();
 // path
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const publicPath = path.join(__dirname, "public");
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use(morgan("dev"));
+// Serve static files from the public directory
+app.use(express.static(publicPath));
 
 // cors options
 app.use(
@@ -49,6 +47,12 @@ app.use(
     origin: "*",
   })
 );
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(morgan("dev"));
 
 // ROUTER SETUP
 app.use("/api/user", userRouter);
@@ -59,6 +63,12 @@ app.use("/api/messages", messageRouter);
 
 //socket connection
 socketIo_Config(io);
+
+// Handle 404 errors
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(publicPath, "404.html"));
+});
+
 
 server.listen(port, () => {
   console.log(`<------------------------------------->`);
