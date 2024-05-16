@@ -175,7 +175,8 @@ export const updateProfielHelper = async ({ userId, name, username, bio }) => {
             },
           },
           { new: true, runValidators: true, setDefaultsOnInsert: true }
-        ).select("-password")
+        )
+          .select("-password")
           .then((response) => {
             resolve({
               user: response,
@@ -215,8 +216,9 @@ export const updateAvatarHelper = async ({ userId, profilePic }) => {
             profilePic,
           },
         },
-        { new:true}
-      ).select("-password")
+        { new: true }
+      )
+        .select("-password")
         .then((response) => {
           resolve({
             user: response,
@@ -282,7 +284,7 @@ export const fetchUserById = (userId) => {
         .select("-password")
         .exec()
         .then((user) => {
-          resolve({status:200 , user});
+          resolve({ status: 200, user });
         })
         .catch((error) => {
           reject(error);
@@ -365,7 +367,7 @@ export const followHelper = (userId, followeeId) => {
         reject(new Error("Invalid user ID"));
         return;
       }
-      
+
       // Create the Connection collection if it doesn't exist
       await Connection.init();
 
@@ -381,7 +383,7 @@ export const followHelper = (userId, followeeId) => {
         { upsert: true, new: true }
       ).exec();
 
-      resolve({ status:200,userConnection, followeeConnection });
+      resolve({ status: 200, userConnection, followeeConnection });
     } catch (error) {
       reject(error);
     }
@@ -412,7 +414,7 @@ export const unfollowHelper = (userId, followeeId) => {
         { new: true }
       ).exec();
 
-      resolve({ status:200,userConnection, followeeConnection });
+      resolve({ status: 200, userConnection, followeeConnection });
     } catch (error) {
       reject(error);
     }
@@ -493,7 +495,9 @@ export const unBlockUserHelper = async (userId, unBlockUserId) => {
     }
 
     if (user.blockedUsers.includes(unBlockUserId)) {
-      user.blockedUsers = user.blockedUsers.filter(id => id.toString() !== unBlockUserId.toString());
+      user.blockedUsers = user.blockedUsers.filter(
+        (id) => id.toString() !== unBlockUserId.toString()
+      );
       await user.save();
       return { status: 200, message: "User Has Been Unblocked", user };
     } else {
@@ -520,7 +524,11 @@ export const getBlockedUsersHelper = async (userId) => {
       throw new Error("User not found");
     }
 
-    return {status: 200, message: "Fetched Blocked Users", blockedUsers : user.blockedUsers}; 
+    return {
+      status: 200,
+      message: "Fetched Blocked Users",
+      blockedUsers: user.blockedUsers,
+    };
   } catch (error) {
     throw {
       status: error.status || 500,
@@ -530,7 +538,6 @@ export const getBlockedUsersHelper = async (userId) => {
     };
   }
 };
-
 
 ////////////////////////////////////////////////// EMAIL VERIFICATION //////////////////////////////////////////////////////////////////
 // @desc    Sent verification link
@@ -631,7 +638,7 @@ export const checkToken = async (userId, token, type) => {
       });
     } else if (type === "update") {
       const existingToken = await Verify.findOne({
-        token : token,
+        token: token,
       });
       const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30);
       if (existingToken) {
@@ -809,7 +816,7 @@ export const removeSavePostHelper = (userId, postId) => {
     } catch (err) {
       reject({
         status: err.status || 500,
-        
+
         message: err.message || "went wrong",
         err,
       });
@@ -817,9 +824,9 @@ export const removeSavePostHelper = (userId, postId) => {
   });
 };
 
-  // @desc    Remove from saved
-  // @route   DELETE /user/:userId/save/post/remove/:postId
-  // @access  Registerd users
+// @desc    Remove from saved
+// @route   DELETE /user/:userId/save/post/remove/:postId
+// @access  Registerd users
 // export const  getMutualFriendsHelper = async (userId) =>{
 //   try {
 //     // Find the user's connections
@@ -882,7 +889,7 @@ export const getMutualFriendsHelper = async (userId) => {
       // Find the connections of the connected user
       const connectedUserConnections = await Connection.findOne({
         userId: connectedUser._id,
-      }).populate("followers following", "username");
+      }).populate("followers following", "username profilePic");
       if (!connectedUserConnections) {
         // If no connections are found, skip this user
         continue;
@@ -905,11 +912,11 @@ export const getMutualFriendsHelper = async (userId) => {
         ) {
           continue;
         }
-
         // Add the suggested user to the array
         suggestedMutualFriends.push({
           username: suggestedUser.username,
           userId: suggestedUser._id,
+          profilePic: suggestedUser.profilePic,
         });
       }
     }
