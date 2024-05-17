@@ -1,5 +1,7 @@
 import { ChatRoom } from "../models/chatRoomModel.js";
 import { Messages } from "../models/messageModel.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 // @desc    Get chats from a room
 // @route   /messages/inbox/:roomId
@@ -114,7 +116,11 @@ export const newMessageHelper = (roomId, textMessage, senderId) => {
             {
               $set: {
                 lastMessageTime: response?.createdAt,
-                lastMessage: textMessage,
+                lastMessage: textMessage.includes(
+                  process.env.CLODINARY_IMAGE_URL
+                )
+                  ? "Image"
+                  : textMessage,
               },
             },
             { new: true } // Return the updated document
@@ -156,7 +162,7 @@ export const roomWithUserID = (userId) => {
 // @desc    Get rooms with userID
 // @route   GET /messages/inbox/get-room/userID/:userId
 // @access  Users - private
-export const startVideoCallHelper = ( callerId,receiverId) => {
+export const startVideoCallHelper = (callerId, receiverId) => {
   return new Promise((resolve, reject) => {
     try {
       ChatRoom.find({ users: userId })
