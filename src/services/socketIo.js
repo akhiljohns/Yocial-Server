@@ -24,9 +24,8 @@ const socketIo_Config = (io) => {
         io.emit("changeEmail", userId);
       });
 
-      socket.on("postInteraction", ({ userId, username, message }) => {
-        console.log("usedfdrId :>> ", userId , username, message);
-        io.emit("postInteraction", {userId, username, message});
+      socket.on("postInteraction", ({ userId, username, message ,postOwner}) => {
+        io.emit("postInteraction", {userId, username, message ,postOwner});
       });
 
       //disconnecting user

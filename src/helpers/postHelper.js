@@ -591,7 +591,7 @@ export const saveNotificationHelper = (
 // @access  Registerd users
 export const fetchNotificationsHelper = (userId) => {
   return Notifications.find({ userId, isRead: false })
-    .populate("from", "username")
+    .populate("from", "username profilePic")
     .sort({ createdAt: -1 })
     .exec()
     .then((notifications) => {
