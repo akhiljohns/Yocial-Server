@@ -598,7 +598,7 @@ export const fetchNotificationsHelper = (userId) => {
       if (notifications.length === 0) {
         return { status: 200, message: "No Notifications Found" };
       }
-      return {notifications ,status : 200, message: "Notifications Fetched" };
+      return { notifications, status: 200, message: "Notifications Fetched" };
     })
     .catch((error) => {
       throw error;
@@ -642,6 +642,21 @@ export const changeNotificationStatusHelper = (notificationId) => {
               });
             });
         }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+// @desc    delete all user notification
+// @route   POST /post/notification/delete/:userId
+// @access  Registerd users
+export const deleteNotificationsByUserIdHelper = (userId) => {
+  return new Promise((resolve, reject) => {
+    Notifications.deleteMany({ userId: userId })
+      .then((result) => {
+        resolve({ status: 200, message: "Deleted Notifications", result });
       })
       .catch((error) => {
         reject(error);

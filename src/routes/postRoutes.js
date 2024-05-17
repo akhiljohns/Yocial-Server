@@ -20,6 +20,7 @@ import {
   saveNotification,
   fetchNotifications,
   changeNotifStatus,
+  deleteNotificationsByUserId,
 } from "../controllers/postController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -96,5 +97,9 @@ router.get("/fetch-notifications/:userId", protect, fetchNotifications);
 // @desc    change notification status
 // @access  Registerd users
 router.get("/notification/status/:notificationId", protect, changeNotifStatus);
+
+// @desc    delete user notifications
+// @access  Registerd users
+router.delete("/notification/delete/:userId", protect, deleteNotificationsByUserId);
 
 export default router;
