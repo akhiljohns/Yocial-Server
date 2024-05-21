@@ -27,6 +27,10 @@ const socketIo_Config = (io) => {
       socket.on("postInteraction", ({ userId, username, message ,postOwner}) => {
         io.emit("postInteraction", {userId, username, message ,postOwner});
       });
+      socket.on("blockuser", (userId) => {
+        console.log('userId :>> ', userId);
+        io.emit("blockUser",{userId});
+      });
 
       //disconnecting user
       socket.on("disconnect", () => {
