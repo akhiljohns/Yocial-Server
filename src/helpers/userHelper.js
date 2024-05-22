@@ -13,6 +13,7 @@ import {
   verificationEmail,
 } from "../services/nodemailer.js";
 import { findQuery } from "../services/query.js";
+import { checkForNoSQLInjection } from "../services/checkText.js";
 
 ////////////////////////////////////////////////// USER LOGIN & REGISTRATION //////////////////////////////////////////////////////////////////
 // @desc    Login user
@@ -20,6 +21,14 @@ import { findQuery } from "../services/query.js";
 // @access  Public
 export const userLogin = async ({ credential, password }) => {
   try {
+    const isInjectionDetected = checkForNoSQLInjection(credential, password);
+    if (isInjectionDetected) {
+      return {
+        status: 400,
+        message: "Enter a proper username and password",
+        error_code: "NOSQL_INJECTION_DETECTED",
+      };
+    }
     const queryRes = await findQuery(credential);
 
     if (queryRes.error) {
@@ -98,6 +107,21 @@ export const registration = async ({
 }) => {
   try {
     // Check if username exists
+    const isInjectionDetected = checkForNoSQLInjection(
+      fName,
+      lName,
+      username,
+      email,
+      password,
+      phone
+    );
+    if (isInjectionDetected) {
+      return {
+        status: 400,
+        message: "Enter proper Details - Potential risks Found",
+        error_code: "NOSQL_INJECTION_DETECTED",
+      };
+    }
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
       return {
