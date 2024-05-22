@@ -226,6 +226,7 @@ export const fetchPostsHelper = (perPage, page) => {
         .exec()
         .then(async (posts) => {
           if (posts) {
+            const totalPosts = await Post.countDocuments(); // Get total count of all posts
             const postsWithCommentCount = await Promise.all(
               posts.map(async (post) => {
                 const commentCount = await fetchCommentCountHelper(post._id);
@@ -238,6 +239,7 @@ export const fetchPostsHelper = (perPage, page) => {
             resolve({
               status: 200,
               message: "Posts fetched successfully",
+              totalPosts,
               posts: postsWithCommentCount,
             });
           } else {
