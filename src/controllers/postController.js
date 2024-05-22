@@ -3,6 +3,7 @@ import {
   changeNotificationStatusHelper,
   createPostHelper,
   deleteCommentHelper,
+  deleteNotificationsByUserIdHelper,
   deletePostHelper,
   fetchCommentHelper,
   fetchNotificationsHelper,
@@ -408,6 +409,21 @@ export const changeNotifStatus = async (req, res) => {
       });
     } catch (error) {
     responseHandler(res, error);
+    
+  }
+};
 
+// @desc    video call between two users
+// @route   GET /messages/inbox/videocall/callerId/receiverId
+// @access  Users - private
+export const deleteNotificationsByUserId = (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log('userId :>> ', userId);
+    deleteNotificationsByUserIdHelper(userId).then((response) => {
+      responseHandler(res, response);
+    });
+  } catch (error) {
+    responseHandler(res, error);
   }
 };

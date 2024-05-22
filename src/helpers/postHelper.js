@@ -105,26 +105,32 @@ export const updatePostHelper = ({ caption, postId, userId }) => {
 // @route   GET /post/fetch-single-post
 // @access  Authenticated user
 export const fetchSinglePostHelper = (postId) => {
-  return new Promise(async (resolve, reject) => {
-    const postExist = await Post.findById({ _id: postId });
+  try {
+    return new Promise(async (resolve, reject) => {
+      const postExist = await Post.findById({ _id: postId });
 
-    if (!postExist) {
-      reject({
-        status: 404,
-        message: "Post Not Found",
-      });
-    }
-    Post.findOne({ _id: postId })
-      .then((post) => {
-        resolve({ status: 404, message: "Single Post Found", post });
-      })
-      .catch((error) => {
+      if (!postExist) {
         reject({
-          status: error.status || 500,
-          message: error.message || "Something Went Wrong, Try After Sometime",
+          status: 404,
+          message: "Post Not Found",
         });
-      });
-  });
+      }
+      Post.findOne({ _id: postId })
+      .populate('userId', 'username profilePic')
+        .then((post) => {
+          resolve({ status: 200, message: "Single Post Found", post });
+        })
+        .catch((error) => {
+          reject({
+            status: error.status || 500,
+            message:
+              error.message || "Something Went Wrong, Try After Sometime",
+          });
+        });
+    });
+  } catch (error) {
+    return error;
+  }
 };
 
 // @desc    Fetch a user's posts
@@ -598,7 +604,7 @@ export const fetchNotificationsHelper = (userId) => {
       if (notifications.length === 0) {
         return { status: 200, message: "No Notifications Found" };
       }
-      return {notifications ,status : 200, message: "Notifications Fetched" };
+      return { notifications, status: 200, message: "Notifications Fetched" };
     })
     .catch((error) => {
       throw error;
@@ -642,6 +648,21 @@ export const changeNotificationStatusHelper = (notificationId) => {
               });
             });
         }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+// @desc    delete all user notification
+// @route   POST /post/notification/delete/:userId
+// @access  Registerd users
+export const deleteNotificationsByUserIdHelper = (userId) => {
+  return new Promise((resolve, reject) => {
+    Notifications.deleteMany({ userId: userId })
+      .then((result) => {
+        resolve({ status: 200, message: "Deleted Notifications", result });
       })
       .catch((error) => {
         reject(error);
