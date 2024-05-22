@@ -3,6 +3,7 @@ import { Comment } from "../models/commentModel.js";
 import { Report } from "../models/reportsModel.js";
 import { Notifications } from "../models/notificationModel.js";
 import User from "../models/userModel.js"; //userModel
+import { checkForNoSQLInjection } from "../services/checkText.js";
 
 // @desc    Create post
 // @route   POST /post/create-post
@@ -10,6 +11,14 @@ import User from "../models/userModel.js"; //userModel
 export const createPostHelper = ({ image, caption, userId }) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const isInjectionDetected = checkForNoSQLInjection(image, caption, userId );
+      if (isInjectionDetected) {
+        return reject({
+          status: 400,
+          message: "Try again Later - Potential risks Found",
+          error_code: "NOSQL_INJECTION_DETECTED",
+        });
+      }
       let query = {};
       if (caption) {
         query = {
