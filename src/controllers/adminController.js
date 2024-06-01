@@ -207,7 +207,7 @@ export const togglePostBlock = (req, res) => {
     res.status(500).json(error)
   }
 }
-};
+
 // @desc    Delete post report
 // @route   GET /admin/reports/users
 // @access  Admins
