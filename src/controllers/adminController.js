@@ -8,6 +8,7 @@ import {
   fetchCommentCountHelper,
   fetchPostsHelper,
   getPostReportsHelper,
+  deletePostReportHelper,
 } from "../helpers/adminHelper.js";
 import responseHandler from "../utils/responseHandler.js";
 
@@ -161,13 +162,27 @@ export const getPostReports = (req, res) => {
   try {
     const page = req.body.page || 1;
     const perPage = req.body.perPage || 7;
-    const search = req.body.search || '';
-    getPostReportsHelper(page, perPage, search).then((response)=> {
-      res.status(200).json(response);
-    }).catch((err)=> {
-      res.status(500).json(err);
-    })
+    const search = req.body.search || "";
+    getPostReportsHelper(page, perPage, search)
+      .then((response) => {
+        res.status(200).json(response);
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
   } catch (error) {
-    res.status(500).json(error)
+    res.status(500).json(error);
   }
-}
+};
+// @desc    Delete post report
+// @route   GET /admin/reports/users
+// @access  Admins
+export const deletePostReport = (req, res) => {
+  try {
+    deletePostReportHelper(req.params.reportId).then((response) => {
+      res.status(200).json(response);
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};

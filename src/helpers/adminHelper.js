@@ -313,4 +313,50 @@ export const getPostReportsHelper = (page, perPage, search) => {
   })
 };
 
+// @desc    Delete post reports
+// @route   GET /admin/reports/delete
+// @access  Admins
+export const deletePostReportHelper = (reportId) => {
+  return new Promise((resolve, reject) => {
+    if (!mongoose.Types.ObjectId.isValid(reportId)) {
+      reject(new Error("Invalid report ID"));
+      return;
+    }
+
+    Report.findByIdAndDelete(reportId)
+      .then((deletedReport) => {
+        if (!deletedReport) {
+          reject(new Error("Report not found"));
+          return;
+        }
+
+        resolve({
+          status: 200,
+          message: "Report Has been deleted",
+          deletedReport,
+        });
+      })
+      .catch((error) => {
+        console.error("Error deleting report:", error);
+        reject(error);
+      });
+  });
+};
+
+// @desc   toggle action taken status of post report
+// @route   GET /admin/post/toggleactiontaken
+// @access  Admins
+export const toggleActionTakenHelper = async (reportId) => {
+  try {
+    const report = await Report.findById(reportId);
+    if (!report) {
+      throw new Error("Report not found");
+    }
+    report.actionTaken = !report.actionTaken;
+    await report.save();
+    return report;
+  } catch (error) {
+    throw error;
+  }
+};
 

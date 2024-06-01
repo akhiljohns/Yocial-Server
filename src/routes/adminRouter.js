@@ -13,6 +13,7 @@ import {
 } from "../controllers/adminController.js";
 import { fetchAllPosts } from "../controllers/postController.js";
 import adminProtect from "../middlewares/adminAuth.js";
+import { deletePostReportHelper } from "../helpers/adminHelper.js";
 
 // @desc    Login admin
 // @access  Admins
@@ -39,6 +40,11 @@ router.post("/register", adminPostRegister);
 // @desc    Fetch post reports
 // @access  Admins
 router.get("/reports/posts", adminProtect, getPostReports);
+
+// @desc    delete post report
+// @access  Admins
+router.get("/report/delete/:reportId", adminProtect, deletePostReportHelper);
+
 // router.get("/reports/posts/:perPage/:page", adminProtect, getPostReports);
 
 export default router;
