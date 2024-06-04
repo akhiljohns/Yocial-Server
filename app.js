@@ -47,9 +47,8 @@ app.use(express.static(publicPath));
 //     origin: "*",
 //   })
 // );
-app.use(cors({
-  origin: 'http://localhost:3000' // You can specify the allowed origin
-}));
+app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
