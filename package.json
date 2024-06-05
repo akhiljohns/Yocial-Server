@@ -1,36 +1,37 @@
-{
-  "name": "yocial-server",
-  "version": "1.0.0",
-  "description": "social media webapp",
-  "main": "app.js",
-  "type": "module",
-  "scripts": {
-    "dev": "nodemon app.js",
-    "start": "npm run dev"
-  },
-  "keywords": [
-    "social",
-    "media"
-  ],
-  "author": "Akhil Johns",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.19.2",
-    "gridfs-stream": "^1.1.1",
-    "helmet": "^7.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.2",
-    "morgan": "^1.10.0",
-    "nodemailer": "^6.9.7",
-    "npx": "^3.0.0",
-    "socket.io": "^4.7.5"
-  },
-  "devDependencies": {
-    "esm": "^3.2.25",
-    "nodemon": "^3.0.2"
+  {
+    "name": "yocial-server",
+    "version": "1.0.0",
+    "description": "social media webapp",
+    "main": "app.js",
+    "type": "module",
+    "scripts": {
+      "dev": "nodemon app.js",
+      "start": "npm run dev",
+      "prod":"node app.js"
+    },
+    "keywords": [
+      "social",
+      "media"
+    ],
+    "author": "Akhil Johns",
+    "license": "ISC",
+    "dependencies": {
+      "bcrypt": "^5.1.1",
+      "body-parser": "^1.20.2",
+      "cors": "^2.8.5",
+      "dotenv": "^16.3.1",
+      "express": "^4.19.2",
+      "gridfs-stream": "^1.1.1",
+      "helmet": "^7.1.0",
+      "jsonwebtoken": "^9.0.2",
+      "mongoose": "^8.0.2",
+      "morgan": "^1.10.0",
+      "nodemailer": "^6.9.7",
+      "npx": "^3.0.0",
+      "socket.io": "^4.7.5"
+    },
+    "devDependencies": {
+      "esm": "^3.2.25",
+      "nodemon": "^3.0.2"
+    }
   }
-}
