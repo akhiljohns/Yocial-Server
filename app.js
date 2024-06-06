@@ -42,12 +42,12 @@ const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 
 // cors options
-// app.use(
-//   cors({
-//     origin: "*",
-//   })
-// );
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    method: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -69,7 +69,6 @@ socketIo_Config(io);
 app.use((req, res) => {
   res.status(404).sendFile(path.join(publicPath, "404.html"));
 });
-
 
 server.listen(port, () => {
   console.log(`<------------------------------------->`);
