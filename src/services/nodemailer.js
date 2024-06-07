@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { Verify } from "../models/verifyModel.js";
 import User from "../models/userModel.js"; //userModel
 import { sentEmail, sentVerificationEmail } from "./sentmail.js";
+import { BASE_URL, CLIENT_URL } from "../utils/const.js";
 
 export const verificationEmail = async (email, username, userId) => {
   try {
@@ -36,7 +37,7 @@ export const verificationEmail = async (email, username, userId) => {
       await newToken.save();
     }
 
-    const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}/register`;
+    const message = `${CLIENT_URL}/auth/verify/${userId}/${token}/register`;
     const response = await sentEmail(email, username, message);
 
     return { status: 200, message: "Email sent successfully", data: response };
@@ -134,7 +135,7 @@ export const verifyEmailChange = async ({
   }).then((token) => {
     // Send confirmation email
     let update = true;
-    const message = `${process.env.CLIENT_URL}/auth/verify/${userId}/${token}/${type}`;
+    const message = `${CLIENT_URL}/auth/verify/${userId}/${token}/${type}`;
     return sentEmail(newEmail, username, message, update);
   }).then((response) => {
     return {
@@ -163,7 +164,7 @@ export const generateTokenForPassword = (data) => {
 
       await verify.save();
 
-      const verificationLink = `${process.env.BASE_URL}/auth/change-password/verify/${data?.username}/${token}`;
+      const verificationLink = `${BASE_URL}/auth/change-password/verify/${data?.username}/${token}`;
 
       sentVerificationEmail(data?.email, data?.username, verificationLink)
         .then((response) => {
