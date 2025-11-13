@@ -41,8 +41,8 @@ const publicPath = path.join(__dirname, "public");
 // Serve static files from the public directory
 app.use(express.static(publicPath));
 
-// cors options
 app.use(cors());
+app.options("*", cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
