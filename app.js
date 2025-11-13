@@ -42,12 +42,7 @@ const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 
 // cors options
-app.use(
-  cors({
-    origin: "*",
-    method: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
